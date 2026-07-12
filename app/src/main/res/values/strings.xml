@@ -92,4 +92,26 @@
     <string name="toast_desempate_eliminado">Desempate eliminado</string>
     <string name="titulo_desempate_puesto">Desempate a %1$d platos: ¿quién queda en el puesto %2$d?</string>
     <string name="toast_desempate_guardado">Desempate guardado</string>
+
+    <!-- Inicio de sesión -->
+    <string name="login_subtitulo">Inicia sesión para continuar</string>
+    <string name="label_email">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="label_password_confirm">Repite la contraseña</string>
+    <string name="accion_iniciar_sesion">Iniciar sesión</string>
+    <string name="accion_crear_cuenta">Crear cuenta</string>
+    <string name="login_no_tengo_cuenta">¿No tienes cuenta? Crea una</string>
+    <string name="login_ya_tengo_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="login_olvide_password">He olvidado mi contraseña</string>
+    <string name="login_error_email_invalido">Introduce un correo válido</string>
+    <string name="login_error_password_corta">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="login_error_password_no_coincide">Las contraseñas no coinciden</string>
+    <string name="login_error_credenciales">Correo o contraseña incorrectos</string>
+    <string name="login_error_email_en_uso">Ya existe una cuenta con ese correo</string>
+    <string name="login_error_usuario_no_existe">No existe ninguna cuenta con ese correo</string>
+    <string name="login_error_red">Sin conexión: comprueba tu acceso a internet</string>
+    <string name="login_error_generico">No se ha podido completar la operación. Inténtalo de nuevo.</string>
+    <string name="login_reset_enviado">Te hemos enviado un correo para restablecer la contraseña</string>
+    <string name="accion_cerrar_sesion">Cerrar sesión</string>
+    <string name="toast_sesion_cerrada">Sesión cerrada</string>
 </resources>

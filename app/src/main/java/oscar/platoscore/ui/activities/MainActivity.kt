@@ -3,11 +3,14 @@ package oscar.platoscore.ui.activities
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.firebase.auth.FirebaseAuth
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.databinding.DialogAddTiradaBinding
@@ -31,6 +34,28 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         observeTiradas()
         setupFAB()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_cerrar_sesion -> {
+                cerrarSesion()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun cerrarSesion() {
+        FirebaseAuth.getInstance().signOut()
+        Toast.makeText(this, R.string.toast_sesion_cerrada, Toast.LENGTH_SHORT).show()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 
     private fun setupRecyclerView() {
