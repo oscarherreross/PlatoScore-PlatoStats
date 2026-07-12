@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.platoscore.databinding.ActivityEscuadraDetailBinding
 import oscar.platoscore.databinding.DialogAddTiradorBinding
-import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.TiradorAdapter
 import oscar.platoscore.viewmodels.TiradaViewModel
@@ -26,7 +25,6 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private var tiradaId: Int = 0
     private var escuadraId: Int = 0
-    private var tiradaActual: Tirada? = null
 
     companion object {
         const val EXTRA_TIRADA_ID = "tirada_id"
@@ -62,7 +60,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private fun observeData() {
         tiradaViewModel.getTirada(tiradaId).observe(this) { t ->
-            tiradaActual = t
+            tiradorAdapter.tirada = t
         }
 
         tiradorViewModel.getTiradores(escuadraId).observe(this) { tiradores ->
@@ -73,10 +71,6 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private fun setupFab() {
         binding.fabAddTirador.setOnClickListener {
-            if (tiradaActual == null) {
-                Toast.makeText(this, "Cargando datos de la tirada, espera un momento...", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
             showAddTiradorDialog()
         }
     }
@@ -144,19 +138,6 @@ class EscuadraDetailActivity : AppCompatActivity() {
             return null
         }
 
-        val esLocal = dialogBinding.cbLocal.isChecked
-        val esJunior = dialogBinding.cbJunior.isChecked
-        val esSenior = dialogBinding.cbSenior.isChecked
-        val esDama = dialogBinding.cbDama.isChecked
-
-        val precio = calcularPrecio(
-            tirada = tiradaActual,
-            esLocal = esLocal,
-            esJunior = esJunior,
-            esSenior = esSenior,
-            esDama = esDama
-        )
-
         return Tirador(
             id = existingId,
             escuadraId = escuadraId,
@@ -164,33 +145,10 @@ class EscuadraDetailActivity : AppCompatActivity() {
             dni = dni,
             numeroLicencia = licencia,
             platosRotos = platosRotos,
-            esLocal = esLocal,
-            esJunior = esJunior,
-            esSenior = esSenior,
-            esDama = esDama,
-            precio = precio
+            esLocal = dialogBinding.cbLocal.isChecked,
+            esJunior = dialogBinding.cbJunior.isChecked,
+            esSenior = dialogBinding.cbSenior.isChecked,
+            esDama = dialogBinding.cbDama.isChecked
         )
-    }
-
-    private fun calcularPrecio(
-        tirada: Tirada?,
-        esLocal: Boolean,
-        esJunior: Boolean,
-        esSenior: Boolean,
-        esDama: Boolean
-    ): Float {
-        val t = tirada ?: return 0f
-
-        val precios = mutableListOf<Float>()
-
-        if (esLocal) precios.add(t.precioLocal)
-        if (esJunior) precios.add(t.precioJunior)
-        if (esSenior) precios.add(t.precioSenior)
-        if (esDama) precios.add(t.precioDama)
-
-        // Si no tiene ninguna categoría marcada, es General
-        if (precios.isEmpty()) precios.add(t.precioGeneral)
-
-        return precios.min()
     }
 }

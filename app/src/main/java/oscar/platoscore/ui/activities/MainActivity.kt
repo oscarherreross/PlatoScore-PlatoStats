@@ -10,10 +10,8 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.TiradaAdapter
+import oscar.platoscore.utils.Fechas
 import oscar.platoscore.viewmodels.TiradaViewModel
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         binding.fabAddTirada.setOnClickListener {
             val nuevaTirada = Tirada(
                 nombre = "Nueva Tirada",
-                fecha = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
+                fecha = Fechas.hoyIso()
             )
             tiradaViewModel.insertTirada(nuevaTirada)
         }

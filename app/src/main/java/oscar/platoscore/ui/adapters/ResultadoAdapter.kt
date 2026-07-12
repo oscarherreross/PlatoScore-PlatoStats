@@ -19,7 +19,7 @@ class ResultadoAdapter :
             binding.tvPosicion.text = "$posicion."
             binding.tvNombre.text = item.tirador.nombreApellidos
             binding.tvPlatos.text = "${item.tirador.platosRotos} platos"
-            binding.tvPrecio.text = "${"%.2f".format(item.tirador.precio)}€"
+            binding.tvPrecio.text = "${"%.2f".format(item.precio)}€"
         }
     }
 

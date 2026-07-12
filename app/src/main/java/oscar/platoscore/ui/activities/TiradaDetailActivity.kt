@@ -12,17 +12,13 @@ import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.EscuadraAdapter
 import oscar.platoscore.viewmodels.EscuadraViewModel
-import oscar.platoscore.viewmodels.ResultadoViewModel
 import oscar.platoscore.viewmodels.TiradaViewModel
-import oscar.platoscore.viewmodels.TiradorViewModel
 
 class TiradaDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTiradaDetailBinding
     private val tiradaViewModel: TiradaViewModel by viewModels()
     private val escuadraViewModel: EscuadraViewModel by viewModels()
-    private val tiradorViewModel: TiradorViewModel by viewModels()
-    private val resultadoViewModel: ResultadoViewModel by viewModels()
     private lateinit var escuadraAdapter: EscuadraAdapter
 
     private var tiradaId: Int = 0
@@ -99,13 +95,22 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     private fun observeTirada() {
         tiradaViewModel.getTirada(tiradaId).observe(this) { tirada ->
+            if (tirada == null) return@observe
+
+            // Los campos solo se rellenan en la primera carga: si se repoblaran
+            // en cada emisión (p. ej. tras guardar en onPause o al girar la
+            // pantalla), se pisaría lo que el usuario esté escribiendo.
+            val esPrimeraCarga = this.tirada == null
             this.tirada = tirada
-            binding.etNombreTirada.setText(tirada.nombre)
-            binding.etPrecioLocal.setText(tirada.precioLocal.toString())
-            binding.etPrecioGeneral.setText(tirada.precioGeneral.toString())
-            binding.etPrecioJunior.setText(tirada.precioJunior.toString())
-            binding.etPrecioSenior.setText(tirada.precioSenior.toString())
-            binding.etPrecioDama.setText(tirada.precioDama.toString())
+
+            if (esPrimeraCarga) {
+                binding.etNombreTirada.setText(tirada.nombre)
+                binding.etPrecioLocal.setText(tirada.precioLocal.toString())
+                binding.etPrecioGeneral.setText(tirada.precioGeneral.toString())
+                binding.etPrecioJunior.setText(tirada.precioJunior.toString())
+                binding.etPrecioSenior.setText(tirada.precioSenior.toString())
+                binding.etPrecioDama.setText(tirada.precioDama.toString())
+            }
         }
 
         escuadraViewModel.getEscuadrasByTirada(tiradaId).observe(this) { escuadras ->

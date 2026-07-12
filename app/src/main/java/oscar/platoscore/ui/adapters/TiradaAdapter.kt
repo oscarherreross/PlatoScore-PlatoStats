@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import oscar.platoscore.databinding.ItemTiradaBinding
 import oscar.platoscore.models.Tirada
+import oscar.platoscore.utils.Fechas
 
 class TiradaAdapter(
     private val onClickListener: (Tirada) -> Unit,
@@ -18,7 +19,7 @@ class TiradaAdapter(
 
         fun bind(tirada: Tirada) {
             binding.tvNombreTirada.text = tirada.nombre
-            binding.tvFechaTirada.text = "Fecha: ${tirada.fecha}"
+            binding.tvFechaTirada.text = "Fecha: ${Fechas.mostrar(tirada.fecha)}"
             binding.root.setOnClickListener {
                 onClickListener(tirada)
             }

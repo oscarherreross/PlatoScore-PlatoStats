@@ -6,10 +6,18 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import oscar.platoscore.databinding.ItemTiradorBinding
+import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 
 class TiradorAdapter(private val onClickListener: (Tirador) -> Unit) :
     ListAdapter<Tirador, TiradorAdapter.TiradorViewHolder>(DiffCallback()) {
+
+    /** Tirada a la que pertenecen los tiradores; necesaria para calcular el precio. */
+    var tirada: Tirada? = null
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
 
     inner class TiradorViewHolder(private val binding: ItemTiradorBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -29,7 +37,8 @@ class TiradorAdapter(private val onClickListener: (Tirador) -> Unit) :
                 "General"
             }
 
-            binding.tvInfo.text = "Categoría: $categoriaTexto · Precio: ${"%.2f".format(item.precio)}€ · Platos rotos: ${item.platosRotos}"
+            val precioTexto = tirada?.let { " · Precio: ${"%.2f".format(it.precioPara(item))}€" } ?: ""
+            binding.tvInfo.text = "Categoría: $categoriaTexto$precioTexto · Platos rotos: ${item.platosRotos}"
 
             binding.root.setOnClickListener {
                 onClickListener(item)

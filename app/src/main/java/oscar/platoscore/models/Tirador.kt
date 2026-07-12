@@ -2,6 +2,7 @@ package oscar.platoscore.models
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -13,7 +14,8 @@ import androidx.room.PrimaryKey
             childColumns = ["escuadraId"],
             onDelete = ForeignKey.CASCADE
         )
-    ]
+    ],
+    indices = [Index("escuadraId")]
 )
 data class Tirador(
     @PrimaryKey(autoGenerate = true)
@@ -26,6 +28,5 @@ data class Tirador(
     val esLocal: Boolean = false,
     val esJunior: Boolean = false,
     val esSenior: Boolean = false,
-    val esDama: Boolean = false,
-    val precio: Float = 0f
+    val esDama: Boolean = false
 )

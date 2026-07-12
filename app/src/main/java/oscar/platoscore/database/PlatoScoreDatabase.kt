@@ -4,13 +4,15 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 
 @Database(
     entities = [Tirada::class, Escuadra::class, Tirador::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -22,13 +24,59 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
     companion object {
         @Volatile private var INSTANCE: PlatoScoreDatabase? = null
 
+        /**
+         * v1 -> v2:
+         *  - Las fechas de las tiradas pasan de dd/MM/yyyy a formato ISO
+         *    (yyyy-MM-dd) para que ORDER BY fecha ordene cronológicamente.
+         *  - Se elimina la columna tiradores.precio: el precio se calcula
+         *    siempre a partir de los precios vigentes de la tirada.
+         *  - Se añade el índice sobre tiradores.escuadraId que exige la
+         *    clave foránea.
+         */
+        private val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "UPDATE tiradas SET fecha = substr(fecha, 7, 4) || '-' || " +
+                            "substr(fecha, 4, 2) || '-' || substr(fecha, 1, 2) " +
+                            "WHERE fecha LIKE '__/__/____'"
+                )
+                db.execSQL(
+                    "CREATE TABLE tiradores_new (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`escuadraId` INTEGER NOT NULL, " +
+                            "`nombreApellidos` TEXT NOT NULL, " +
+                            "`dni` TEXT NOT NULL, " +
+                            "`numeroLicencia` TEXT NOT NULL, " +
+                            "`platosRotos` INTEGER NOT NULL, " +
+                            "`esLocal` INTEGER NOT NULL, " +
+                            "`esJunior` INTEGER NOT NULL, " +
+                            "`esSenior` INTEGER NOT NULL, " +
+                            "`esDama` INTEGER NOT NULL, " +
+                            "FOREIGN KEY(`escuadraId`) REFERENCES `escuadras`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "INSERT INTO tiradores_new (id, escuadraId, nombreApellidos, dni, " +
+                            "numeroLicencia, platosRotos, esLocal, esJunior, esSenior, esDama) " +
+                            "SELECT id, escuadraId, nombreApellidos, dni, numeroLicencia, " +
+                            "platosRotos, esLocal, esJunior, esSenior, esDama FROM tiradores"
+                )
+                db.execSQL("DROP TABLE tiradores")
+                db.execSQL("ALTER TABLE tiradores_new RENAME TO tiradores")
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_tiradores_escuadraId` " +
+                            "ON `tiradores` (`escuadraId`)"
+                )
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
-                ).fallbackToDestructiveMigration()
+                ).addMigrations(MIGRATION_1_2)
                     .build()
                     .also { INSTANCE = it }
             }

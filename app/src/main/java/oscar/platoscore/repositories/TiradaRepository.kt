@@ -10,7 +10,7 @@ class TiradaRepository(private val tiradaDao: TiradaDao) {
 
     val allTiradas: LiveData<List<Tirada>> = tiradaDao.getAllTiradas()
 
-    fun getTirada(id: Int): LiveData<Tirada> = tiradaDao.getTirada(id)
+    fun getTirada(id: Int): LiveData<Tirada?> = tiradaDao.getTirada(id)
 
     suspend fun insert(tirada: Tirada): Long = withContext(Dispatchers.IO) {
         tiradaDao.insert(tirada)

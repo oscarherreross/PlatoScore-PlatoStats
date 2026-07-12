@@ -21,7 +21,7 @@ class TiradaViewModel(application: Application) : AndroidViewModel(application) 
         allTiradas = tiradaRepository.allTiradas
     }
 
-    fun getTirada(id: Int): LiveData<Tirada> = tiradaRepository.getTirada(id)
+    fun getTirada(id: Int): LiveData<Tirada?> = tiradaRepository.getTirada(id)
 
     fun insertTirada(tirada: Tirada) {
         viewModelScope.launch {
