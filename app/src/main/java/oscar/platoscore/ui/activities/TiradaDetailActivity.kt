@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityTiradaDetailBinding
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
@@ -96,12 +97,12 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     private fun confirmarEliminarEscuadra(escuadra: Escuadra) {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Eliminar escuadra")
-            .setMessage("¿Estás seguro de que quieres eliminar la Escuadra ${escuadra.numeroEscuadra}? Se eliminarán también todos sus tiradores.")
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Eliminar") { _, _ ->
+            .setTitle(R.string.titulo_eliminar_escuadra)
+            .setMessage(getString(R.string.msg_eliminar_escuadra, escuadra.numeroEscuadra))
+            .setNegativeButton(R.string.accion_cancelar, null)
+            .setPositiveButton(R.string.accion_eliminar) { _, _ ->
                 escuadraViewModel.deleteEscuadra(escuadra)
-                Toast.makeText(this, "Escuadra eliminada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_escuadra_eliminada, Toast.LENGTH_SHORT).show()
             }
             .show()
     }

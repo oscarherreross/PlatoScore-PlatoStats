@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityEscuadraDetailBinding
 import oscar.platoscore.databinding.DialogAddTiradorBinding
 import oscar.platoscore.models.Tirador
@@ -39,7 +40,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
         escuadraId = intent.getIntExtra(Extras.ESCUADRA_ID, 0)
 
-        supportActionBar?.title = "Escuadra"
+        supportActionBar?.title = getString(R.string.titulo_escuadra)
 
         setupRecycler()
         observeData()
@@ -87,10 +88,10 @@ class EscuadraDetailActivity : AppCompatActivity() {
         configurarAutocompletado(dialogBinding)
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Añadir tirador")
+            .setTitle(R.string.titulo_anadir_tirador)
             .setView(dialogBinding.root)
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Guardar") { _, _ ->
+            .setNegativeButton(R.string.accion_cancelar, null)
+            .setPositiveButton(R.string.accion_guardar) { _, _ ->
                 val tirador = buildTiradorFromDialog(dialogBinding, existente = null)
                 if (tirador != null) {
                     tiradorViewModel.insertTirador(tirador)
@@ -116,14 +117,14 @@ class EscuadraDetailActivity : AppCompatActivity() {
         dialogBinding.cbDama.isChecked = tirador.esDama
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Editar tirador")
+            .setTitle(R.string.titulo_editar_tirador)
             .setView(dialogBinding.root)
-            .setNeutralButton("Eliminar") { _, _ ->
+            .setNeutralButton(R.string.accion_eliminar) { _, _ ->
                 tiradorViewModel.deleteTirador(tirador)
-                Toast.makeText(this, "Tirador eliminado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_tirador_eliminado, Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Guardar") { _, _ ->
+            .setNegativeButton(R.string.accion_cancelar, null)
+            .setPositiveButton(R.string.accion_guardar) { _, _ ->
                 val tiradorActualizado = buildTiradorFromDialog(dialogBinding, existente = tirador)
                 if (tiradorActualizado != null) {
                     tiradorViewModel.updateTirador(tiradorActualizado)
@@ -180,7 +181,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
         val platosRotos = dialogBinding.etPlatosRotos.text?.toString()?.toIntOrNull() ?: 0
 
         if (nombre.isBlank()) {
-            Toast.makeText(this, "El nombre es obligatorio", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.error_nombre_obligatorio, Toast.LENGTH_SHORT).show()
             return null
         }
 

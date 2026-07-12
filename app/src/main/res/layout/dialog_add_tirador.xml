@@ -12,7 +12,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Nombre y apellidos"
+            android:text="@string/label_nombre_apellidos"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"
             android:labelFor="@id/etNombreApellidos" />
@@ -22,14 +22,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="Ej: Juan Pérez"
+            android:hint="@string/hint_nombre_apellidos"
             android:completionThreshold="1"
             android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="DNI"
+            android:text="@string/label_dni"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"
             android:labelFor="@id/etDni" />
@@ -39,13 +39,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Ej: 12345678A"
+            android:hint="@string/hint_dni"
             android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Número de licencia"
+            android:text="@string/label_numero_licencia"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"
             android:labelFor="@id/etNumeroLicencia" />
@@ -55,13 +55,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="Ej: LIC-001"
+            android:hint="@string/hint_numero_licencia"
             android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Platos rotos"
+            android:text="@string/label_platos_rotos"
             android:textStyle="bold"
             android:layout_marginBottom="6dp"
             android:labelFor="@id/etPlatosRotos" />
@@ -71,13 +71,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"
-            android:hint="0"
+            android:hint="@string/hint_platos_rotos"
             android:layout_marginBottom="12dp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Categoría"
+            android:text="@string/label_categoria"
             android:textStyle="bold"
             android:layout_marginBottom="6dp" />
 
@@ -85,25 +85,25 @@
             android:id="@+id/cbLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Local" />
+            android:text="@string/categoria_local" />
 
         <CheckBox
             android:id="@+id/cbJunior"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Junior" />
+            android:text="@string/categoria_junior" />
 
         <CheckBox
             android:id="@+id/cbSenior"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Senior" />
+            android:text="@string/categoria_senior" />
 
         <CheckBox
             android:id="@+id/cbDama"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dama" />
+            android:text="@string/categoria_dama" />
 
     </LinearLayout>
 

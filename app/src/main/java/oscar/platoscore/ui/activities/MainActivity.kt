@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.databinding.DialogAddTiradaBinding
 import oscar.platoscore.models.Tirada
@@ -49,12 +50,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun confirmarEliminarTirada(tirada: Tirada) {
         MaterialAlertDialogBuilder(this)
-            .setTitle("Eliminar tirada")
-            .setMessage("¿Estás seguro de que quieres eliminar \"${tirada.nombre}\"? Se eliminarán también todas sus escuadras y tiradores.")
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Eliminar") { _, _ ->
+            .setTitle(R.string.titulo_eliminar_tirada)
+            .setMessage(getString(R.string.msg_eliminar_tirada, tirada.nombre))
+            .setNegativeButton(R.string.accion_cancelar, null)
+            .setPositiveButton(R.string.accion_eliminar) { _, _ ->
                 tiradaViewModel.deleteTirada(tirada)
-                Toast.makeText(this, "Tirada eliminada", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_tirada_eliminada, Toast.LENGTH_SHORT).show()
             }
             .show()
     }
@@ -85,13 +86,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         MaterialAlertDialogBuilder(this)
-            .setTitle("Nueva tirada")
+            .setTitle(R.string.titulo_nueva_tirada)
             .setView(dialogBinding.root)
-            .setNegativeButton("Cancelar", null)
-            .setPositiveButton("Crear") { _, _ ->
+            .setNegativeButton(R.string.accion_cancelar, null)
+            .setPositiveButton(R.string.accion_crear) { _, _ ->
                 val nombre = dialogBinding.etNombreTirada.text?.toString()?.trim().orEmpty()
                 if (nombre.isBlank()) {
-                    Toast.makeText(this, "El nombre es obligatorio", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.error_nombre_obligatorio, Toast.LENGTH_SHORT).show()
                 } else {
                     tiradaViewModel.insertTirada(Tirada(nombre = nombre, fecha = fechaIso))
                 }

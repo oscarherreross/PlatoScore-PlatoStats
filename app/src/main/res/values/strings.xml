@@ -1,3 +1,95 @@
 <resources>
     <string name="app_name">PlatoScore</string>
+
+    <!-- Acciones genéricas -->
+    <string name="accion_cancelar">Cancelar</string>
+    <string name="accion_eliminar">Eliminar</string>
+    <string name="accion_guardar">Guardar</string>
+    <string name="accion_crear">Crear</string>
+    <string name="error_nombre_obligatorio">El nombre es obligatorio</string>
+
+    <!-- Lista de tiradas -->
+    <string name="titulo_tiradas">Tiradas</string>
+    <string name="titulo_nueva_tirada">Nueva tirada</string>
+    <string name="label_nombre_tirada">Nombre de la tirada</string>
+    <string name="hint_nombre_tirada">Ej: Tirada de San Isidro</string>
+    <string name="label_fecha">Fecha</string>
+    <string name="titulo_eliminar_tirada">Eliminar tirada</string>
+    <string name="msg_eliminar_tirada">¿Estás seguro de que quieres eliminar \"%1$s\"? Se eliminarán también todas sus escuadras y tiradores.</string>
+    <string name="toast_tirada_eliminada">Tirada eliminada</string>
+    <string name="item_fecha_tirada">Fecha: %1$s</string>
+    <string name="item_contadores_tirada">Escuadras: %1$d · Tiradores: %2$d</string>
+    <string name="cd_anadir_tirada">Añadir tirada</string>
+
+    <!-- Detalle de tirada -->
+    <string name="titulo_datos_tirada">Datos de la Tirada</string>
+    <string name="titulo_precios_categoria">Precios por Categoría</string>
+    <string name="label_precio_local">Precio Tirador Local</string>
+    <string name="label_precio_general">Precio Tirador General</string>
+    <string name="label_precio_junior">Precio Tirador Junior</string>
+    <string name="label_precio_senior">Precio Tirador Senior</string>
+    <string name="label_precio_dama">Precio Tirador Dama</string>
+    <string name="hint_precio_local">Precio Local</string>
+    <string name="hint_precio_general">Precio General</string>
+    <string name="hint_precio_junior">Precio Junior</string>
+    <string name="hint_precio_senior">Precio Senior</string>
+    <string name="hint_precio_dama">Precio Dama</string>
+    <string name="titulo_escuadras">Escuadras</string>
+    <string name="btn_generar_resultados">Generar Resultados</string>
+    <string name="cd_anadir_escuadra">Añadir escuadra</string>
+    <string name="titulo_eliminar_escuadra">Eliminar escuadra</string>
+    <string name="msg_eliminar_escuadra">¿Estás seguro de que quieres eliminar la Escuadra %1$d? Se eliminarán también todos sus tiradores.</string>
+    <string name="toast_escuadra_eliminada">Escuadra eliminada</string>
+    <string name="item_numero_escuadra">Escuadra %1$d</string>
+    <string name="item_contador_tiradores">Tiradores: %1$d</string>
+
+    <!-- Escuadra y tiradores -->
+    <string name="titulo_escuadra">Escuadra</string>
+    <string name="titulo_tiradores">Tiradores</string>
+    <string name="msg_sin_tiradores_escuadra">No hay tiradores en esta escuadra. Pulsa + para añadir.</string>
+    <string name="cd_anadir_tirador">Añadir tirador</string>
+    <string name="titulo_anadir_tirador">Añadir tirador</string>
+    <string name="titulo_editar_tirador">Editar tirador</string>
+    <string name="toast_tirador_eliminado">Tirador eliminado</string>
+    <string name="label_nombre_apellidos">Nombre y apellidos</string>
+    <string name="hint_nombre_apellidos">Ej: Juan Pérez</string>
+    <string name="label_dni">DNI</string>
+    <string name="hint_dni">Ej: 12345678A</string>
+    <string name="label_numero_licencia">Número de licencia</string>
+    <string name="hint_numero_licencia">Ej: LIC-001</string>
+    <string name="label_platos_rotos">Platos rotos</string>
+    <string name="hint_platos_rotos">0</string>
+    <string name="label_categoria">Categoría</string>
+    <string name="categoria_local">Local</string>
+    <string name="categoria_general">General</string>
+    <string name="categoria_junior">Junior</string>
+    <string name="categoria_senior">Senior</string>
+    <string name="categoria_dama">Dama</string>
+    <string name="item_info_tirador">Categoría: %1$s%2$s · Platos rotos: %3$d</string>
+    <string name="segmento_precio">" · Precio: %1$s€"</string>
+
+    <!-- Resultados -->
+    <string name="titulo_resultados">Resultados</string>
+    <string name="msg_sin_tiradores_tirada">No hay tiradores registrados en esta tirada.</string>
+    <string name="msg_recaudacion">Recaudación total: %1$s€ · Tiradores: %2$d</string>
+    <string name="hint_desempate">Los tiradores marcados con = están empatados: toca uno para registrar el desempate.</string>
+    <string name="clasificacion_local">Clasificación Local</string>
+    <string name="clasificacion_general">Clasificación General</string>
+    <string name="clasificacion_junior">Clasificación Junior</string>
+    <string name="clasificacion_senior">Clasificación Senior</string>
+    <string name="clasificacion_dama">Clasificación Dama</string>
+    <string name="item_platos">%1$d platos</string>
+    <string name="item_precio">%1$s€</string>
+    <string name="btn_compartir_resultados">Compartir resultados</string>
+    <string name="toast_nada_que_compartir">No hay resultados que compartir</string>
+    <string name="compartir_cabecera">🏆 %1$s — %2$s</string>
+    <string name="compartir_num_tiradores">Tiradores: %1$d</string>
+    <string name="compartir_linea_resultado">%1$s%2$d. %3$s — %4$d platos</string>
+    <string name="titulo_empate">Empate a %1$d platos</string>
+    <string name="msg_empate_resuelto">Este empate ya está resuelto. ¿Qué quieres hacer?</string>
+    <string name="accion_repetir_desempate">Repetir desempate</string>
+    <string name="accion_quitar_desempate">Quitar desempate</string>
+    <string name="toast_desempate_eliminado">Desempate eliminado</string>
+    <string name="titulo_desempate_puesto">Desempate a %1$d platos: ¿quién queda en el puesto %2$d?</string>
+    <string name="toast_desempate_guardado">Desempate guardado</string>
 </resources>

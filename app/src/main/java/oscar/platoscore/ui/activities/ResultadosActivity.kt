@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityResultadosBinding
 import oscar.platoscore.models.Clasificacion
 import oscar.platoscore.models.Tirada
@@ -55,11 +56,11 @@ class ResultadosActivity : AppCompatActivity() {
 
     private fun setupSecciones() {
         secciones = listOf(
-            crearSeccion("Clasificación Local", binding.tvTituloLocal, binding.rvResultadosLocal) { it.esLocal },
-            crearSeccion("Clasificación General", binding.tvTituloGeneral, binding.rvResultadosGeneral) { !it.esLocal },
-            crearSeccion("Clasificación Junior", binding.tvTituloJunior, binding.rvResultadosJunior) { it.esJunior },
-            crearSeccion("Clasificación Senior", binding.tvTituloSenior, binding.rvResultadosSenior) { it.esSenior },
-            crearSeccion("Clasificación Dama", binding.tvTituloDama, binding.rvResultadosDama) { it.esDama }
+            crearSeccion(getString(R.string.clasificacion_local), binding.tvTituloLocal, binding.rvResultadosLocal) { it.esLocal },
+            crearSeccion(getString(R.string.clasificacion_general), binding.tvTituloGeneral, binding.rvResultadosGeneral) { !it.esLocal },
+            crearSeccion(getString(R.string.clasificacion_junior), binding.tvTituloJunior, binding.rvResultadosJunior) { it.esJunior },
+            crearSeccion(getString(R.string.clasificacion_senior), binding.tvTituloSenior, binding.rvResultadosSenior) { it.esSenior },
+            crearSeccion(getString(R.string.clasificacion_dama), binding.tvTituloDama, binding.rvResultadosDama) { it.esDama }
         )
     }
 
@@ -81,14 +82,14 @@ class ResultadosActivity : AppCompatActivity() {
         binding.btnCompartir.setOnClickListener {
             val texto = generarTextoResultados()
             if (texto == null) {
-                Toast.makeText(this, "No hay resultados que compartir", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_nada_que_compartir, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
                 putExtra(Intent.EXTRA_TEXT, texto)
             }
-            startActivity(Intent.createChooser(intent, "Compartir resultados"))
+            startActivity(Intent.createChooser(intent, getString(R.string.btn_compartir_resultados)))
         }
     }
 
@@ -102,8 +103,8 @@ class ResultadosActivity : AppCompatActivity() {
         if (tiradores.isEmpty()) return null
 
         val sb = StringBuilder()
-        sb.appendLine("🏆 ${tirada.nombre} — ${Fechas.mostrar(tirada.fecha)}")
-        sb.appendLine("Tiradores: ${tiradores.size}")
+        sb.appendLine(getString(R.string.compartir_cabecera, tirada.nombre, Fechas.mostrar(tirada.fecha)))
+        sb.appendLine(getString(R.string.compartir_num_tiradores, tiradores.size))
 
         secciones.forEach { seccion ->
             val resultados = Clasificacion.generar(tiradores.filter(seccion.filtro), tirada)
@@ -113,7 +114,10 @@ class ResultadosActivity : AppCompatActivity() {
                 resultados.forEach { r ->
                     val marcaEmpate = if (r.empatado) "=" else ""
                     sb.appendLine(
-                        "$marcaEmpate${r.posicion}. ${r.tirador.nombreApellidos} — ${r.tirador.platosRotos} platos"
+                        getString(
+                            R.string.compartir_linea_resultado,
+                            marcaEmpate, r.posicion, r.tirador.nombreApellidos, r.tirador.platosRotos
+                        )
                     )
                 }
             }
@@ -138,7 +142,7 @@ class ResultadosActivity : AppCompatActivity() {
         val tiradores = this.tiradores ?: return
 
         if (tiradores.isEmpty()) {
-            binding.tvRecaudacion.text = "No hay tiradores registrados en esta tirada."
+            binding.tvRecaudacion.text = getString(R.string.msg_sin_tiradores_tirada)
             binding.tvHintDesempate.visibility = View.GONE
             secciones.forEach {
                 it.titulo.visibility = View.GONE
@@ -149,7 +153,8 @@ class ResultadosActivity : AppCompatActivity() {
 
         // Recaudación total con los precios vigentes de la tirada
         val recaudacionTotal = tiradores.sumOf { tirada.precioPara(it).toDouble() }
-        binding.tvRecaudacion.text = "Recaudación total: ${"%.2f".format(recaudacionTotal)}€ · Tiradores: ${tiradores.size}"
+        binding.tvRecaudacion.text =
+            getString(R.string.msg_recaudacion, "%.2f".format(recaudacionTotal), tiradores.size)
 
         var hayEmpates = false
         secciones.forEach { seccion ->
@@ -174,16 +179,16 @@ class ResultadosActivity : AppCompatActivity() {
         val yaResuelto = grupo.none { it.ordenDesempate == 0 }
         if (yaResuelto) {
             MaterialAlertDialogBuilder(this)
-                .setTitle("Empate a ${tirador.platosRotos} platos")
-                .setMessage("Este empate ya está resuelto. ¿Qué quieres hacer?")
-                .setPositiveButton("Repetir desempate") { _, _ ->
+                .setTitle(getString(R.string.titulo_empate, tirador.platosRotos))
+                .setMessage(R.string.msg_empate_resuelto)
+                .setPositiveButton(R.string.accion_repetir_desempate) { _, _ ->
                     pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
                 }
-                .setNeutralButton("Quitar desempate") { _, _ ->
+                .setNeutralButton(R.string.accion_quitar_desempate) { _, _ ->
                     grupo.forEach { tiradorViewModel.updateTirador(it.copy(ordenDesempate = 0)) }
-                    Toast.makeText(this, "Desempate eliminado", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.toast_desempate_eliminado, Toast.LENGTH_SHORT).show()
                 }
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton(R.string.accion_cancelar, null)
                 .show()
         } else {
             pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
@@ -202,14 +207,20 @@ class ResultadosActivity : AppCompatActivity() {
 
         val nombres = pendientes.map { it.nombreApellidos }.toTypedArray()
         MaterialAlertDialogBuilder(this)
-            .setTitle("Desempate a ${pendientes.first().platosRotos} platos: ¿quién queda en el puesto ${ordenados.size + 1}?")
+            .setTitle(
+                getString(
+                    R.string.titulo_desempate_puesto,
+                    pendientes.first().platosRotos,
+                    ordenados.size + 1
+                )
+            )
             .setItems(nombres) { _, which ->
                 pedirSiguientePuesto(
                     pendientes - pendientes[which],
                     ordenados + pendientes[which]
                 )
             }
-            .setNegativeButton("Cancelar", null)
+            .setNegativeButton(R.string.accion_cancelar, null)
             .show()
     }
 
@@ -217,7 +228,7 @@ class ResultadosActivity : AppCompatActivity() {
         orden.forEachIndexed { indice, tirador ->
             tiradorViewModel.updateTirador(tirador.copy(ordenDesempate = indice + 1))
         }
-        Toast.makeText(this, "Desempate guardado", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.toast_desempate_guardado, Toast.LENGTH_SHORT).show()
     }
 
     private fun ordenAlfabetico(grupo: List<Tirador>): List<Tirador> =

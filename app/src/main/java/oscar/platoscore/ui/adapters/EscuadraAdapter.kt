@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ItemEscuadraBinding
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.EscuadraConContadores
@@ -18,9 +19,12 @@ class EscuadraAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: EscuadraConContadores) {
+            val contexto = binding.root.context
             val escuadra = item.escuadra
-            binding.tvNumeroEscuadra.text = "Escuadra ${escuadra.numeroEscuadra}"
-            binding.tvInfoEscuadra.text = "Tiradores: ${item.numTiradores}"
+            binding.tvNumeroEscuadra.text =
+                contexto.getString(R.string.item_numero_escuadra, escuadra.numeroEscuadra)
+            binding.tvInfoEscuadra.text =
+                contexto.getString(R.string.item_contador_tiradores, item.numTiradores)
             binding.root.setOnClickListener {
                 onClickListener(escuadra)
             }

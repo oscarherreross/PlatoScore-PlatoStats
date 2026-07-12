@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import oscar.platoscore.R
 import oscar.platoscore.databinding.ItemResultadoBinding
 import oscar.platoscore.models.Resultado
 
@@ -16,10 +17,11 @@ class ResultadoAdapter(
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Resultado) {
+            val contexto = binding.root.context
             binding.tvPosicion.text = if (item.empatado) "=${item.posicion}." else "${item.posicion}."
             binding.tvNombre.text = item.tirador.nombreApellidos
-            binding.tvPlatos.text = "${item.tirador.platosRotos} platos"
-            binding.tvPrecio.text = "${"%.2f".format(item.precio)}€"
+            binding.tvPlatos.text = contexto.getString(R.string.item_platos, item.tirador.platosRotos)
+            binding.tvPrecio.text = contexto.getString(R.string.item_precio, "%.2f".format(item.precio))
             binding.root.setOnClickListener {
                 onClickListener(item)
             }

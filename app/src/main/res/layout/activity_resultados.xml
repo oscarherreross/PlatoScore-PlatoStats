@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Resultados"
+            android:text="@string/titulo_resultados"
             android:textSize="24sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -31,7 +31,7 @@
             android:id="@+id/tvHintDesempate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Los tiradores marcados con = están empatados: toca uno para registrar el desempate."
+            android:text="@string/hint_desempate"
             android:textSize="13sp"
             android:textColor="?android:attr/textColorSecondary"
             android:visibility="gone"
@@ -42,7 +42,7 @@
             android:id="@+id/tvTituloLocal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clasificación Local"
+            android:text="@string/clasificacion_local"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -59,7 +59,7 @@
             android:id="@+id/tvTituloGeneral"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clasificación General"
+            android:text="@string/clasificacion_general"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -76,7 +76,7 @@
             android:id="@+id/tvTituloJunior"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clasificación Junior"
+            android:text="@string/clasificacion_junior"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -93,7 +93,7 @@
             android:id="@+id/tvTituloSenior"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clasificación Senior"
+            android:text="@string/clasificacion_senior"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -110,7 +110,7 @@
             android:id="@+id/tvTituloDama"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clasificación Dama"
+            android:text="@string/clasificacion_dama"
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginBottom="8dp" />
@@ -126,7 +126,7 @@
             android:id="@+id/btnCompartir"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Compartir resultados"
+            android:text="@string/btn_compartir_resultados"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>

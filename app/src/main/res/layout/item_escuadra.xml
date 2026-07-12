@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
@@ -17,7 +18,7 @@
             android:id="@+id/tvNumeroEscuadra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Escuadra 1"
+            tools:text="Escuadra 1"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -25,7 +26,7 @@
             android:id="@+id/tvInfoEscuadra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tiradores: 0"
+            tools:text="Tiradores: 0"
             android:textSize="12sp"
             android:layout_marginTop="4dp" />
 

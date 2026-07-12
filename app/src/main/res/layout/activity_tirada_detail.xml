@@ -28,7 +28,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Datos de la Tirada"
+                android:text="@string/titulo_datos_tirada"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="16dp" />
@@ -37,7 +37,7 @@
                 android:id="@+id/lblNombreTirada"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nombre de la tirada"
+                android:text="@string/label_nombre_tirada"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etNombreTirada" />
@@ -52,7 +52,7 @@
                 android:id="@+id/lblFechaTirada"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Fecha"
+                android:text="@string/label_fecha"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etFechaTirada" />
@@ -71,7 +71,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precios por Categoría"
+                android:text="@string/titulo_precios_categoria"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
@@ -81,7 +81,7 @@
                 android:id="@+id/lblPrecioLocal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio Tirador Local"
+                android:text="@string/label_precio_local"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etPrecioLocal" />
@@ -90,7 +90,7 @@
                 android:id="@+id/etPrecioLocal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio Local"
+                android:hint="@string/hint_precio_local"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="8dp" />
 
@@ -98,7 +98,7 @@
                 android:id="@+id/lblPrecioGeneral"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio Tirador General"
+                android:text="@string/label_precio_general"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etPrecioGeneral" />
@@ -107,7 +107,7 @@
                 android:id="@+id/etPrecioGeneral"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio General"
+                android:hint="@string/hint_precio_general"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="8dp" />
 
@@ -115,7 +115,7 @@
                 android:id="@+id/lblPrecioJunior"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio Tirador Junior"
+                android:text="@string/label_precio_junior"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etPrecioJunior" />
@@ -124,7 +124,7 @@
                 android:id="@+id/etPrecioJunior"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio Junior"
+                android:hint="@string/hint_precio_junior"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="8dp" />
 
@@ -132,7 +132,7 @@
                 android:id="@+id/lblPrecioSenior"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio Tirador Senior"
+                android:text="@string/label_precio_senior"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etPrecioSenior" />
@@ -141,7 +141,7 @@
                 android:id="@+id/etPrecioSenior"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio Senior"
+                android:hint="@string/hint_precio_senior"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="8dp" />
 
@@ -149,7 +149,7 @@
                 android:id="@+id/lblPrecioDama"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Precio Tirador Dama"
+                android:text="@string/label_precio_dama"
                 android:textStyle="bold"
                 android:layout_marginBottom="6dp"
                 android:labelFor="@id/etPrecioDama" />
@@ -158,14 +158,14 @@
                 android:id="@+id/etPrecioDama"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Precio Dama"
+                android:hint="@string/hint_precio_dama"
                 android:inputType="numberDecimal"
                 android:layout_marginBottom="24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Escuadras"
+                android:text="@string/titulo_escuadras"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
@@ -194,7 +194,7 @@
             android:id="@+id/btnGenerarResultados"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Generar Resultados"
+            android:text="@string/btn_generar_resultados"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -208,7 +208,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Añadir escuadra"
+        android:contentDescription="@string/cd_anadir_escuadra"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
         android:layout_marginEnd="16dp"
