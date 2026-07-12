@@ -12,7 +12,7 @@ import oscar.platoscore.models.Tirador
 
 @Database(
     entities = [Tirada::class, Escuadra::class, Tirador::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -70,13 +70,25 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v2 -> v3: columna tiradores.ordenDesempate para registrar el
+         * resultado del desempate manual entre empatados a platos rotos.
+         */
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE tiradores ADD COLUMN ordenDesempate INTEGER NOT NULL DEFAULT 0"
+                )
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
-                ).addMigrations(MIGRATION_1_2)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                     .also { INSTANCE = it }
             }

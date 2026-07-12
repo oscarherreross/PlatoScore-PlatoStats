@@ -28,5 +28,11 @@ data class Tirador(
     val esLocal: Boolean = false,
     val esJunior: Boolean = false,
     val esSenior: Boolean = false,
-    val esDama: Boolean = false
+    val esDama: Boolean = false,
+    /**
+     * Resultado del desempate manual entre los tiradores de la tirada que
+     * empatan a platos rotos: 1 = ganador del desempate, 2 = segundo, etc.
+     * 0 = desempate sin resolver.
+     */
+    val ordenDesempate: Int = 0
 )

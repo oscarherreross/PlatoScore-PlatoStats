@@ -8,18 +8,21 @@ import androidx.recyclerview.widget.RecyclerView
 import oscar.platoscore.databinding.ItemResultadoBinding
 import oscar.platoscore.models.Resultado
 
-class ResultadoAdapter :
-    ListAdapter<Resultado, ResultadoAdapter.ResultadoViewHolder>(DiffCallback()) {
+class ResultadoAdapter(
+    private val onClickListener: (Resultado) -> Unit = {}
+) : ListAdapter<Resultado, ResultadoAdapter.ResultadoViewHolder>(DiffCallback()) {
 
     inner class ResultadoViewHolder(private val binding: ItemResultadoBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Resultado) {
-            val posicion = absoluteAdapterPosition + 1
-            binding.tvPosicion.text = "$posicion."
+            binding.tvPosicion.text = if (item.empatado) "=${item.posicion}." else "${item.posicion}."
             binding.tvNombre.text = item.tirador.nombreApellidos
             binding.tvPlatos.text = "${item.tirador.platosRotos} platos"
             binding.tvPrecio.text = "${"%.2f".format(item.precio)}€"
+            binding.root.setOnClickListener {
+                onClickListener(item)
+            }
         }
     }
 

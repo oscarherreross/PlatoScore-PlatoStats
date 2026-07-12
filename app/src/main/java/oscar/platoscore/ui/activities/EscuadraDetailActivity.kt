@@ -85,7 +85,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
             .setView(dialogBinding.root)
             .setNegativeButton("Cancelar", null)
             .setPositiveButton("Guardar") { _, _ ->
-                val tirador = buildTiradorFromDialog(dialogBinding, existingId = 0)
+                val tirador = buildTiradorFromDialog(dialogBinding, existente = null)
                 if (tirador != null) {
                     tiradorViewModel.insertTirador(tirador)
                 }
@@ -117,7 +117,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
             }
             .setNegativeButton("Cancelar", null)
             .setPositiveButton("Guardar") { _, _ ->
-                val tiradorActualizado = buildTiradorFromDialog(dialogBinding, existingId = tirador.id)
+                val tiradorActualizado = buildTiradorFromDialog(dialogBinding, existente = tirador)
                 if (tiradorActualizado != null) {
                     tiradorViewModel.updateTirador(tiradorActualizado)
                 }
@@ -127,7 +127,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     // ─── CONSTRUIR TIRADOR DESDE EL DIÁLOGO ───
 
-    private fun buildTiradorFromDialog(dialogBinding: DialogAddTiradorBinding, existingId: Int): Tirador? {
+    private fun buildTiradorFromDialog(dialogBinding: DialogAddTiradorBinding, existente: Tirador?): Tirador? {
         val nombre = dialogBinding.etNombreApellidos.text?.toString()?.trim().orEmpty()
         val dni = dialogBinding.etDni.text?.toString()?.trim().orEmpty()
         val licencia = dialogBinding.etNumeroLicencia.text?.toString()?.trim().orEmpty()
@@ -139,7 +139,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
         }
 
         return Tirador(
-            id = existingId,
+            id = existente?.id ?: 0,
             escuadraId = escuadraId,
             nombreApellidos = nombre,
             dni = dni,
@@ -148,7 +148,13 @@ class EscuadraDetailActivity : AppCompatActivity() {
             esLocal = dialogBinding.cbLocal.isChecked,
             esJunior = dialogBinding.cbJunior.isChecked,
             esSenior = dialogBinding.cbSenior.isChecked,
-            esDama = dialogBinding.cbDama.isChecked
+            esDama = dialogBinding.cbDama.isChecked,
+            // El desempate manual solo sigue valiendo si no cambian los platos
+            ordenDesempate = if (existente != null && existente.platosRotos == platosRotos) {
+                existente.ordenDesempate
+            } else {
+                0
+            }
         )
     }
 }

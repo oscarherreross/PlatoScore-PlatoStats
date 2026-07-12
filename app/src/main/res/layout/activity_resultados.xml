@@ -25,6 +25,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:id="@+id/tvHintDesempate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Los tiradores marcados con = están empatados: toca uno para registrar el desempate."
+            android:textSize="13sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:visibility="gone"
             android:layout_marginBottom="16dp" />
 
         <!-- Clasificación Local -->
