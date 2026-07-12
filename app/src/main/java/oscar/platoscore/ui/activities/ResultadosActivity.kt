@@ -13,6 +13,7 @@ import oscar.platoscore.models.Clasificacion
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.ResultadoAdapter
+import oscar.platoscore.utils.Extras
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
 
@@ -42,7 +43,7 @@ class ResultadosActivity : AppCompatActivity() {
         binding = ActivityResultadosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        tiradaId = intent.getIntExtra("tirada_id", 0)
+        tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
         setupSecciones()
         cargarResultados()

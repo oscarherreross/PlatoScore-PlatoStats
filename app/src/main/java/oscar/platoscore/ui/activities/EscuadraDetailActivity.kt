@@ -11,6 +11,7 @@ import oscar.platoscore.databinding.ActivityEscuadraDetailBinding
 import oscar.platoscore.databinding.DialogAddTiradorBinding
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.TiradorAdapter
+import oscar.platoscore.utils.Extras
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
 
@@ -26,18 +27,13 @@ class EscuadraDetailActivity : AppCompatActivity() {
     private var tiradaId: Int = 0
     private var escuadraId: Int = 0
 
-    companion object {
-        const val EXTRA_TIRADA_ID = "tirada_id"
-        const val EXTRA_ESCUADRA_ID = "escuadra_id"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEscuadraDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        tiradaId = intent.getIntExtra(EXTRA_TIRADA_ID, 0)
-        escuadraId = intent.getIntExtra(EXTRA_ESCUADRA_ID, 0)
+        tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
+        escuadraId = intent.getIntExtra(Extras.ESCUADRA_ID, 0)
 
         supportActionBar?.title = "Escuadra"
 

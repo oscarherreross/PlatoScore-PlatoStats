@@ -11,6 +11,7 @@ import oscar.platoscore.databinding.ActivityTiradaDetailBinding
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.EscuadraAdapter
+import oscar.platoscore.utils.Extras
 import oscar.platoscore.viewmodels.EscuadraViewModel
 import oscar.platoscore.viewmodels.TiradaViewModel
 
@@ -24,17 +25,12 @@ class TiradaDetailActivity : AppCompatActivity() {
     private var tiradaId: Int = 0
     private var tirada: Tirada? = null
 
-    companion object {
-        const val EXTRA_TIRADA_ID = "tirada_id"
-        const val EXTRA_ESCUADRA_ID = "escuadra_id"
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        tiradaId = intent.getIntExtra(EXTRA_TIRADA_ID, 0)
+        tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
         setupRecyclerView()
         observeTirada()
@@ -65,8 +61,8 @@ class TiradaDetailActivity : AppCompatActivity() {
         escuadraAdapter = EscuadraAdapter(
             onClickListener = { escuadra ->
                 val intent = Intent(this, EscuadraDetailActivity::class.java)
-                intent.putExtra(EXTRA_TIRADA_ID, tiradaId)
-                intent.putExtra(EXTRA_ESCUADRA_ID, escuadra.id)
+                intent.putExtra(Extras.TIRADA_ID, tiradaId)
+                intent.putExtra(Extras.ESCUADRA_ID, escuadra.id)
                 startActivity(intent)
             },
             onLongClickListener = { escuadra ->
@@ -129,7 +125,7 @@ class TiradaDetailActivity : AppCompatActivity() {
             guardarCambiosTirada()
 
             val intent = Intent(this, ResultadosActivity::class.java)
-            intent.putExtra(EXTRA_TIRADA_ID, tiradaId)
+            intent.putExtra(Extras.TIRADA_ID, tiradaId)
             startActivity(intent)
         }
     }

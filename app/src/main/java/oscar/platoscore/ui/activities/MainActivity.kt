@@ -10,6 +10,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.TiradaAdapter
+import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
 import oscar.platoscore.viewmodels.TiradaViewModel
 
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         tiradaAdapter = TiradaAdapter(
             onClickListener = { tirada ->
                 val intent = Intent(this, TiradaDetailActivity::class.java)
-                intent.putExtra("tirada_id", tirada.id)
+                intent.putExtra(Extras.TIRADA_ID, tirada.id)
                 startActivity(intent)
             },
             onLongClickListener = { tirada ->
