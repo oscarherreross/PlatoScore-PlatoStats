@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -42,12 +42,13 @@ android {
 
     buildFeatures {
         viewBinding = true
-        dataBinding = true
     }
 }
 
-kapt {
-    correctErrorTypes = true
+ksp {
+    // Guarda el esquema de cada versión de la BD para poder escribir y
+    // verificar migraciones.
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
@@ -74,7 +75,7 @@ dependencies {
     val roomVersion = "2.8.4"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
-    kapt("androidx.room:room-compiler:$roomVersion")
+    ksp("androidx.room:room-compiler:$roomVersion")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")

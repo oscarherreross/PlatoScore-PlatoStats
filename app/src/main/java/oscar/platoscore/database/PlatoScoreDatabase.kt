@@ -13,7 +13,7 @@ import oscar.platoscore.models.Tirador
 @Database(
     entities = [Tirada::class, Escuadra::class, Tirador::class],
     version = 3,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
 
