@@ -17,6 +17,10 @@ class EscuadraRepository(private val escuadraDao: EscuadraDao) {
         escuadraDao.insert(escuadra)
     }
 
+    suspend fun getSiguienteNumeroEscuadra(tiradaId: Int): Int = withContext(Dispatchers.IO) {
+        escuadraDao.getSiguienteNumeroEscuadra(tiradaId)
+    }
+
     suspend fun update(escuadra: Escuadra) = withContext(Dispatchers.IO) {
         escuadraDao.update(escuadra)
     }

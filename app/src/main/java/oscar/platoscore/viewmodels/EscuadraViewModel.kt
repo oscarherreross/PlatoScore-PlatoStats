@@ -29,6 +29,17 @@ class EscuadraViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    /**
+     * Crea una escuadra nueva numerada con MAX(numeroEscuadra) + 1, para que
+     * no se repitan números aunque se hayan borrado escuadras intermedias.
+     */
+    fun crearEscuadra(tiradaId: Int) {
+        viewModelScope.launch {
+            val numero = escuadraRepository.getSiguienteNumeroEscuadra(tiradaId)
+            escuadraRepository.insert(Escuadra(tiradaId = tiradaId, numeroEscuadra = numero))
+        }
+    }
+
     fun updateEscuadra(escuadra: Escuadra) {
         viewModelScope.launch {
             escuadraRepository.update(escuadra)

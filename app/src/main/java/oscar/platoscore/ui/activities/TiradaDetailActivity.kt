@@ -120,12 +120,7 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddEscuadra.setOnClickListener {
-            val numeroEscuadra = (escuadraAdapter.itemCount + 1)
-            val nuevaEscuadra = Escuadra(
-                tiradaId = tiradaId,
-                numeroEscuadra = numeroEscuadra
-            )
-            escuadraViewModel.insertEscuadra(nuevaEscuadra)
+            escuadraViewModel.crearEscuadra(tiradaId)
         }
     }
 

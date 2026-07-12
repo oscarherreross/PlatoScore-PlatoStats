@@ -25,4 +25,7 @@ interface EscuadraDao {
 
     @Query("SELECT * FROM escuadras WHERE id = :id")
     fun getEscuadra(id: Int): LiveData<Escuadra>
+
+    @Query("SELECT COALESCE(MAX(numeroEscuadra), 0) + 1 FROM escuadras WHERE tiradaId = :tiradaId")
+    suspend fun getSiguienteNumeroEscuadra(tiradaId: Int): Int
 }
