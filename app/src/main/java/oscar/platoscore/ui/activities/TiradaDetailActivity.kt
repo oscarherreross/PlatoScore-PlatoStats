@@ -1,5 +1,6 @@
 package oscar.platoscore.ui.activities
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -12,6 +13,7 @@ import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.EscuadraAdapter
 import oscar.platoscore.utils.Extras
+import oscar.platoscore.utils.Fechas
 import oscar.platoscore.viewmodels.EscuadraViewModel
 import oscar.platoscore.viewmodels.TiradaViewModel
 
@@ -25,6 +27,9 @@ class TiradaDetailActivity : AppCompatActivity() {
     private var tiradaId: Int = 0
     private var tirada: Tirada? = null
 
+    /** Fecha en formato ISO elegida con el DatePicker (el EditText muestra dd/MM/yyyy). */
+    private var fechaIso: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
@@ -34,8 +39,19 @@ class TiradaDetailActivity : AppCompatActivity() {
 
         setupRecyclerView()
         observeTirada()
+        setupFechaPicker()
         setupFAB()
         setupGenerarResultadosButton()
+    }
+
+    private fun setupFechaPicker() {
+        binding.etFechaTirada.setOnClickListener {
+            val (anio, mes, dia) = Fechas.partesIso(fechaIso)
+            DatePickerDialog(this, { _, a, m, d ->
+                fechaIso = Fechas.aIso(a, m + 1, d)
+                binding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
+            }, anio, mes - 1, dia).show()
+        }
     }
 
     override fun onPause() {
@@ -47,6 +63,7 @@ class TiradaDetailActivity : AppCompatActivity() {
         tirada?.let { t ->
             val tiradaActualizada = t.copy(
                 nombre = binding.etNombreTirada.text.toString(),
+                fecha = fechaIso.ifBlank { t.fecha },
                 precioLocal = binding.etPrecioLocal.text.toString().toFloatOrNull() ?: 0f,
                 precioGeneral = binding.etPrecioGeneral.text.toString().toFloatOrNull() ?: 0f,
                 precioJunior = binding.etPrecioJunior.text.toString().toFloatOrNull() ?: 0f,
@@ -100,7 +117,9 @@ class TiradaDetailActivity : AppCompatActivity() {
             this.tirada = tirada
 
             if (esPrimeraCarga) {
+                fechaIso = tirada.fecha
                 binding.etNombreTirada.setText(tirada.nombre)
+                binding.etFechaTirada.setText(Fechas.mostrar(tirada.fecha))
                 binding.etPrecioLocal.setText(tirada.precioLocal.toString())
                 binding.etPrecioGeneral.setText(tirada.precioGeneral.toString())
                 binding.etPrecioJunior.setText(tirada.precioJunior.toString())

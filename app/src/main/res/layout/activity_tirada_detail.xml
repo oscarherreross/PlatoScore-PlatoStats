@@ -49,6 +49,26 @@
                 android:layout_marginBottom="12dp" />
 
             <TextView
+                android:id="@+id/lblFechaTirada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fecha"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etFechaTirada" />
+
+            <EditText
+                android:id="@+id/etFechaTirada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:focusable="false"
+                android:clickable="true"
+                android:cursorVisible="false"
+                android:longClickable="false"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Precios por Categoría"

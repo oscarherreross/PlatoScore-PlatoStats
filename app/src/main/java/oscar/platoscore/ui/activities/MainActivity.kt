@@ -1,5 +1,6 @@
 package oscar.platoscore.ui.activities
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
@@ -8,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.platoscore.databinding.ActivityMainBinding
+import oscar.platoscore.databinding.DialogAddTiradaBinding
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.TiradaAdapter
 import oscar.platoscore.utils.Extras
@@ -65,11 +67,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTirada.setOnClickListener {
-            val nuevaTirada = Tirada(
-                nombre = "Nueva Tirada",
-                fecha = Fechas.hoyIso()
-            )
-            tiradaViewModel.insertTirada(nuevaTirada)
+            showNuevaTiradaDialog()
         }
+    }
+
+    private fun showNuevaTiradaDialog() {
+        val dialogBinding = DialogAddTiradaBinding.inflate(layoutInflater)
+
+        var fechaIso = Fechas.hoyIso()
+        dialogBinding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
+        dialogBinding.etFechaTirada.setOnClickListener {
+            val (anio, mes, dia) = Fechas.partesIso(fechaIso)
+            DatePickerDialog(this, { _, a, m, d ->
+                fechaIso = Fechas.aIso(a, m + 1, d)
+                dialogBinding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
+            }, anio, mes - 1, dia).show()
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Nueva tirada")
+            .setView(dialogBinding.root)
+            .setNegativeButton("Cancelar", null)
+            .setPositiveButton("Crear") { _, _ ->
+                val nombre = dialogBinding.etNombreTirada.text?.toString()?.trim().orEmpty()
+                if (nombre.isBlank()) {
+                    Toast.makeText(this, "El nombre es obligatorio", Toast.LENGTH_SHORT).show()
+                } else {
+                    tiradaViewModel.insertTirada(Tirada(nombre = nombre, fecha = fechaIso))
+                }
+            }
+            .show()
     }
 }
