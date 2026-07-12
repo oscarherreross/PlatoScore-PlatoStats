@@ -2,6 +2,7 @@ package oscar.platoscore.ui.activities
 
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +27,9 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private var tiradaId: Int = 0
     private var escuadraId: Int = 0
+
+    /** Histórico de todos los tiradores (más recientes primero) para autocompletar. */
+    private var historicoTiradores: List<Tirador> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +67,10 @@ class EscuadraDetailActivity : AppCompatActivity() {
             tiradorAdapter.submitList(tiradores)
             binding.tvEmpty.visibility = if (tiradores.isEmpty()) View.VISIBLE else View.GONE
         }
+
+        tiradorViewModel.getAllTiradores().observe(this) { todos ->
+            historicoTiradores = todos
+        }
     }
 
     private fun setupFab() {
@@ -75,6 +83,8 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private fun showAddTiradorDialog() {
         val dialogBinding = DialogAddTiradorBinding.inflate(layoutInflater)
+        configurarValidaciones(dialogBinding)
+        configurarAutocompletado(dialogBinding)
 
         MaterialAlertDialogBuilder(this)
             .setTitle("Añadir tirador")
@@ -93,6 +103,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private fun showEditTiradorDialog(tirador: Tirador) {
         val dialogBinding = DialogAddTiradorBinding.inflate(layoutInflater)
+        configurarValidaciones(dialogBinding)
 
         // Precargar los campos con los datos actuales
         dialogBinding.etNombreApellidos.setText(tirador.nombreApellidos)
@@ -119,6 +130,45 @@ class EscuadraDetailActivity : AppCompatActivity() {
                 }
             }
             .show()
+    }
+
+    /**
+     * Sugiere nombres del histórico de tiradores mientras se escribe; al
+     * elegir uno se rellenan DNI, licencia y categorías con sus últimos
+     * datos (los platos rotos no: son de cada tirada).
+     */
+    private fun configurarAutocompletado(dialogBinding: DialogAddTiradorBinding) {
+        val nombres = historicoTiradores
+            .map { it.nombreApellidos }
+            .distinctBy { it.lowercase() }
+
+        dialogBinding.etNombreApellidos.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nombres)
+        )
+
+        dialogBinding.etNombreApellidos.setOnItemClickListener { _, _, _, _ ->
+            val nombreElegido = dialogBinding.etNombreApellidos.text.toString()
+            val anterior = historicoTiradores.firstOrNull {
+                it.nombreApellidos.equals(nombreElegido, ignoreCase = true)
+            } ?: return@setOnItemClickListener
+
+            dialogBinding.etDni.setText(anterior.dni)
+            dialogBinding.etNumeroLicencia.setText(anterior.numeroLicencia)
+            dialogBinding.cbLocal.isChecked = anterior.esLocal
+            dialogBinding.cbJunior.isChecked = anterior.esJunior
+            dialogBinding.cbSenior.isChecked = anterior.esSenior
+            dialogBinding.cbDama.isChecked = anterior.esDama
+        }
+    }
+
+    /** Junior y Senior son categorías por edad: no pueden marcarse a la vez. */
+    private fun configurarValidaciones(dialogBinding: DialogAddTiradorBinding) {
+        dialogBinding.cbJunior.setOnCheckedChangeListener { _, marcado ->
+            if (marcado) dialogBinding.cbSenior.isChecked = false
+        }
+        dialogBinding.cbSenior.setOnCheckedChangeListener { _, marcado ->
+            if (marcado) dialogBinding.cbJunior.isChecked = false
+        }
     }
 
     // ─── CONSTRUIR TIRADOR DESDE EL DIÁLOGO ───

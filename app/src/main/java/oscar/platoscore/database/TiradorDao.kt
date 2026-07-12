@@ -23,6 +23,10 @@ interface TiradorDao {
     @Query("SELECT * FROM tiradores WHERE escuadraId = :escuadraId ORDER BY id ASC")
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>>
 
+    /** Histórico completo, del más reciente al más antiguo (para autocompletar). */
+    @Query("SELECT * FROM tiradores ORDER BY id DESC")
+    fun getAllTiradores(): LiveData<List<Tirador>>
+
     @Query(
         "SELECT tiradores.* FROM tiradores " +
                 "INNER JOIN escuadras ON tiradores.escuadraId = escuadras.id " +

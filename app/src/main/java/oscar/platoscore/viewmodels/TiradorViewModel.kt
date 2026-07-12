@@ -21,6 +21,9 @@ class TiradorViewModel(application: Application) : AndroidViewModel(application)
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>> =
         tiradorRepository.getTiradores(escuadraId)
 
+    fun getAllTiradores(): LiveData<List<Tirador>> =
+        tiradorRepository.getAllTiradores()
+
     fun getTiradoresByTirada(tiradaId: Int): LiveData<List<Tirador>> =
         tiradorRepository.getTiradoresByTirada(tiradaId)
 

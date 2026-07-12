@@ -17,12 +17,13 @@
             android:layout_marginBottom="6dp"
             android:labelFor="@id/etNombreApellidos" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/etNombreApellidos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:hint="Ej: Juan Pérez"
+            android:completionThreshold="1"
             android:layout_marginBottom="12dp" />
 
         <TextView

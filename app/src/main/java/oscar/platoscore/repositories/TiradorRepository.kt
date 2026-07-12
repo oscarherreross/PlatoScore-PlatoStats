@@ -9,6 +9,9 @@ class TiradorRepository(private val tiradorDao: TiradorDao) {
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>> =
         tiradorDao.getTiradores(escuadraId)
 
+    fun getAllTiradores(): LiveData<List<Tirador>> =
+        tiradorDao.getAllTiradores()
+
     fun getTiradoresByTirada(tiradaId: Int): LiveData<List<Tirador>> =
         tiradorDao.getTiradoresByTirada(tiradaId)
 
