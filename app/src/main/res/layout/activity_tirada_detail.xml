@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootTiradaDetail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.activities.TiradaDetailActivity">
+
+    <!-- Contenido desplazable -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/contentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Datos de la Tirada"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/lblNombreTirada"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nombre de la tirada"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etNombreTirada" />
+
+            <EditText
+                android:id="@+id/etNombreTirada"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precios por Categoría"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/lblPrecioLocal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio Tirador Local"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etPrecioLocal" />
+
+            <EditText
+                android:id="@+id/etPrecioLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio Local"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lblPrecioGeneral"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio Tirador General"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etPrecioGeneral" />
+
+            <EditText
+                android:id="@+id/etPrecioGeneral"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio General"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lblPrecioJunior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio Tirador Junior"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etPrecioJunior" />
+
+            <EditText
+                android:id="@+id/etPrecioJunior"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio Junior"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lblPrecioSenior"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio Tirador Senior"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etPrecioSenior" />
+
+            <EditText
+                android:id="@+id/etPrecioSenior"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio Senior"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/lblPrecioDama"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Precio Tirador Dama"
+                android:textStyle="bold"
+                android:layout_marginBottom="6dp"
+                android:labelFor="@id/etPrecioDama" />
+
+            <EditText
+                android:id="@+id/etPrecioDama"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio Dama"
+                android:inputType="numberDecimal"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Escuadras"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEscuadras"
+                android:layout_width="match_parent"
+                android:layout_height="400dp"
+                android:layout_marginBottom="16dp" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Barra inferior fija con el botón -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btnGenerarResultados"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Generar Resultados"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- FAB fijo (fuera del scroll) -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddEscuadra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@android:drawable/ic_input_add"
+        android:contentDescription="Añadir escuadra"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomBar"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nombre y apellidos"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"
+            android:labelFor="@id/etNombreApellidos" />
+
+        <EditText
+            android:id="@+id/etNombreApellidos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:hint="Ej: Juan Pérez"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DNI"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"
+            android:labelFor="@id/etDni" />
+
+        <EditText
+            android:id="@+id/etDni"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Ej: 12345678A"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número de licencia"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"
+            android:labelFor="@id/etNumeroLicencia" />
+
+        <EditText
+            android:id="@+id/etNumeroLicencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:hint="Ej: LIC-001"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Platos rotos"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"
+            android:labelFor="@id/etPlatosRotos" />
+
+        <EditText
+            android:id="@+id/etPlatosRotos"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:hint="0"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Categoría"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp" />
+
+        <CheckBox
+            android:id="@+id/cbLocal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Local" />
+
+        <CheckBox
+            android:id="@+id/cbJunior"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Junior" />
+
+        <CheckBox
+            android:id="@+id/cbSenior"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senior" />
+
+        <CheckBox
+            android:id="@+id/cbDama"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dama" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>
