@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.Escuadra
+import oscar.platoscore.models.EscuadraConContadores
 import oscar.platoscore.repositories.EscuadraRepository
 
 class EscuadraViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,7 +19,7 @@ class EscuadraViewModel(application: Application) : AndroidViewModel(application
         escuadraRepository = EscuadraRepository(escuadraDao)
     }
 
-    fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<Escuadra>> =
+    fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<EscuadraConContadores>> =
         escuadraRepository.getEscuadrasByTirada(tiradaId)
 
     /**

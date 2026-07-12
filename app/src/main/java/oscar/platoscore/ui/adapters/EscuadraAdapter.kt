@@ -7,17 +7,20 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import oscar.platoscore.databinding.ItemEscuadraBinding
 import oscar.platoscore.models.Escuadra
+import oscar.platoscore.models.EscuadraConContadores
 
 class EscuadraAdapter(
     private val onClickListener: (Escuadra) -> Unit,
     private val onLongClickListener: (Escuadra) -> Unit
-) : ListAdapter<Escuadra, EscuadraAdapter.EscuadraViewHolder>(DiffCallback()) {
+) : ListAdapter<EscuadraConContadores, EscuadraAdapter.EscuadraViewHolder>(DiffCallback()) {
 
     inner class EscuadraViewHolder(private val binding: ItemEscuadraBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(escuadra: Escuadra) {
+        fun bind(item: EscuadraConContadores) {
+            val escuadra = item.escuadra
             binding.tvNumeroEscuadra.text = "Escuadra ${escuadra.numeroEscuadra}"
+            binding.tvInfoEscuadra.text = "Tiradores: ${item.numTiradores}"
             binding.root.setOnClickListener {
                 onClickListener(escuadra)
             }
@@ -37,11 +40,15 @@ class EscuadraAdapter(
         holder.bind(getItem(position))
     }
 
-    class DiffCallback : DiffUtil.ItemCallback<Escuadra>() {
-        override fun areItemsTheSame(oldItem: Escuadra, newItem: Escuadra): Boolean =
-            oldItem.id == newItem.id
+    class DiffCallback : DiffUtil.ItemCallback<EscuadraConContadores>() {
+        override fun areItemsTheSame(
+            oldItem: EscuadraConContadores,
+            newItem: EscuadraConContadores
+        ): Boolean = oldItem.escuadra.id == newItem.escuadra.id
 
-        override fun areContentsTheSame(oldItem: Escuadra, newItem: Escuadra): Boolean =
-            oldItem == newItem
+        override fun areContentsTheSame(
+            oldItem: EscuadraConContadores,
+            newItem: EscuadraConContadores
+        ): Boolean = oldItem == newItem
     }
 }

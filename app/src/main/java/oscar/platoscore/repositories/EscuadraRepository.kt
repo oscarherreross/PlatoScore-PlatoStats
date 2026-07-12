@@ -5,10 +5,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import oscar.platoscore.database.EscuadraDao
 import oscar.platoscore.models.Escuadra
+import oscar.platoscore.models.EscuadraConContadores
 
 class EscuadraRepository(private val escuadraDao: EscuadraDao) {
 
-    fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<Escuadra>> =
+    fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<EscuadraConContadores>> =
         escuadraDao.getEscuadrasByTirada(tiradaId)
 
     suspend fun insert(escuadra: Escuadra): Long = withContext(Dispatchers.IO) {

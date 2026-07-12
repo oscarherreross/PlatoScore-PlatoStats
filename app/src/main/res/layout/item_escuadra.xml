@@ -21,6 +21,14 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/tvInfoEscuadra"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tiradores: 0"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>

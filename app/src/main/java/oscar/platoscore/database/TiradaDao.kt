@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import oscar.platoscore.models.Tirada
+import oscar.platoscore.models.TiradaConContadores
 
 @Dao
 interface TiradaDao {
@@ -23,6 +24,13 @@ interface TiradaDao {
     @Query("SELECT * FROM tiradas WHERE id = :id")
     fun getTirada(id: Int): LiveData<Tirada?>
 
-    @Query("SELECT * FROM tiradas ORDER BY fecha DESC")
-    fun getAllTiradas(): LiveData<List<Tirada>>
+    @Query(
+        "SELECT t.*, " +
+                "(SELECT COUNT(*) FROM escuadras e WHERE e.tiradaId = t.id) AS numEscuadras, " +
+                "(SELECT COUNT(*) FROM tiradores ti " +
+                "   INNER JOIN escuadras e ON ti.escuadraId = e.id " +
+                "   WHERE e.tiradaId = t.id) AS numTiradores " +
+                "FROM tiradas t ORDER BY t.fecha DESC"
+    )
+    fun getAllTiradasConContadores(): LiveData<List<TiradaConContadores>>
 }

@@ -7,13 +7,14 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.Tirada
+import oscar.platoscore.models.TiradaConContadores
 import oscar.platoscore.repositories.TiradaRepository
 
 class TiradaViewModel(application: Application) : AndroidViewModel(application) {
 
     private val tiradaRepository: TiradaRepository
 
-    val allTiradas: LiveData<List<Tirada>>
+    val allTiradas: LiveData<List<TiradaConContadores>>
 
     init {
         val tiradaDao = PlatoScoreDatabase.getDatabase(application).tiradaDao()

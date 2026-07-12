@@ -29,6 +29,14 @@
             android:textSize="12sp"
             android:layout_marginTop="4dp" />
 
+        <TextView
+            android:id="@+id/tvInfoTirada"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Escuadras: 0 · Tiradores: 0"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
