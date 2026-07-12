@@ -23,8 +23,4 @@ class TiradaRepository(private val tiradaDao: TiradaDao) {
     suspend fun delete(tirada: Tirada) = withContext(Dispatchers.IO) {
         tiradaDao.delete(tirada)
     }
-
-    suspend fun deleteTiradaById(id: Int) = withContext(Dispatchers.IO) {
-        tiradaDao.deleteTiradaById(id)
-    }
 }

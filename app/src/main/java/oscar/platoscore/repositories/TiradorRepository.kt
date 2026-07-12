@@ -9,9 +9,6 @@ class TiradorRepository(private val tiradorDao: TiradorDao) {
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>> =
         tiradorDao.getTiradores(escuadraId)
 
-    fun getTirador(id: Int): LiveData<Tirador> =
-        tiradorDao.getTirador(id)
-
     fun getTiradoresByTirada(tiradaId: Int): LiveData<List<Tirador>> =
         tiradorDao.getTiradoresByTirada(tiradaId)
 
@@ -20,6 +17,4 @@ class TiradorRepository(private val tiradorDao: TiradorDao) {
     suspend fun update(tirador: Tirador) = tiradorDao.update(tirador)
 
     suspend fun delete(tirador: Tirador) = tiradorDao.delete(tirador)
-
-    suspend fun deleteTiradores(escuadraId: Int) = tiradorDao.deleteTiradores(escuadraId)
 }

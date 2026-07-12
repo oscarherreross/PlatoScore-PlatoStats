@@ -21,8 +21,6 @@ class TiradorViewModel(application: Application) : AndroidViewModel(application)
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>> =
         tiradorRepository.getTiradores(escuadraId)
 
-    fun getTirador(id: Int): LiveData<Tirador> = tiradorRepository.getTirador(id)
-
     fun getTiradoresByTirada(tiradaId: Int): LiveData<List<Tirador>> =
         tiradorRepository.getTiradoresByTirada(tiradaId)
 
@@ -41,12 +39,6 @@ class TiradorViewModel(application: Application) : AndroidViewModel(application)
     fun deleteTirador(tirador: Tirador) {
         viewModelScope.launch {
             tiradorRepository.delete(tirador)
-        }
-    }
-
-    fun deleteTiradores(escuadraId: Int) {
-        viewModelScope.launch {
-            tiradorRepository.deleteTiradores(escuadraId)
         }
     }
 }

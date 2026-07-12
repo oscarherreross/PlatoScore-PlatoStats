@@ -21,14 +21,6 @@ class EscuadraViewModel(application: Application) : AndroidViewModel(application
     fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<Escuadra>> =
         escuadraRepository.getEscuadrasByTirada(tiradaId)
 
-    fun getEscuadra(id: Int): LiveData<Escuadra> = escuadraRepository.getEscuadra(id)
-
-    fun insertEscuadra(escuadra: Escuadra) {
-        viewModelScope.launch {
-            escuadraRepository.insert(escuadra)
-        }
-    }
-
     /**
      * Crea una escuadra nueva numerada con MAX(numeroEscuadra) + 1, para que
      * no se repitan números aunque se hayan borrado escuadras intermedias.
@@ -37,12 +29,6 @@ class EscuadraViewModel(application: Application) : AndroidViewModel(application
         viewModelScope.launch {
             val numero = escuadraRepository.getSiguienteNumeroEscuadra(tiradaId)
             escuadraRepository.insert(Escuadra(tiradaId = tiradaId, numeroEscuadra = numero))
-        }
-    }
-
-    fun updateEscuadra(escuadra: Escuadra) {
-        viewModelScope.launch {
-            escuadraRepository.update(escuadra)
         }
     }
 

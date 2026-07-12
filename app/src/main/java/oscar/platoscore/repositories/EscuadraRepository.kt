@@ -11,18 +11,12 @@ class EscuadraRepository(private val escuadraDao: EscuadraDao) {
     fun getEscuadrasByTirada(tiradaId: Int): LiveData<List<Escuadra>> =
         escuadraDao.getEscuadrasByTirada(tiradaId)
 
-    fun getEscuadra(id: Int): LiveData<Escuadra> = escuadraDao.getEscuadra(id)
-
     suspend fun insert(escuadra: Escuadra): Long = withContext(Dispatchers.IO) {
         escuadraDao.insert(escuadra)
     }
 
     suspend fun getSiguienteNumeroEscuadra(tiradaId: Int): Int = withContext(Dispatchers.IO) {
         escuadraDao.getSiguienteNumeroEscuadra(tiradaId)
-    }
-
-    suspend fun update(escuadra: Escuadra) = withContext(Dispatchers.IO) {
-        escuadraDao.update(escuadra)
     }
 
     suspend fun delete(escuadra: Escuadra) = withContext(Dispatchers.IO) {

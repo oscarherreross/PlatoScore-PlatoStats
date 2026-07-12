@@ -40,10 +40,4 @@ class TiradaViewModel(application: Application) : AndroidViewModel(application) 
             tiradaRepository.delete(tirada)
         }
     }
-
-    fun deleteTiradaById(id: Int) {
-        viewModelScope.launch {
-            tiradaRepository.deleteTiradaById(id)
-        }
-    }
 }

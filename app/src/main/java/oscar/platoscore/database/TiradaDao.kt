@@ -25,7 +25,4 @@ interface TiradaDao {
 
     @Query("SELECT * FROM tiradas ORDER BY fecha DESC")
     fun getAllTiradas(): LiveData<List<Tirada>>
-
-    @Query("DELETE FROM tiradas WHERE id = :id")
-    suspend fun deleteTiradaById(id: Int)
 }

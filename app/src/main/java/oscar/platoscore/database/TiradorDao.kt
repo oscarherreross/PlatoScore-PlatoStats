@@ -23,12 +23,6 @@ interface TiradorDao {
     @Query("SELECT * FROM tiradores WHERE escuadraId = :escuadraId ORDER BY id ASC")
     fun getTiradores(escuadraId: Int): LiveData<List<Tirador>>
 
-    @Query("SELECT * FROM tiradores WHERE id = :id")
-    fun getTirador(id: Int): LiveData<Tirador>
-
-    @Query("DELETE FROM tiradores WHERE escuadraId = :escuadraId")
-    suspend fun deleteTiradores(escuadraId: Int)
-
     @Query(
         "SELECT tiradores.* FROM tiradores " +
                 "INNER JOIN escuadras ON tiradores.escuadraId = escuadras.id " +
