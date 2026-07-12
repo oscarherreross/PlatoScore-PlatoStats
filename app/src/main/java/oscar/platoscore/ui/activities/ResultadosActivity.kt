@@ -1,5 +1,6 @@
 package oscar.platoscore.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,6 +15,7 @@ import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.ResultadoAdapter
 import oscar.platoscore.utils.Extras
+import oscar.platoscore.utils.Fechas
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
 
@@ -28,6 +30,7 @@ class ResultadosActivity : AppCompatActivity() {
 
     /** Una clasificación de la pantalla: título, lista y filtro de categoría. */
     private class Seccion(
+        val nombre: String,
         val titulo: View,
         val recycler: RecyclerView,
         val adapter: ResultadoAdapter,
@@ -46,20 +49,22 @@ class ResultadosActivity : AppCompatActivity() {
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
         setupSecciones()
+        setupCompartir()
         cargarResultados()
     }
 
     private fun setupSecciones() {
         secciones = listOf(
-            crearSeccion(binding.tvTituloLocal, binding.rvResultadosLocal) { it.esLocal },
-            crearSeccion(binding.tvTituloGeneral, binding.rvResultadosGeneral) { !it.esLocal },
-            crearSeccion(binding.tvTituloJunior, binding.rvResultadosJunior) { it.esJunior },
-            crearSeccion(binding.tvTituloSenior, binding.rvResultadosSenior) { it.esSenior },
-            crearSeccion(binding.tvTituloDama, binding.rvResultadosDama) { it.esDama }
+            crearSeccion("Clasificación Local", binding.tvTituloLocal, binding.rvResultadosLocal) { it.esLocal },
+            crearSeccion("Clasificación General", binding.tvTituloGeneral, binding.rvResultadosGeneral) { !it.esLocal },
+            crearSeccion("Clasificación Junior", binding.tvTituloJunior, binding.rvResultadosJunior) { it.esJunior },
+            crearSeccion("Clasificación Senior", binding.tvTituloSenior, binding.rvResultadosSenior) { it.esSenior },
+            crearSeccion("Clasificación Dama", binding.tvTituloDama, binding.rvResultadosDama) { it.esDama }
         )
     }
 
     private fun crearSeccion(
+        nombre: String,
         titulo: View,
         recycler: RecyclerView,
         filtro: (Tirador) -> Boolean
@@ -69,7 +74,51 @@ class ResultadosActivity : AppCompatActivity() {
         }
         recycler.adapter = adapter
         recycler.layoutManager = LinearLayoutManager(this)
-        return Seccion(titulo, recycler, adapter, filtro)
+        return Seccion(nombre, titulo, recycler, adapter, filtro)
+    }
+
+    private fun setupCompartir() {
+        binding.btnCompartir.setOnClickListener {
+            val texto = generarTextoResultados()
+            if (texto == null) {
+                Toast.makeText(this, "No hay resultados que compartir", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            val intent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, texto)
+            }
+            startActivity(Intent.createChooser(intent, "Compartir resultados"))
+        }
+    }
+
+    /**
+     * Clasificaciones en texto plano para compartir. No incluye la
+     * recaudación ni los precios: son datos internos de la organización.
+     */
+    private fun generarTextoResultados(): String? {
+        val tirada = this.tirada ?: return null
+        val tiradores = this.tiradores ?: return null
+        if (tiradores.isEmpty()) return null
+
+        val sb = StringBuilder()
+        sb.appendLine("🏆 ${tirada.nombre} — ${Fechas.mostrar(tirada.fecha)}")
+        sb.appendLine("Tiradores: ${tiradores.size}")
+
+        secciones.forEach { seccion ->
+            val resultados = Clasificacion.generar(tiradores.filter(seccion.filtro), tirada)
+            if (resultados.isNotEmpty()) {
+                sb.appendLine()
+                sb.appendLine("${seccion.nombre}:")
+                resultados.forEach { r ->
+                    val marcaEmpate = if (r.empatado) "=" else ""
+                    sb.appendLine(
+                        "$marcaEmpate${r.posicion}. ${r.tirador.nombreApellidos} — ${r.tirador.platosRotos} platos"
+                    )
+                }
+            }
+        }
+        return sb.toString().trimEnd()
     }
 
     private fun cargarResultados() {

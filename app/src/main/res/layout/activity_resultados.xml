@@ -122,6 +122,13 @@
             android:nestedScrollingEnabled="false"
             android:layout_marginBottom="24dp" />
 
+        <Button
+            android:id="@+id/btnCompartir"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Compartir resultados"
+            android:layout_marginBottom="16dp" />
+
     </LinearLayout>
 
 </androidx.core.widget.NestedScrollView>
