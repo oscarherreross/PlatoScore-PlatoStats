@@ -30,11 +30,31 @@
             app:selectionRequired="true">
 
             <Button
+                android:id="@+id/btnTodas"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:maxLines="1"
+                android:textSize="12sp"
+                android:text="@string/estadisticas_filtro_todas" />
+
+            <Button
                 android:id="@+id/btnEntrenamiento"
                 style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:maxLines="1"
+                android:textSize="12sp"
                 android:text="@string/tipo_entrenamiento" />
 
             <Button
@@ -43,6 +63,12 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
+                android:insetLeft="0dp"
+                android:insetRight="0dp"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp"
+                android:maxLines="1"
+                android:textSize="12sp"
                 android:text="@string/tipo_competicion" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 

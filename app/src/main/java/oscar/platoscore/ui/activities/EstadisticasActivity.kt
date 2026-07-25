@@ -28,8 +28,8 @@ class EstadisticasActivity : AppCompatActivity() {
     private val viewModel: TiradaPersonalViewModel by viewModels()
 
     private var todas: List<TiradaPersonalConSeries> = emptyList()
-    private var tipoSeleccionado = TiradaPersonal.TIPO_ENTRENAMIENTO
-    private var seleccionInicialHecha = false
+    /** Tipo filtrado, o null para ver todas las tiradas juntas. */
+    private var tipoSeleccionado: String? = null
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -47,35 +47,24 @@ class EstadisticasActivity : AppCompatActivity() {
 
         binding.toggleTipo.addOnButtonCheckedListener { _, checkedId, isChecked ->
             if (!isChecked) return@addOnButtonCheckedListener
-            tipoSeleccionado =
-                if (checkedId == R.id.btnCompeticion) TiradaPersonal.TIPO_COMPETICION
-                else TiradaPersonal.TIPO_ENTRENAMIENTO
+            tipoSeleccionado = when (checkedId) {
+                R.id.btnCompeticion -> TiradaPersonal.TIPO_COMPETICION
+                R.id.btnEntrenamiento -> TiradaPersonal.TIPO_ENTRENAMIENTO
+                else -> null // Todas
+            }
             render()
         }
-        binding.toggleTipo.check(R.id.btnEntrenamiento)
+        binding.toggleTipo.check(R.id.btnTodas)
 
         viewModel.todas.observe(this) { lista ->
             todas = lista
-            if (!seleccionInicialHecha && lista.isNotEmpty()) {
-                seleccionInicialHecha = true
-                // Se arranca en la categoría que tenga datos (competición si los hay).
-                val hayCompeticion = lista.any {
-                    it.tirada.tipo == TiradaPersonal.TIPO_COMPETICION && it.series.isNotEmpty()
-                }
-                val boton = if (hayCompeticion) R.id.btnCompeticion else R.id.btnEntrenamiento
-                if (binding.toggleTipo.checkedButtonId != boton) {
-                    binding.toggleTipo.check(boton) // dispara render()
-                } else {
-                    render()
-                }
-            } else {
-                render()
-            }
+            render()
         }
     }
 
     private fun render() {
-        val filtradas = todas.filter { it.tirada.tipo == tipoSeleccionado }
+        val sel = tipoSeleccionado
+        val filtradas = if (sel == null) todas else todas.filter { it.tirada.tipo == sel }
         mostrar(EstadisticasPersonales.calcular(filtradas))
     }
 

@@ -7,13 +7,15 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
+import kotlin.math.ceil
+import kotlin.math.max
 
 /**
  * Gráfica de líneas mínima y sin dependencias externas. Pinta una o varias
  * series de valores en porcentaje (0..100). El eje Y es fijo de 0 a 100 % con
  * líneas guía en 0/50/100 y el eje X reparte las tiradas de izquierda (más
- * antigua) a derecha (más reciente). Los valores nulos dejan hueco en la línea
- * (p. ej. tiradas sin dato de primer tiro).
+ * antigua) a derecha (más reciente), etiquetadas por su número de tirada. Los
+ * valores nulos dejan hueco en la línea (p. ej. tiradas sin dato de primer tiro).
  */
 class LineChartView @JvmOverloads constructor(
     context: Context,
@@ -55,7 +57,7 @@ class LineChartView @JvmOverloads constructor(
         super.onDraw(canvas)
 
         val margenIzq = dp(36f)
-        val margenAbajo = dp(20f)
+        val margenAbajo = dp(28f)
         val margenArriba = dp(8f)
         val margenDer = dp(12f)
 
@@ -94,6 +96,18 @@ class LineChartView @JvmOverloads constructor(
             }
             v.forEachIndexed { i, valor ->
                 if (valor != null) canvas.drawCircle(xDe(i), yDe(valor), dp(3.5f), pintaPunto)
+            }
+        }
+
+        // Etiquetas del eje X (número de tirada), espaciadas para no solaparse.
+        val baseY = yDe(0f) + sp(15f)
+        val anchoEtiqueta = pintaTexto.measureText("00") + dp(8f)
+        val maxEtiquetas = max(1, (anchoUtil / anchoEtiqueta).toInt())
+        val paso = max(1, ceil(n.toFloat() / maxEtiquetas).toInt())
+        for (i in 0 until n) {
+            if (i % paso == 0 || i == n - 1) {
+                val txt = (i + 1).toString()
+                canvas.drawText(txt, xDe(i) - pintaTexto.measureText(txt) / 2f, baseY, pintaTexto)
             }
         }
     }
