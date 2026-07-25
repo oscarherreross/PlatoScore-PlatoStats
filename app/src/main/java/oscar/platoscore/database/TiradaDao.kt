@@ -30,7 +30,7 @@ interface TiradaDao {
                 "(SELECT COUNT(*) FROM tiradores ti " +
                 "   INNER JOIN escuadras e ON ti.escuadraId = e.id " +
                 "   WHERE e.tiradaId = t.id) AS numTiradores " +
-                "FROM tiradas t ORDER BY t.fecha DESC"
+                "FROM tiradas t WHERE t.userId = :userId ORDER BY t.fecha DESC"
     )
-    fun getAllTiradasConContadores(): LiveData<List<TiradaConContadores>>
+    fun getAllTiradasConContadores(userId: String): LiveData<List<TiradaConContadores>>
 }

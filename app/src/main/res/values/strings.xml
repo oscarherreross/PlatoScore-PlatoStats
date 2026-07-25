@@ -114,4 +114,55 @@
     <string name="login_reset_enviado">Te hemos enviado un correo para restablecer la contraseña</string>
     <string name="accion_cerrar_sesion">Cerrar sesión</string>
     <string name="toast_sesion_cerrada">Sesión cerrada</string>
+
+    <!-- Selección de rol -->
+    <string name="role_subtitulo">¿Cómo quieres entrar?</string>
+    <string name="role_entrar_profesional">Entrar como profesional</string>
+    <string name="role_entrar_personal">Entrar como personal</string>
+    <string name="rol_profesional">profesional</string>
+    <string name="rol_personal">personal</string>
+    <string name="login_error_rol_incorrecto">Estas credenciales son de una cuenta de otro tipo. Entra en el modo correcto o crea una cuenta nueva para el modo %1$s.</string>
+
+    <!-- Modo personal: lista -->
+    <string name="personal_titulo">Mis tiradas</string>
+    <string name="personal_vacio">Aún no has registrado ninguna tirada. Pulsa + para añadir una.</string>
+    <string name="menu_estadisticas">Estadísticas</string>
+    <string name="cd_anadir_tirada_personal">Añadir tirada</string>
+    <string name="item_personal_escuadra_puesto">Escuadra %1$d · Puesto %2$d</string>
+    <string name="item_personal_resumen">%1$d/%2$d platos · %3$s%%</string>
+    <string name="titulo_eliminar_tirada_personal">Eliminar tirada</string>
+    <string name="msg_eliminar_tirada_personal">¿Seguro que quieres eliminar esta tirada de %1$s?</string>
+    <string name="toast_tirada_personal_eliminada">Tirada eliminada</string>
+
+    <!-- Modo personal: formulario -->
+    <string name="personal_form_titulo_nueva">Nueva tirada</string>
+    <string name="personal_form_titulo_editar">Editar tirada</string>
+    <string name="label_lugar">Lugar</string>
+    <string name="hint_lugar">Ej: Club de tiro de Madrid</string>
+    <string name="label_fecha_hora">Fecha y hora</string>
+    <string name="label_numero_escuadra">Nº de escuadra</string>
+    <string name="label_puesto_inicial">Nº de puesto de tiro inicial</string>
+    <string name="label_numero_series">Nº de series (25 platos cada una)</string>
+    <string name="label_notas">Notas</string>
+    <string name="series_titulo">Series</string>
+    <string name="serie_label">Serie %1$d</string>
+    <string name="hint_platos_rotos_serie">Platos rotos</string>
+    <string name="hint_platos_primer_tiro">1.er tiro (opcional)</string>
+    <string name="toast_tirada_personal_guardada">Tirada guardada</string>
+    <string name="personal_error_lugar">Indica el lugar de la tirada</string>
+    <string name="personal_error_escuadra">Indica el número de escuadra</string>
+    <string name="personal_error_puesto">Indica el puesto de tiro inicial</string>
+    <string name="personal_error_series">Indica cuántas series (entre 1 y 20)</string>
+    <string name="personal_error_platos_serie">Serie %1$d: introduce los platos rotos (0 a 25)</string>
+    <string name="personal_error_primer_tiro">Serie %1$d: el 1.er tiro no puede superar los platos rotos ni 25</string>
+
+    <!-- Modo personal: estadísticas -->
+    <string name="estadisticas_titulo">Estadísticas</string>
+    <string name="estadisticas_vacio">Registra alguna tirada para ver tu evolución.</string>
+    <string name="estadisticas_grafica_titulo">Aciertos por tirada (%)</string>
+    <string name="estadisticas_num_tiradas">Tiradas registradas: %1$d</string>
+    <string name="estadisticas_media_platos">Media de platos: %1$s</string>
+    <string name="estadisticas_media_porcentaje">Media de aciertos: %1$s%%</string>
+    <string name="estadisticas_mejor">Mejor tirada: %1$s%%</string>
+    <string name="estadisticas_media_primer_tiro">Media al 1.er tiro: %1$s%%</string>
 </resources>

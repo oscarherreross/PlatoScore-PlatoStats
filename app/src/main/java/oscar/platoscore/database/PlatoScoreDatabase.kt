@@ -7,12 +7,17 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import oscar.platoscore.models.Escuadra
+import oscar.platoscore.models.SeriePersonal
 import oscar.platoscore.models.Tirada
+import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.Tirador
 
 @Database(
-    entities = [Tirada::class, Escuadra::class, Tirador::class],
-    version = 3,
+    entities = [
+        Tirada::class, Escuadra::class, Tirador::class,
+        TiradaPersonal::class, SeriePersonal::class
+    ],
+    version = 4,
     exportSchema = true
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -20,6 +25,7 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
     abstract fun tiradaDao(): TiradaDao
     abstract fun escuadraDao(): EscuadraDao
     abstract fun tiradorDao(): TiradorDao
+    abstract fun tiradaPersonalDao(): TiradaPersonalDao
 
     companion object {
         @Volatile private var INSTANCE: PlatoScoreDatabase? = null
@@ -82,13 +88,50 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v3 -> v4: soporte de cuentas y del modo personal.
+         *  - tiradas.userId aísla las tiradas de cada profesional. Las
+         *    tiradas anteriores a las cuentas quedan con userId '' (sin dueño).
+         *  - Nuevas tablas tiradas_personales y series_personales para los
+         *    registros del rol personal.
+         */
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE tiradas ADD COLUMN userId TEXT NOT NULL DEFAULT ''")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `tiradas_personales` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`userId` TEXT NOT NULL, " +
+                            "`lugar` TEXT NOT NULL, " +
+                            "`fechaHora` INTEGER NOT NULL, " +
+                            "`numeroEscuadra` INTEGER NOT NULL, " +
+                            "`puestoInicial` INTEGER NOT NULL, " +
+                            "`notas` TEXT NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `series_personales` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`tiradaPersonalId` INTEGER NOT NULL, " +
+                            "`numeroSerie` INTEGER NOT NULL, " +
+                            "`platosRotos` INTEGER NOT NULL, " +
+                            "`platosPrimerTiro` INTEGER, " +
+                            "FOREIGN KEY(`tiradaPersonalId`) REFERENCES `tiradas_personales`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_series_personales_tiradaPersonalId` " +
+                            "ON `series_personales` (`tiradaPersonalId`)"
+                )
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                     .also { INSTANCE = it }
             }

@@ -1,0 +1,31 @@
+package oscar.platoscore.models
+
+import androidx.room.Embedded
+import androidx.room.Relation
+
+/** Una [TiradaPersonal] con sus series, para leerla completa de una vez. */
+data class TiradaPersonalConSeries(
+    @Embedded val tirada: TiradaPersonal,
+    @Relation(
+        parentColumn = "id",
+        entityColumn = "tiradaPersonalId"
+    )
+    val series: List<SeriePersonal>
+) {
+    /** Platos máximos posibles: 25 por serie. */
+    val platosPosibles: Int get() = series.size * SeriePersonal.PLATOS_POR_SERIE
+
+    /** Total de platos rotos en toda la tirada. */
+    val platosRotos: Int get() = series.sumOf { it.platosRotos }
+
+    /** Total de platos rotos al primer tiro; null si ninguna serie lo registró. */
+    val platosPrimerTiro: Int?
+        get() {
+            val conDato = series.mapNotNull { it.platosPrimerTiro }
+            return if (conDato.isEmpty()) null else conDato.sum()
+        }
+
+    /** Porcentaje de aciertos (0..100); 0 si no hay series. */
+    val porcentaje: Float
+        get() = if (platosPosibles == 0) 0f else platosRotos * 100f / platosPosibles
+}

@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey
 data class Tirada(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    /** UID de Firebase del profesional dueño de la tirada; aísla los datos por usuario. */
+    val userId: String = "",
     val nombre: String = "",
     /** Fecha en formato ISO (yyyy-MM-dd); ver [oscar.platoscore.utils.Fechas]. */
     val fecha: String = "",

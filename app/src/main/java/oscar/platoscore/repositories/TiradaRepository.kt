@@ -9,7 +9,8 @@ import oscar.platoscore.models.TiradaConContadores
 
 class TiradaRepository(private val tiradaDao: TiradaDao) {
 
-    val allTiradas: LiveData<List<TiradaConContadores>> = tiradaDao.getAllTiradasConContadores()
+    fun allTiradas(userId: String): LiveData<List<TiradaConContadores>> =
+        tiradaDao.getAllTiradasConContadores(userId)
 
     fun getTirada(id: Int): LiveData<Tirada?> = tiradaDao.getTirada(id)
 

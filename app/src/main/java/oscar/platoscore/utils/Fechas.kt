@@ -14,9 +14,16 @@ object Fechas {
 
     private const val FORMATO_ISO = "yyyy-MM-dd"
     private const val FORMATO_VISUAL = "dd/MM/yyyy"
+    private const val FORMATO_FECHA_HORA = "dd/MM/yyyy HH:mm"
 
     fun hoyIso(): String =
         SimpleDateFormat(FORMATO_ISO, Locale.getDefault()).format(Date())
+
+    fun ahoraMillis(): Long = System.currentTimeMillis()
+
+    /** Fecha y hora (epoch millis) mostradas como dd/MM/yyyy HH:mm. */
+    fun mostrarFechaHora(millis: Long): String =
+        SimpleDateFormat(FORMATO_FECHA_HORA, Locale.getDefault()).format(Date(millis))
 
     fun mostrar(fechaIso: String): String = try {
         val fecha = SimpleDateFormat(FORMATO_ISO, Locale.getDefault()).parse(fechaIso)

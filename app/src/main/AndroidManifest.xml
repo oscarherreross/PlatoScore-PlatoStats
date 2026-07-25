@@ -17,13 +17,17 @@
         tools:targetApi="31">
 
         <activity
-            android:name=".ui.activities.LoginActivity"
+            android:name=".ui.activities.RoleSelectionActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activities.LoginActivity"
+            android:exported="false" />
 
         <activity
             android:name=".ui.activities.MainActivity"
@@ -39,6 +43,18 @@
 
         <activity
             android:name=".ui.activities.ResultadosActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.PersonalMainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.PersonalTiradaDetailActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.activities.EstadisticasActivity"
             android:exported="false" />
 
     </application>

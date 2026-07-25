@@ -54,7 +54,9 @@ class MainActivity : AppCompatActivity() {
     private fun cerrarSesion() {
         FirebaseAuth.getInstance().signOut()
         Toast.makeText(this, R.string.toast_sesion_cerrada, Toast.LENGTH_SHORT).show()
-        startActivity(Intent(this, LoginActivity::class.java))
+        val intent = Intent(this, RoleSelectionActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
         finish()
     }
 
