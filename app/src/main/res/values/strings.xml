@@ -165,4 +165,8 @@
     <string name="estadisticas_media_porcentaje">Media de aciertos: %1$s%%</string>
     <string name="estadisticas_mejor">Mejor tirada: %1$s%%</string>
     <string name="estadisticas_media_primer_tiro">Media al 1.er tiro: %1$s%%</string>
+    <string name="estadisticas_leyenda_total">Total</string>
+    <string name="estadisticas_leyenda_primer_tiro">1.er tiro</string>
+    <string name="estadisticas_por_puesto_titulo">Media de aciertos por puesto</string>
+    <string name="estadisticas_puesto_linea">Puesto %1$d: %2$s%% (%3$d series)</string>
 </resources>

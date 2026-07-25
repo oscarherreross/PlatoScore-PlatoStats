@@ -9,6 +9,13 @@ data class PuntoEvolucion(
     val porcentajePrimerTiro: Float?
 )
 
+/** Media de aciertos en un puesto de tiro concreto, sobre todas las series. */
+data class AciertoPorPuesto(
+    val puesto: Int,
+    val porcentaje: Float,
+    val numSeries: Int
+)
+
 /** Resumen de la evolución de un tirador a lo largo de sus tiradas. */
 data class ResumenEstadisticas(
     val puntos: List<PuntoEvolucion>,
@@ -16,12 +23,15 @@ data class ResumenEstadisticas(
     val mediaPlatos: Float,
     val mejorPorcentaje: Float,
     val mediaPorcentaje: Float,
-    val mediaPorcentajePrimerTiro: Float?
+    val mediaPorcentajePrimerTiro: Float?,
+    val mediaPorPuesto: List<AciertoPorPuesto>
 ) {
     val hayDatos: Boolean get() = puntos.isNotEmpty()
 }
 
 object EstadisticasPersonales {
+
+    private val VACIO = ResumenEstadisticas(emptyList(), 0, 0f, 0f, 0f, null, emptyList())
 
     /**
      * Calcula el resumen a partir de las tiradas del tirador. Los puntos de
@@ -32,9 +42,7 @@ object EstadisticasPersonales {
         val validas = tiradas.filter { it.series.isNotEmpty() }
             .sortedBy { it.tirada.fechaHora }
 
-        if (validas.isEmpty()) {
-            return ResumenEstadisticas(emptyList(), 0, 0f, 0f, 0f, null)
-        }
+        if (validas.isEmpty()) return VACIO
 
         val puntos = validas.map { t ->
             val porcentajePrimerTiro = t.platosPrimerTiro?.let { primer ->
@@ -59,7 +67,24 @@ object EstadisticasPersonales {
             mediaPorcentaje = puntos.map { it.porcentaje }.average().toFloat(),
             mediaPorcentajePrimerTiro =
                 if (porcentajesPrimerTiro.isEmpty()) null
-                else porcentajesPrimerTiro.average().toFloat()
+                else porcentajesPrimerTiro.average().toFloat(),
+            mediaPorPuesto = mediaPorPuesto(validas)
         )
+    }
+
+    /** Agrupa todas las series por puesto de tiro y calcula el % de aciertos de cada uno. */
+    private fun mediaPorPuesto(tiradas: List<TiradaPersonalConSeries>): List<AciertoPorPuesto> {
+        return tiradas.flatMap { it.series }
+            .groupBy { it.puesto }
+            .toSortedMap()
+            .map { (puesto, series) ->
+                val posibles = series.size * SeriePersonal.PLATOS_POR_SERIE
+                val rotos = series.sumOf { it.platosRotos }
+                AciertoPorPuesto(
+                    puesto = puesto,
+                    porcentaje = if (posibles == 0) 0f else rotos * 100f / posibles,
+                    numSeries = series.size
+                )
+            }
     }
 }

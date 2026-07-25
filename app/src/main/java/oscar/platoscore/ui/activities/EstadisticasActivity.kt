@@ -1,20 +1,38 @@
 package oscar.platoscore.ui.activities
 
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.View
+import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityEstadisticasBinding
 import oscar.platoscore.models.EstadisticasPersonales
 import oscar.platoscore.models.ResumenEstadisticas
+import oscar.platoscore.models.TiradaPersonal
+import oscar.platoscore.models.TiradaPersonalConSeries
+import oscar.platoscore.ui.views.LineChartView
 import oscar.platoscore.viewmodels.TiradaPersonalViewModel
 
-/** Muestra la evolución del tirador (rol personal) a lo largo de sus tiradas. */
+/**
+ * Evolución del tirador (rol personal). Se muestran por separado las
+ * estadísticas de competición y de entrenamiento (selector superior), con la
+ * gráfica de aciertos por tirada —total y al primer tiro— y la media de
+ * aciertos por puesto de tiro.
+ */
 class EstadisticasActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEstadisticasBinding
     private val viewModel: TiradaPersonalViewModel by viewModels()
+
+    private var todas: List<TiradaPersonalConSeries> = emptyList()
+    private var tipoSeleccionado = TiradaPersonal.TIPO_ENTRENAMIENTO
+    private var seleccionInicialHecha = false
+
+    private var colorTotal = 0
+    private var colorPrimerTiro = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,9 +41,42 @@ class EstadisticasActivity : AppCompatActivity() {
 
         supportActionBar?.setTitle(R.string.estadisticas_titulo)
 
-        viewModel.todas.observe(this) { tiradas ->
-            mostrar(EstadisticasPersonales.calcular(tiradas))
+        colorTotal = resolverColorPrimario()
+        colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
+        prepararLeyenda()
+
+        binding.toggleTipo.addOnButtonCheckedListener { _, checkedId, isChecked ->
+            if (!isChecked) return@addOnButtonCheckedListener
+            tipoSeleccionado =
+                if (checkedId == R.id.btnCompeticion) TiradaPersonal.TIPO_COMPETICION
+                else TiradaPersonal.TIPO_ENTRENAMIENTO
+            render()
         }
+        binding.toggleTipo.check(R.id.btnEntrenamiento)
+
+        viewModel.todas.observe(this) { lista ->
+            todas = lista
+            if (!seleccionInicialHecha && lista.isNotEmpty()) {
+                seleccionInicialHecha = true
+                // Se arranca en la categoría que tenga datos (competición si los hay).
+                val hayCompeticion = lista.any {
+                    it.tirada.tipo == TiradaPersonal.TIPO_COMPETICION && it.series.isNotEmpty()
+                }
+                val boton = if (hayCompeticion) R.id.btnCompeticion else R.id.btnEntrenamiento
+                if (binding.toggleTipo.checkedButtonId != boton) {
+                    binding.toggleTipo.check(boton) // dispara render()
+                } else {
+                    render()
+                }
+            } else {
+                render()
+            }
+        }
+    }
+
+    private fun render() {
+        val filtradas = todas.filter { it.tirada.tipo == tipoSeleccionado }
+        mostrar(EstadisticasPersonales.calcular(filtradas))
     }
 
     private fun mostrar(resumen: ResumenEstadisticas) {
@@ -55,6 +106,53 @@ class EstadisticasActivity : AppCompatActivity() {
             binding.tvMediaPrimerTiro.visibility = View.GONE
         }
 
-        binding.chart.setValores(resumen.puntos.map { it.porcentaje })
+        mostrarGrafica(resumen)
+        mostrarPorPuesto(resumen)
     }
+
+    private fun mostrarGrafica(resumen: ResumenEstadisticas) {
+        val series = mutableListOf(
+            LineChartView.Serie(resumen.puntos.map { it.porcentaje }, colorTotal)
+        )
+        val hayPrimerTiro = resumen.puntos.any { it.porcentajePrimerTiro != null }
+        if (hayPrimerTiro) {
+            series.add(
+                LineChartView.Serie(resumen.puntos.map { it.porcentajePrimerTiro }, colorPrimerTiro)
+            )
+        }
+        binding.tvLeyendaPrimerTiro.visibility = if (hayPrimerTiro) View.VISIBLE else View.GONE
+        binding.chart.setSeries(series)
+    }
+
+    private fun mostrarPorPuesto(resumen: ResumenEstadisticas) {
+        binding.containerPuestos.removeAllViews()
+        resumen.mediaPorPuesto.forEach { puesto ->
+            val tv = TextView(this)
+            tv.textSize = 15f
+            tv.setPadding(0, dp(2), 0, dp(2))
+            tv.text = getString(
+                R.string.estadisticas_puesto_linea,
+                puesto.puesto,
+                "%.1f".format(puesto.porcentaje),
+                puesto.numSeries
+            )
+            binding.containerPuestos.addView(tv)
+        }
+    }
+
+    private fun prepararLeyenda() {
+        binding.tvLeyendaTotal.text = "● " + getString(R.string.estadisticas_leyenda_total)
+        binding.tvLeyendaTotal.setTextColor(colorTotal)
+        binding.tvLeyendaPrimerTiro.text = "● " + getString(R.string.estadisticas_leyenda_primer_tiro)
+        binding.tvLeyendaPrimerTiro.setTextColor(colorPrimerTiro)
+    }
+
+    private fun resolverColorPrimario(): Int {
+        val tv = TypedValue()
+        val ok = theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, tv, true)
+        return if (ok) tv.data else ContextCompat.getColor(this, R.color.purple_500)
+    }
+
+    private fun dp(valor: Int): Int =
+        (valor * resources.displayMetrics.density).toInt()
 }

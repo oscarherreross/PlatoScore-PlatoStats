@@ -21,8 +21,8 @@ class EstadisticasPersonalesTest {
         series = series
     )
 
-    private fun serie(rotos: Int, primer: Int? = null) =
-        SeriePersonal(platosRotos = rotos, platosPrimerTiro = primer)
+    private fun serie(rotos: Int, primer: Int? = null, puesto: Int = 1) =
+        SeriePersonal(puesto = puesto, platosRotos = rotos, platosPrimerTiro = primer)
 
     @Test
     fun `totales y porcentaje de una tirada`() {
@@ -68,6 +68,27 @@ class EstadisticasPersonalesTest {
 
         assertEquals(listOf(1000L, 5000L), resumen.puntos.map { it.fechaHora })
         assertEquals(2, resumen.numTiradas)
+    }
+
+    @Test
+    fun `media por puesto agrupa las series de todas las tiradas y ordena por puesto`() {
+        // Tirada 1: puesto 2 -> 25/25, puesto 1 -> 20/25
+        // Tirada 2: puesto 1 -> 15/25
+        val t1 = tirada(1, 1000, listOf(serie(25, puesto = 2), serie(20, puesto = 1)))
+        val t2 = tirada(2, 2000, listOf(serie(15, puesto = 1)))
+        val resumen = EstadisticasPersonales.calcular(listOf(t1, t2))
+
+        // Ordenado por número de puesto.
+        assertEquals(listOf(1, 2), resumen.mediaPorPuesto.map { it.puesto })
+
+        val puesto1 = resumen.mediaPorPuesto.first { it.puesto == 1 }
+        // (20 + 15) / (2 * 25) = 70 %
+        assertEquals(70f, puesto1.porcentaje, 0.001f)
+        assertEquals(2, puesto1.numSeries)
+
+        val puesto2 = resumen.mediaPorPuesto.first { it.puesto == 2 }
+        assertEquals(100f, puesto2.porcentaje, 0.001f)
+        assertEquals(1, puesto2.numSeries)
     }
 
     @Test

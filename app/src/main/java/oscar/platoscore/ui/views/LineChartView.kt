@@ -7,14 +7,13 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.View
-import androidx.core.content.ContextCompat
-import oscar.platoscore.R
 
 /**
- * Gráfica de líneas mínima y sin dependencias externas: pinta una serie de
- * valores en porcentaje (0..100) mostrando la evolución del tirador. El eje Y
- * es fijo de 0 a 100 % con líneas guía en 0/50/100 y el eje X reparte las
- * tiradas de izquierda (más antigua) a derecha (más reciente).
+ * Gráfica de líneas mínima y sin dependencias externas. Pinta una o varias
+ * series de valores en porcentaje (0..100). El eje Y es fijo de 0 a 100 % con
+ * líneas guía en 0/50/100 y el eje X reparte las tiradas de izquierda (más
+ * antigua) a derecha (más reciente). Los valores nulos dejan hueco en la línea
+ * (p. ej. tiradas sin dato de primer tiro).
  */
 class LineChartView @JvmOverloads constructor(
     context: Context,
@@ -22,20 +21,20 @@ class LineChartView @JvmOverloads constructor(
     defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
 
-    private var valores: List<Float> = emptyList()
+    /** Una serie de la gráfica: valores (nullable = hueco) y su color. */
+    data class Serie(val valores: List<Float?>, val color: Int)
 
-    private val colorLinea = resolverColorPrimario()
+    private var series: List<Serie> = emptyList()
+
     private val colorGuia = Color.parseColor("#40808080")
-    private val colorTexto = resolverColorTexto()
+    private val colorTexto = Color.GRAY
 
     private val pintaLinea = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
         strokeWidth = dp(2.5f)
-        color = colorLinea
     }
     private val pintaPunto = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.FILL
-        color = colorLinea
     }
     private val pintaGuia = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -47,8 +46,8 @@ class LineChartView @JvmOverloads constructor(
         textSize = sp(12f)
     }
 
-    fun setValores(nuevos: List<Float>) {
-        valores = nuevos
+    fun setSeries(nuevas: List<Serie>) {
+        series = nuevas
         invalidate()
     }
 
@@ -64,7 +63,6 @@ class LineChartView @JvmOverloads constructor(
         val altoUtil = height - margenArriba - margenAbajo
         if (anchoUtil <= 0 || altoUtil <= 0) return
 
-        // Función para pasar un porcentaje (0..100) a coordenada Y.
         fun yDe(porcentaje: Float): Float =
             margenArriba + altoUtil * (1f - porcentaje / 100f)
 
@@ -75,43 +73,29 @@ class LineChartView @JvmOverloads constructor(
             canvas.drawText("$nivel", dp(4f), y + sp(4f), pintaTexto)
         }
 
-        if (valores.isEmpty()) return
+        val n = series.maxOfOrNull { it.valores.size } ?: 0
+        if (n == 0) return
 
-        // Coordenada X de cada valor. Con un solo punto se centra.
         fun xDe(indice: Int): Float =
-            if (valores.size == 1) margenIzq + anchoUtil / 2f
-            else margenIzq + anchoUtil * indice / (valores.size - 1)
+            if (n == 1) margenIzq + anchoUtil / 2f
+            else margenIzq + anchoUtil * indice / (n - 1)
 
-        // Línea que une los puntos.
-        for (i in 0 until valores.size - 1) {
-            canvas.drawLine(
-                xDe(i), yDe(valores[i]),
-                xDe(i + 1), yDe(valores[i + 1]),
-                pintaLinea
-            )
+        for (serie in series) {
+            pintaLinea.color = serie.color
+            pintaPunto.color = serie.color
+            val v = serie.valores
+            // Segmentos solo entre puntos consecutivos con dato.
+            for (i in 0 until v.size - 1) {
+                val a = v[i]
+                val b = v[i + 1]
+                if (a != null && b != null) {
+                    canvas.drawLine(xDe(i), yDe(a), xDe(i + 1), yDe(b), pintaLinea)
+                }
+            }
+            v.forEachIndexed { i, valor ->
+                if (valor != null) canvas.drawCircle(xDe(i), yDe(valor), dp(3.5f), pintaPunto)
+            }
         }
-        // Puntos.
-        valores.forEachIndexed { i, v ->
-            canvas.drawCircle(xDe(i), yDe(v), dp(3.5f), pintaPunto)
-        }
-    }
-
-    private fun resolverColorPrimario(): Int {
-        val tv = TypedValue()
-        val encontrado = context.theme.resolveAttribute(
-            com.google.android.material.R.attr.colorPrimary, tv, true
-        )
-        return if (encontrado) tv.data else ContextCompat.getColor(context, R.color.purple_500)
-    }
-
-    private fun resolverColorTexto(): Int {
-        val tv = TypedValue()
-        val encontrado = context.theme.resolveAttribute(
-            android.R.attr.textColorSecondary, tv, true
-        )
-        return if (encontrado) {
-            if (tv.resourceId != 0) ContextCompat.getColor(context, tv.resourceId) else tv.data
-        } else Color.GRAY
     }
 
     private fun dp(valor: Float): Float =
