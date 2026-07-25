@@ -170,4 +170,5 @@
     <string name="estadisticas_por_puesto_titulo">Media de aciertos por puesto</string>
     <string name="estadisticas_puesto_linea">Puesto %1$d: %2$s%% (%3$d series)</string>
     <string name="estadisticas_filtro_todas">Todas</string>
+    <string name="estadisticas_filtro_hint">Categoría</string>
 </resources>

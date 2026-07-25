@@ -3,6 +3,7 @@ package oscar.platoscore.ui.activities
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -45,19 +46,28 @@ class EstadisticasActivity : AppCompatActivity() {
         colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
         prepararLeyenda()
 
-        binding.toggleTipo.addOnButtonCheckedListener { _, checkedId, isChecked ->
-            if (!isChecked) return@addOnButtonCheckedListener
-            tipoSeleccionado = when (checkedId) {
-                R.id.btnCompeticion -> TiradaPersonal.TIPO_COMPETICION
-                R.id.btnEntrenamiento -> TiradaPersonal.TIPO_ENTRENAMIENTO
-                else -> null // Todas
-            }
-            render()
-        }
-        binding.toggleTipo.check(R.id.btnTodas)
+        configurarFiltro()
 
         viewModel.todas.observe(this) { lista ->
             todas = lista
+            render()
+        }
+    }
+
+    private fun configurarFiltro() {
+        // Cada posición del desplegable se asocia a un tipo filtrado (null = todas).
+        val opciones = listOf(
+            getString(R.string.estadisticas_filtro_todas) to null,
+            getString(R.string.tipo_entrenamiento) to TiradaPersonal.TIPO_ENTRENAMIENTO,
+            getString(R.string.tipo_competicion) to TiradaPersonal.TIPO_COMPETICION
+        )
+        binding.dropdownTipo.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, opciones.map { it.first })
+        )
+        // Selección inicial: Todas (sin disparar filtrado de texto).
+        binding.dropdownTipo.setText(opciones.first().first, false)
+        binding.dropdownTipo.setOnItemClickListener { _, _, posicion, _ ->
+            tipoSeleccionado = opciones[posicion].second
             render()
         }
     }

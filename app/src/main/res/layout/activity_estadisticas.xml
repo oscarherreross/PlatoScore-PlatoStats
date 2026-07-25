@@ -21,56 +21,20 @@
             android:textStyle="bold"
             android:layout_marginBottom="12dp" />
 
-        <com.google.android.material.button.MaterialButtonToggleGroup
-            android:id="@+id/toggleTipo"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTipo"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:singleSelection="true"
-            app:selectionRequired="true">
+            android:hint="@string/estadisticas_filtro_hint"
+            android:layout_marginBottom="16dp">
 
-            <Button
-                android:id="@+id/btnTodas"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <AutoCompleteTextView
+                android:id="@+id/dropdownTipo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:insetLeft="0dp"
-                android:insetRight="0dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:maxLines="1"
-                android:textSize="12sp"
-                android:text="@string/estadisticas_filtro_todas" />
-
-            <Button
-                android:id="@+id/btnEntrenamiento"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:insetLeft="0dp"
-                android:insetRight="0dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:maxLines="1"
-                android:textSize="12sp"
-                android:text="@string/tipo_entrenamiento" />
-
-            <Button
-                android:id="@+id/btnCompeticion"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:insetLeft="0dp"
-                android:insetRight="0dp"
-                android:paddingLeft="4dp"
-                android:paddingRight="4dp"
-                android:maxLines="1"
-                android:textSize="12sp"
-                android:text="@string/tipo_competicion" />
-        </com.google.android.material.button.MaterialButtonToggleGroup>
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
             android:id="@+id/tvVacio"
