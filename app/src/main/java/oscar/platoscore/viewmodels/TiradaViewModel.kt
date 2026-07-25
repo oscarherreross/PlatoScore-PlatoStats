@@ -3,11 +3,15 @@ package oscar.platoscore.viewmodels
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import oscar.platoscore.database.PlatoScoreDatabase
+import oscar.platoscore.models.ResumenProfesional
+import oscar.platoscore.models.ResumenProfesionalCalc
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
+import oscar.platoscore.models.TiradorConTirada
 import oscar.platoscore.repositories.TiradaRepository
 import oscar.platoscore.utils.Sesion
 
@@ -18,10 +22,24 @@ class TiradaViewModel(application: Application) : AndroidViewModel(application) 
 
     val allTiradas: LiveData<List<TiradaConContadores>>
 
+    /** Resumen del profesional (para el menú de perfil), combinando tiradas y tiradores. */
+    val resumenProfesional: LiveData<ResumenProfesional>
+
     init {
         val tiradaDao = PlatoScoreDatabase.getDatabase(application).tiradaDao()
         tiradaRepository = TiradaRepository(tiradaDao)
         allTiradas = tiradaRepository.allTiradas(uid)
+
+        val tiradores = tiradaRepository.tiradoresConTirada(uid)
+        resumenProfesional = MediatorLiveData<ResumenProfesional>().apply {
+            var tiradasCache: List<TiradaConContadores> = emptyList()
+            var tiradoresCache: List<TiradorConTirada> = emptyList()
+            fun recalcular() {
+                value = ResumenProfesionalCalc.calcular(tiradasCache, tiradoresCache)
+            }
+            addSource(allTiradas) { tiradasCache = it; recalcular() }
+            addSource(tiradores) { tiradoresCache = it; recalcular() }
+        }
     }
 
     fun getTirada(id: Int): LiveData<Tirada?> = tiradaRepository.getTirada(id)

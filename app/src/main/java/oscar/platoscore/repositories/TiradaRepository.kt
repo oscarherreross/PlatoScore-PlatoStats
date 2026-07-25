@@ -6,11 +6,15 @@ import kotlinx.coroutines.withContext
 import oscar.platoscore.database.TiradaDao
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
+import oscar.platoscore.models.TiradorConTirada
 
 class TiradaRepository(private val tiradaDao: TiradaDao) {
 
     fun allTiradas(userId: String): LiveData<List<TiradaConContadores>> =
         tiradaDao.getAllTiradasConContadores(userId)
+
+    fun tiradoresConTirada(userId: String): LiveData<List<TiradorConTirada>> =
+        tiradaDao.getTiradoresConTirada(userId)
 
     fun getTirada(id: Int): LiveData<Tirada?> = tiradaDao.getTirada(id)
 

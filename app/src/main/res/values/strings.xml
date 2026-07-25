@@ -192,4 +192,10 @@
     <string name="password_error_actual">Introduce tu contraseña actual</string>
     <string name="password_error_actual_incorrecta">La contraseña actual no es correcta</string>
     <string name="toast_password_cambiada">Contraseña actualizada</string>
+
+    <!-- Menú lateral de perfil (profesional) -->
+    <string name="drawer_prof_num_tiradas">Tiradas organizadas: %1$d</string>
+    <string name="drawer_prof_escuadras">Escuadras: %1$d</string>
+    <string name="drawer_prof_tiradores">Tiradores registrados: %1$d</string>
+    <string name="drawer_prof_recaudacion">Recaudación acumulada: %1$s €</string>
 </resources>

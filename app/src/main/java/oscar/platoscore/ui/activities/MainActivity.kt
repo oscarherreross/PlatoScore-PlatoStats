@@ -2,11 +2,12 @@ package oscar.platoscore.ui.activities
 
 import android.app.DatePickerDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -14,7 +15,9 @@ import com.google.firebase.auth.FirebaseAuth
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.databinding.DialogAddTiradaBinding
+import oscar.platoscore.models.ResumenProfesional
 import oscar.platoscore.models.Tirada
+import oscar.platoscore.ui.CuentaUi
 import oscar.platoscore.ui.adapters.TiradaAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
@@ -25,39 +28,60 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val tiradaViewModel: TiradaViewModel by viewModels()
     private lateinit var tiradaAdapter: TiradaAdapter
+    private lateinit var drawerToggle: ActionBarDrawerToggle
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupDrawer()
         setupRecyclerView()
         observeTiradas()
         setupFAB()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_main, menu)
-        return true
-    }
+    private fun setupDrawer() {
+        drawerToggle = ActionBarDrawerToggle(
+            this, binding.drawerLayout, R.string.drawer_abrir, R.string.drawer_cerrar
+        )
+        binding.drawerLayout.addDrawerListener(drawerToggle)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_cerrar_sesion -> {
-                cerrarSesion()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
+        binding.tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
+        binding.btnCambiarPassword.setOnClickListener { CuentaUi.mostrarCambiarPassword(this) }
+        binding.btnCerrarSesion.setOnClickListener { CuentaUi.cerrarSesion(this) }
+
+        tiradaViewModel.resumenProfesional.observe(this) { resumen ->
+            mostrarResumen(resumen)
         }
     }
 
-    private fun cerrarSesion() {
-        FirebaseAuth.getInstance().signOut()
-        Toast.makeText(this, R.string.toast_sesion_cerrada, Toast.LENGTH_SHORT).show()
-        val intent = Intent(this, RoleSelectionActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        finish()
+    private fun mostrarResumen(resumen: ResumenProfesional) {
+        binding.tvNumTiradas.text =
+            getString(R.string.drawer_prof_num_tiradas, resumen.numTiradas)
+        binding.tvEscuadras.text =
+            getString(R.string.drawer_prof_escuadras, resumen.totalEscuadras)
+        binding.tvTiradores.text =
+            getString(R.string.drawer_prof_tiradores, resumen.totalTiradores)
+        binding.tvRecaudacion.text =
+            getString(R.string.drawer_prof_recaudacion, "%.2f".format(resumen.recaudacion))
+    }
+
+    override fun onPostCreate(savedInstanceState: Bundle?) {
+        super.onPostCreate(savedInstanceState)
+        drawerToggle.syncState()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        drawerToggle.onConfigurationChanged(newConfig)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Solo el icono de hamburguesa (home) abre/cierra el menú lateral.
+        if (drawerToggle.onOptionsItemSelected(item)) return true
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setupRecyclerView() {
