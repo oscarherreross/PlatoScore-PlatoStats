@@ -3,7 +3,6 @@ package oscar.platoscore.ui.activities
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -55,8 +54,11 @@ class PersonalMainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
-        binding.btnCerrarSesion.setOnClickListener { cerrarSesion() }
+        binding.btnEstadisticas.setOnClickListener {
+            startActivity(Intent(this, EstadisticasActivity::class.java))
+        }
         binding.btnCambiarPassword.setOnClickListener { mostrarCambiarPassword() }
+        binding.btnCerrarSesion.setOnClickListener { cerrarSesion() }
     }
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
@@ -69,20 +71,10 @@ class PersonalMainActivity : AppCompatActivity() {
         drawerToggle.onConfigurationChanged(newConfig)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_personal, menu)
-        return true
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        // Solo el icono de hamburguesa (home) abre/cierra el menú lateral.
         if (drawerToggle.onOptionsItemSelected(item)) return true
-        return when (item.itemId) {
-            R.id.action_estadisticas -> {
-                startActivity(Intent(this, EstadisticasActivity::class.java))
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun setupRecyclerView() {

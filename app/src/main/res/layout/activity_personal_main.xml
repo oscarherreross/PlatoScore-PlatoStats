@@ -156,13 +156,21 @@
             android:background="#22808080" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEstadisticas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/menu_estadisticas"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCambiarPassword"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/accion_cambiar_password"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp" />
+            android:layout_marginTop="8dp" />
 
         <Button
             android:id="@+id/btnCerrarSesion"
