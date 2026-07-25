@@ -71,6 +71,9 @@ dependencies {
     // CardView
     implementation("androidx.cardview:cardview:1.0.0")
 
+    // DrawerLayout (menú lateral)
+    implementation("androidx.drawerlayout:drawerlayout:1.2.0")
+
     // Room Database (misma versión en runtime/ktx/compiler)
     val roomVersion = "2.8.4"
     implementation("androidx.room:room-runtime:$roomVersion")

@@ -171,4 +171,25 @@
     <string name="estadisticas_puesto_linea">Puesto %1$d: %2$s%% (%3$d series)</string>
     <string name="estadisticas_filtro_todas">Todas</string>
     <string name="estadisticas_filtro_hint">Categoría</string>
+
+    <!-- Menú lateral de perfil (personal) -->
+    <string name="drawer_abrir">Abrir menú de perfil</string>
+    <string name="drawer_cerrar">Cerrar menú de perfil</string>
+    <string name="drawer_titulo_perfil">Mi perfil</string>
+    <string name="drawer_resumen_titulo">Resumen</string>
+    <string name="drawer_total_platos">Platos disparados: %1$d</string>
+    <string name="drawer_total_tiros">Tiros realizados: %1$d</string>
+    <string name="drawer_pct_entrenamiento">Acierto en entrenamiento: %1$s</string>
+    <string name="drawer_pct_competicion">Acierto en competición: %1$s</string>
+    <string name="drawer_pct_general">Acierto general: %1$s</string>
+    <string name="valor_sin_datos">—</string>
+
+    <!-- Cambiar contraseña -->
+    <string name="accion_cambiar_password">Cambiar contraseña</string>
+    <string name="label_password_actual">Contraseña actual</string>
+    <string name="label_password_nueva">Nueva contraseña</string>
+    <string name="label_password_nueva_confirm">Repite la nueva contraseña</string>
+    <string name="password_error_actual">Introduce tu contraseña actual</string>
+    <string name="password_error_actual_incorrecta">La contraseña actual no es correcta</string>
+    <string name="toast_password_cambiada">Contraseña actualizada</string>
 </resources>

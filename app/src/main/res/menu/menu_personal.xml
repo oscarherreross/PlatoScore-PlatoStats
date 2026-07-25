@@ -7,9 +7,4 @@
         android:title="@string/menu_estadisticas"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_cerrar_sesion"
-        android:title="@string/accion_cerrar_sesion"
-        app:showAsAction="never" />
-
 </menu>
