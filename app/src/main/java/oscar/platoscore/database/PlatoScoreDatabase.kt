@@ -17,7 +17,7 @@ import oscar.platoscore.models.Tirador
         Tirada::class, Escuadra::class, Tirador::class,
         TiradaPersonal::class, SeriePersonal::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = true
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -125,13 +125,90 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v4 -> v5: modo personal.
+         *  - tiradas_personales.tipo (competición/entrenamiento) y se elimina
+         *    tiradas_personales.puestoInicial (el puesto pasa a cada serie).
+         *  - series_personales.puesto: el puesto de tiro es ahora por serie.
+         *
+         * Para quitar una columna (SQLite no soporta DROP COLUMN en versiones
+         * antiguas) se recrean ambas tablas. Se vuelca antes a tablas de
+         * respaldo SIN claves foráneas: así, al borrar las tablas originales,
+         * el ON DELETE CASCADE no puede arrastrar las series. Los registros
+         * previos toman tipo 'entrenamiento' y puesto 1 por defecto.
+         */
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                // 1. Respaldos planos (CREATE TABLE AS SELECT no copia las FK).
+                db.execSQL(
+                    "CREATE TABLE `_tp_backup` AS SELECT " +
+                            "id, userId, lugar, fechaHora, numeroEscuadra, notas " +
+                            "FROM tiradas_personales"
+                )
+                db.execSQL(
+                    "CREATE TABLE `_sp_backup` AS SELECT " +
+                            "id, tiradaPersonalId, numeroSerie, platosRotos, platosPrimerTiro " +
+                            "FROM series_personales"
+                )
+
+                // 2. Fuera las tablas originales (los respaldos no tienen FK).
+                db.execSQL("DROP TABLE series_personales")
+                db.execSQL("DROP TABLE tiradas_personales")
+
+                // 3. Tablas nuevas con el esquema v5.
+                db.execSQL(
+                    "CREATE TABLE `tiradas_personales` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`userId` TEXT NOT NULL, " +
+                            "`lugar` TEXT NOT NULL, " +
+                            "`fechaHora` INTEGER NOT NULL, " +
+                            "`numeroEscuadra` INTEGER NOT NULL, " +
+                            "`tipo` TEXT NOT NULL, " +
+                            "`notas` TEXT NOT NULL)"
+                )
+                db.execSQL(
+                    "CREATE TABLE `series_personales` (" +
+                            "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                            "`tiradaPersonalId` INTEGER NOT NULL, " +
+                            "`numeroSerie` INTEGER NOT NULL, " +
+                            "`puesto` INTEGER NOT NULL, " +
+                            "`platosRotos` INTEGER NOT NULL, " +
+                            "`platosPrimerTiro` INTEGER, " +
+                            "FOREIGN KEY(`tiradaPersonalId`) REFERENCES `tiradas_personales`(`id`) " +
+                            "ON UPDATE NO ACTION ON DELETE CASCADE)"
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_series_personales_tiradaPersonalId` " +
+                            "ON `series_personales` (`tiradaPersonalId`)"
+                )
+
+                // 4. Recuperar los datos con los valores por defecto nuevos.
+                db.execSQL(
+                    "INSERT INTO tiradas_personales " +
+                            "(id, userId, lugar, fechaHora, numeroEscuadra, tipo, notas) " +
+                            "SELECT id, userId, lugar, fechaHora, numeroEscuadra, 'entrenamiento', notas " +
+                            "FROM _tp_backup"
+                )
+                db.execSQL(
+                    "INSERT INTO series_personales " +
+                            "(id, tiradaPersonalId, numeroSerie, puesto, platosRotos, platosPrimerTiro) " +
+                            "SELECT id, tiradaPersonalId, numeroSerie, 1, platosRotos, platosPrimerTiro " +
+                            "FROM _sp_backup"
+                )
+
+                // 5. Limpiar respaldos.
+                db.execSQL("DROP TABLE _tp_backup")
+                db.execSQL("DROP TABLE _sp_backup")
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build()
                     .also { INSTANCE = it }
             }

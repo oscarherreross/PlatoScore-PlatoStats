@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ItemTiradaPersonalBinding
+import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.TiradaPersonalConSeries
 import oscar.platoscore.utils.Fechas
 
@@ -22,10 +23,14 @@ class TiradaPersonalAdapter(
             val contexto = binding.root.context
             binding.tvLugar.text = item.tirada.lugar
             binding.tvFechaHora.text = Fechas.mostrarFechaHora(item.tirada.fechaHora)
+            val tipoLabel = contexto.getString(
+                if (item.tirada.tipo == TiradaPersonal.TIPO_COMPETICION) R.string.tipo_competicion
+                else R.string.tipo_entrenamiento
+            )
             binding.tvEscuadraPuesto.text = contexto.getString(
-                R.string.item_personal_escuadra_puesto,
+                R.string.item_personal_escuadra_tipo,
                 item.tirada.numeroEscuadra,
-                item.tirada.puestoInicial
+                tipoLabel
             )
             binding.tvResumen.text = contexto.getString(
                 R.string.item_personal_resumen,

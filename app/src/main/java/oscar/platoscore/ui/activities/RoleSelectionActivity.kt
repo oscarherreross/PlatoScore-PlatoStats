@@ -10,8 +10,9 @@ import oscar.platoscore.utils.Sesion
 
 /**
  * Primera pantalla de la app: elegir entre entrar como profesional o como
- * personal. Cada rol lleva a su propio inicio de sesión (con credenciales
- * independientes). Si ya hay una sesión abierta del rol pulsado, entra directo.
+ * personal. Es solo el modo de uso; una misma cuenta sirve para ambos. Si ya
+ * hay una sesión abierta, se entra directo al modo pulsado; si no, se pasa por
+ * el inicio de sesión.
  */
 class RoleSelectionActivity : AppCompatActivity() {
 
@@ -27,9 +28,8 @@ class RoleSelectionActivity : AppCompatActivity() {
     }
 
     private fun entrarComo(rol: String) {
-        val usuario = FirebaseAuth.getInstance().currentUser
-        if (usuario != null && usuario.displayName == rol) {
-            // Ya hay sesión de ese rol: se entra directamente a su pantalla.
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            // Ya hay sesión: se entra directo al modo elegido.
             startActivity(Intent(this, homeDe(rol)))
         } else {
             val intent = Intent(this, LoginActivity::class.java)

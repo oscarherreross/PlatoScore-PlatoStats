@@ -17,6 +17,12 @@ data class TiradaPersonal(
     /** Fecha y hora de la tirada en epoch millis. */
     val fechaHora: Long = 0,
     val numeroEscuadra: Int = 0,
-    val puestoInicial: Int = 0,
+    /** Clasificación de la tirada: [TIPO_COMPETICION] o [TIPO_ENTRENAMIENTO]. */
+    val tipo: String = TIPO_ENTRENAMIENTO,
     val notas: String = ""
-)
+) {
+    companion object {
+        const val TIPO_COMPETICION = "competicion"
+        const val TIPO_ENTRENAMIENTO = "entrenamiento"
+    }
+}

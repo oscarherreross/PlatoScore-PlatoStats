@@ -1,0 +1,360 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 5,
+    "identityHash": "6194fb1b39db8c48dffd495bd0b6c7e1",
+    "entities": [
+      {
+        "tableName": "tiradas",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT NOT NULL, `nombre` TEXT NOT NULL, `fecha` TEXT NOT NULL, `precioLocal` REAL NOT NULL, `precioGeneral` REAL NOT NULL, `precioJunior` REAL NOT NULL, `precioSenior` REAL NOT NULL, `precioDama` REAL NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fecha",
+            "columnName": "fecha",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioLocal",
+            "columnName": "precioLocal",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioGeneral",
+            "columnName": "precioGeneral",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioJunior",
+            "columnName": "precioJunior",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioSenior",
+            "columnName": "precioSenior",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precioDama",
+            "columnName": "precioDama",
+            "affinity": "REAL",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "escuadras",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tiradaId` INTEGER NOT NULL, `numeroEscuadra` INTEGER NOT NULL, FOREIGN KEY(`tiradaId`) REFERENCES `tiradas`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tiradaId",
+            "columnName": "tiradaId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numeroEscuadra",
+            "columnName": "numeroEscuadra",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_escuadras_tiradaId",
+            "unique": false,
+            "columnNames": [
+              "tiradaId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_escuadras_tiradaId` ON `${TABLE_NAME}` (`tiradaId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "tiradas",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tiradaId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tiradores",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `escuadraId` INTEGER NOT NULL, `nombreApellidos` TEXT NOT NULL, `dni` TEXT NOT NULL, `numeroLicencia` TEXT NOT NULL, `platosRotos` INTEGER NOT NULL, `esLocal` INTEGER NOT NULL, `esJunior` INTEGER NOT NULL, `esSenior` INTEGER NOT NULL, `esDama` INTEGER NOT NULL, `ordenDesempate` INTEGER NOT NULL, FOREIGN KEY(`escuadraId`) REFERENCES `escuadras`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "escuadraId",
+            "columnName": "escuadraId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombreApellidos",
+            "columnName": "nombreApellidos",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dni",
+            "columnName": "dni",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numeroLicencia",
+            "columnName": "numeroLicencia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "platosRotos",
+            "columnName": "platosRotos",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "esLocal",
+            "columnName": "esLocal",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "esJunior",
+            "columnName": "esJunior",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "esSenior",
+            "columnName": "esSenior",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "esDama",
+            "columnName": "esDama",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ordenDesempate",
+            "columnName": "ordenDesempate",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_tiradores_escuadraId",
+            "unique": false,
+            "columnNames": [
+              "escuadraId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_tiradores_escuadraId` ON `${TABLE_NAME}` (`escuadraId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "escuadras",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "escuadraId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "tiradas_personales",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT NOT NULL, `lugar` TEXT NOT NULL, `fechaHora` INTEGER NOT NULL, `numeroEscuadra` INTEGER NOT NULL, `tipo` TEXT NOT NULL, `notas` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "userId",
+            "columnName": "userId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lugar",
+            "columnName": "lugar",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaHora",
+            "columnName": "fechaHora",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numeroEscuadra",
+            "columnName": "numeroEscuadra",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tipo",
+            "columnName": "tipo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "notas",
+            "columnName": "notas",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "series_personales",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tiradaPersonalId` INTEGER NOT NULL, `numeroSerie` INTEGER NOT NULL, `puesto` INTEGER NOT NULL, `platosRotos` INTEGER NOT NULL, `platosPrimerTiro` INTEGER, FOREIGN KEY(`tiradaPersonalId`) REFERENCES `tiradas_personales`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tiradaPersonalId",
+            "columnName": "tiradaPersonalId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numeroSerie",
+            "columnName": "numeroSerie",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "puesto",
+            "columnName": "puesto",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "platosRotos",
+            "columnName": "platosRotos",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "platosPrimerTiro",
+            "columnName": "platosPrimerTiro",
+            "affinity": "INTEGER"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_series_personales_tiradaPersonalId",
+            "unique": false,
+            "columnNames": [
+              "tiradaPersonalId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_series_personales_tiradaPersonalId` ON `${TABLE_NAME}` (`tiradaPersonalId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "tiradas_personales",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "tiradaPersonalId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6194fb1b39db8c48dffd495bd0b6c7e1')"
+    ]
+  }
+}

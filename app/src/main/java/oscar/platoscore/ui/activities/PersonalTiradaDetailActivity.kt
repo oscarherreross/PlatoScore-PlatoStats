@@ -69,8 +69,12 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             val t = conSeries.tirada
             binding.etLugar.setText(t.lugar)
             binding.etEscuadra.setText(t.numeroEscuadra.toString())
-            binding.etPuesto.setText(t.puestoInicial.toString())
             binding.etNotas.setText(t.notas)
+            if (t.tipo == TiradaPersonal.TIPO_COMPETICION) {
+                binding.rbCompeticion.isChecked = true
+            } else {
+                binding.rbEntrenamiento.isChecked = true
+            }
             calendario.timeInMillis = t.fechaHora
             actualizarCampoFechaHora()
 
@@ -79,6 +83,7 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             binding.etNumeroSeries.setText(series.size.toString())
             series.forEachIndexed { i, serie ->
                 filasSeries.getOrNull(i)?.let { fila ->
+                    fila.etPuesto.setText(serie.puesto.toString())
                     fila.etPlatosRotos.setText(serie.platosRotos.toString())
                     fila.etPrimerTiro.setText(serie.platosPrimerTiro?.toString().orEmpty())
                 }
@@ -136,16 +141,16 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
         if (escuadra == null || escuadra < 1) {
             toast(R.string.personal_error_escuadra); return
         }
-        val puesto = binding.etPuesto.text?.toString()?.toIntOrNull()
-        if (puesto == null || puesto < 1) {
-            toast(R.string.personal_error_puesto); return
-        }
         if (filasSeries.isEmpty()) {
             toast(R.string.personal_error_series); return
         }
 
         val series = mutableListOf<SeriePersonal>()
         filasSeries.forEachIndexed { i, fila ->
+            val puesto = fila.etPuesto.text?.toString()?.toIntOrNull()
+            if (puesto == null || puesto < 1) {
+                toast(getString(R.string.personal_error_puesto_serie, i + 1)); return
+            }
             val rotos = fila.etPlatosRotos.text?.toString()?.toIntOrNull()
             if (rotos == null || rotos !in 0..MAX_PLATOS) {
                 toast(getString(R.string.personal_error_platos_serie, i + 1)); return
@@ -158,18 +163,23 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             series.add(
                 SeriePersonal(
                     numeroSerie = i + 1,
+                    puesto = puesto,
                     platosRotos = rotos,
                     platosPrimerTiro = primer
                 )
             )
         }
 
+        val tipo =
+            if (binding.rbCompeticion.isChecked) TiradaPersonal.TIPO_COMPETICION
+            else TiradaPersonal.TIPO_ENTRENAMIENTO
+
         val tirada = TiradaPersonal(
             id = tiradaId,
             lugar = lugar,
             fechaHora = calendario.timeInMillis,
             numeroEscuadra = escuadra,
-            puestoInicial = puesto,
+            tipo = tipo,
             notas = binding.etNotas.text?.toString()?.trim().orEmpty()
         )
 
