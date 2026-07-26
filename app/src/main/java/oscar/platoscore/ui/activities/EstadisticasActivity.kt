@@ -29,8 +29,10 @@ class EstadisticasActivity : AppCompatActivity() {
     private val viewModel: TiradaPersonalViewModel by viewModels()
 
     private var todas: List<TiradaPersonalConSeries> = emptyList()
-    /** Tipo filtrado, o null para ver todas las tiradas juntas. */
+    /** Tipo filtrado, o null para ver todas las categorías juntas. */
     private var tipoSeleccionado: String? = null
+    /** Máquina filtrada, o null para ver todas las máquinas juntas. */
+    private var maquinaSeleccionada: String? = null
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -46,7 +48,8 @@ class EstadisticasActivity : AppCompatActivity() {
         colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
         prepararLeyenda()
 
-        configurarFiltro()
+        configurarFiltroCategoria()
+        configurarFiltroMaquina()
 
         viewModel.todas.observe(this) { lista ->
             todas = lista
@@ -54,7 +57,7 @@ class EstadisticasActivity : AppCompatActivity() {
         }
     }
 
-    private fun configurarFiltro() {
+    private fun configurarFiltroCategoria() {
         // Cada posición del desplegable se asocia a un tipo filtrado (null = todas).
         val opciones = listOf(
             getString(R.string.estadisticas_filtro_todas) to null,
@@ -72,9 +75,29 @@ class EstadisticasActivity : AppCompatActivity() {
         }
     }
 
+    private fun configurarFiltroMaquina() {
+        // Cada posición del desplegable se asocia a una máquina filtrada (null = todas).
+        val opciones = listOf(
+            getString(R.string.estadisticas_filtro_todas) to null,
+            getString(R.string.maquina_robot) to TiradaPersonal.MAQUINA_ROBOT,
+            getString(R.string.maquina_trap) to TiradaPersonal.MAQUINA_TRAP,
+            getString(R.string.maquina_olimpico) to TiradaPersonal.MAQUINA_OLIMPICO
+        )
+        binding.dropdownMaquina.setAdapter(
+            ArrayAdapter(this, android.R.layout.simple_list_item_1, opciones.map { it.first })
+        )
+        binding.dropdownMaquina.setText(opciones.first().first, false)
+        binding.dropdownMaquina.setOnItemClickListener { _, _, posicion, _ ->
+            maquinaSeleccionada = opciones[posicion].second
+            render()
+        }
+    }
+
     private fun render() {
-        val sel = tipoSeleccionado
-        val filtradas = if (sel == null) todas else todas.filter { it.tirada.tipo == sel }
+        val filtradas = todas.filter { t ->
+            (tipoSeleccionado == null || t.tirada.tipo == tipoSeleccionado) &&
+                (maquinaSeleccionada == null || t.tirada.maquina == maquinaSeleccionada)
+        }
         mostrar(EstadisticasPersonales.calcular(filtradas))
     }
 
