@@ -47,11 +47,20 @@ class ResultadosActivity : AppCompatActivity() {
         binding = ActivityResultadosBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setTitle(R.string.titulo_resultados)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
         setupSecciones()
         setupCompartir()
         cargarResultados()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun setupSecciones() {

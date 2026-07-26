@@ -22,6 +22,7 @@
     <string name="cd_anadir_tirada">Añadir tirada</string>
 
     <!-- Detalle de tirada -->
+    <string name="titulo_detalle_tirada">Tirada</string>
     <string name="titulo_datos_tirada">Datos de la Tirada</string>
     <string name="titulo_precios_categoria">Precios por Categoría</string>
     <string name="label_precio_local">Precio Tirador Local</string>

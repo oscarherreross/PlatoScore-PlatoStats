@@ -36,6 +36,10 @@ class TiradaDetailActivity : AppCompatActivity() {
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setTitle(R.string.titulo_detalle_tirada)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
         setupRecyclerView()
@@ -43,6 +47,11 @@ class TiradaDetailActivity : AppCompatActivity() {
         setupFechaPicker()
         setupFAB()
         setupGenerarResultadosButton()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun setupFechaPicker() {

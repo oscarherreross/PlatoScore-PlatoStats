@@ -43,9 +43,11 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
         tiradaId = intent.getIntExtra(Extras.TIRADA_PERSONAL_ID, 0)
         editando = tiradaId != 0
 
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(
             if (editando) R.string.personal_form_titulo_editar else R.string.personal_form_titulo_nueva
         )
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.etFechaHora.setOnClickListener { abrirSelectorFechaHora() }
         binding.etNumeroSeries.doAfterTextChanged {
@@ -59,6 +61,11 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
         } else {
             actualizarCampoFechaHora()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun cargarExistente() {

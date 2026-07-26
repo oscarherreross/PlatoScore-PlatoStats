@@ -42,7 +42,9 @@ class EstadisticasActivity : AppCompatActivity() {
         binding = ActivityEstadisticasBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(R.string.estadisticas_titulo)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         colorTotal = resolverColorPrimario()
         colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
@@ -55,6 +57,11 @@ class EstadisticasActivity : AppCompatActivity() {
             todas = lista
             render()
         }
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun configurarFiltroCategoria() {

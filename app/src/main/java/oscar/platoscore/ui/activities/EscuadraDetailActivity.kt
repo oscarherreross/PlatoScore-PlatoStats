@@ -40,11 +40,18 @@ class EscuadraDetailActivity : AppCompatActivity() {
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
         escuadraId = intent.getIntExtra(Extras.ESCUADRA_ID, 0)
 
+        setSupportActionBar(binding.toolbar)
         supportActionBar?.title = getString(R.string.titulo_escuadra)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         setupRecycler()
         observeData()
         setupFab()
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        finish()
+        return true
     }
 
     private fun setupRecycler() {
