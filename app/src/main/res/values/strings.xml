@@ -173,6 +173,8 @@
     <string name="estadisticas_leyenda_primer_tiro">1.er tiro</string>
     <string name="estadisticas_por_puesto_titulo">Media de aciertos por puesto</string>
     <string name="estadisticas_puesto_linea">Puesto %1$d: %2$s%% (%3$d series)</string>
+    <string name="estadisticas_por_maquina_titulo">Media de aciertos por máquina</string>
+    <string name="estadisticas_maquina_linea">%1$s: %2$s%% (%3$d tiradas)</string>
     <string name="estadisticas_filtro_todas">Todas</string>
     <string name="estadisticas_filtro_hint">Categoría</string>
 

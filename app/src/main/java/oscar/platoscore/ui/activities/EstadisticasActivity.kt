@@ -107,6 +107,7 @@ class EstadisticasActivity : AppCompatActivity() {
 
         mostrarGrafica(resumen)
         mostrarPorPuesto(resumen)
+        mostrarPorMaquina(resumen)
     }
 
     private fun mostrarGrafica(resumen: ResumenEstadisticas) {
@@ -138,6 +139,30 @@ class EstadisticasActivity : AppCompatActivity() {
             binding.containerPuestos.addView(tv)
         }
     }
+
+    private fun mostrarPorMaquina(resumen: ResumenEstadisticas) {
+        binding.containerMaquinas.removeAllViews()
+        resumen.mediaPorMaquina.forEach { maquina ->
+            val tv = TextView(this)
+            tv.textSize = 15f
+            tv.setPadding(0, dp(2), 0, dp(2))
+            tv.text = getString(
+                R.string.estadisticas_maquina_linea,
+                etiquetaMaquina(maquina.maquina),
+                "%.1f".format(maquina.porcentaje),
+                maquina.numTiradas
+            )
+            binding.containerMaquinas.addView(tv)
+        }
+    }
+
+    private fun etiquetaMaquina(maquina: String): String = getString(
+        when (maquina) {
+            TiradaPersonal.MAQUINA_TRAP -> R.string.maquina_trap
+            TiradaPersonal.MAQUINA_OLIMPICO -> R.string.maquina_olimpico
+            else -> R.string.maquina_robot
+        }
+    )
 
     private fun prepararLeyenda() {
         binding.tvLeyendaTotal.text = "● " + getString(R.string.estadisticas_leyenda_total)

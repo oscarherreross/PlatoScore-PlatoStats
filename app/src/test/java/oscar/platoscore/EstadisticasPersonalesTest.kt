@@ -15,9 +15,12 @@ class EstadisticasPersonalesTest {
     private fun tirada(
         id: Int,
         fechaHora: Long,
-        series: List<SeriePersonal>
+        series: List<SeriePersonal>,
+        maquina: String = TiradaPersonal.MAQUINA_ROBOT
     ) = TiradaPersonalConSeries(
-        tirada = TiradaPersonal(id = id, userId = "u", lugar = "L", fechaHora = fechaHora),
+        tirada = TiradaPersonal(
+            id = id, userId = "u", lugar = "L", fechaHora = fechaHora, maquina = maquina
+        ),
         series = series
     )
 
@@ -89,6 +92,30 @@ class EstadisticasPersonalesTest {
         val puesto2 = resumen.mediaPorPuesto.first { it.puesto == 2 }
         assertEquals(100f, puesto2.porcentaje, 0.001f)
         assertEquals(1, puesto2.numSeries)
+    }
+
+    @Test
+    fun `media por maquina agrupa por maquina y respeta el orden robot-trap-olimpico`() {
+        // Robot: 20/25 y 24/25 -> 44/50 = 88 %, 2 tiradas
+        // Trap: 15/25 -> 60 %, 1 tirada
+        val resumen = EstadisticasPersonales.calcular(
+            listOf(
+                tirada(1, 1000, listOf(serie(20)), maquina = TiradaPersonal.MAQUINA_ROBOT),
+                tirada(2, 2000, listOf(serie(24)), maquina = TiradaPersonal.MAQUINA_ROBOT),
+                tirada(3, 3000, listOf(serie(15)), maquina = TiradaPersonal.MAQUINA_TRAP)
+            )
+        )
+
+        assertEquals(
+            listOf(TiradaPersonal.MAQUINA_ROBOT, TiradaPersonal.MAQUINA_TRAP),
+            resumen.mediaPorMaquina.map { it.maquina }
+        )
+        val robot = resumen.mediaPorMaquina.first { it.maquina == TiradaPersonal.MAQUINA_ROBOT }
+        assertEquals(88f, robot.porcentaje, 0.001f)
+        assertEquals(2, robot.numTiradas)
+        val trap = resumen.mediaPorMaquina.first { it.maquina == TiradaPersonal.MAQUINA_TRAP }
+        assertEquals(60f, trap.porcentaje, 0.001f)
+        assertEquals(1, trap.numTiradas)
     }
 
     @Test

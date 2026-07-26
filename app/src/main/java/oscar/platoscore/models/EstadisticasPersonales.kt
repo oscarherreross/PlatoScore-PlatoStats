@@ -16,6 +16,13 @@ data class AciertoPorPuesto(
     val numSeries: Int
 )
 
+/** Media de aciertos con una máquina concreta, sobre todas sus tiradas. */
+data class AciertoPorMaquina(
+    val maquina: String,
+    val porcentaje: Float,
+    val numTiradas: Int
+)
+
 /** Resumen de la evolución de un tirador a lo largo de sus tiradas. */
 data class ResumenEstadisticas(
     val puntos: List<PuntoEvolucion>,
@@ -24,14 +31,22 @@ data class ResumenEstadisticas(
     val mejorPorcentaje: Float,
     val mediaPorcentaje: Float,
     val mediaPorcentajePrimerTiro: Float?,
-    val mediaPorPuesto: List<AciertoPorPuesto>
+    val mediaPorPuesto: List<AciertoPorPuesto>,
+    val mediaPorMaquina: List<AciertoPorMaquina>
 ) {
     val hayDatos: Boolean get() = puntos.isNotEmpty()
 }
 
 object EstadisticasPersonales {
 
-    private val VACIO = ResumenEstadisticas(emptyList(), 0, 0f, 0f, 0f, null, emptyList())
+    private val VACIO = ResumenEstadisticas(emptyList(), 0, 0f, 0f, 0f, null, emptyList(), emptyList())
+
+    /** Orden fijo de las máquinas para mostrarlas siempre igual. */
+    private val ORDEN_MAQUINAS = listOf(
+        TiradaPersonal.MAQUINA_ROBOT,
+        TiradaPersonal.MAQUINA_TRAP,
+        TiradaPersonal.MAQUINA_OLIMPICO
+    )
 
     /**
      * Calcula el resumen a partir de las tiradas del tirador. Los puntos de
@@ -68,7 +83,8 @@ object EstadisticasPersonales {
             mediaPorcentajePrimerTiro =
                 if (porcentajesPrimerTiro.isEmpty()) null
                 else porcentajesPrimerTiro.average().toFloat(),
-            mediaPorPuesto = mediaPorPuesto(validas)
+            mediaPorPuesto = mediaPorPuesto(validas),
+            mediaPorMaquina = mediaPorMaquina(validas)
         )
     }
 
@@ -86,5 +102,20 @@ object EstadisticasPersonales {
                     numSeries = series.size
                 )
             }
+    }
+
+    /** Agrupa las tiradas por máquina y calcula el % de aciertos de cada una. */
+    private fun mediaPorMaquina(tiradas: List<TiradaPersonalConSeries>): List<AciertoPorMaquina> {
+        return tiradas.groupBy { it.tirada.maquina }
+            .map { (maquina, lista) ->
+                val posibles = lista.sumOf { it.platosPosibles }
+                val rotos = lista.sumOf { it.platosRotos }
+                AciertoPorMaquina(
+                    maquina = maquina,
+                    porcentaje = if (posibles == 0) 0f else rotos * 100f / posibles,
+                    numTiradas = lista.size
+                )
+            }
+            .sortedBy { ORDEN_MAQUINAS.indexOf(it.maquina).let { i -> if (i < 0) Int.MAX_VALUE else i } }
     }
 }
