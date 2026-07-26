@@ -17,7 +17,7 @@ import oscar.platoscore.models.Tirador
         Tirada::class, Escuadra::class, Tirador::class,
         TiradaPersonal::class, SeriePersonal::class
     ],
-    version = 5,
+    version = 6,
     exportSchema = true
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -202,13 +202,27 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v5 -> v6: máquina de lanzamiento por tirada personal
+         * (robot/trap/olímpico). Los registros previos toman 'robot'.
+         */
+        private val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "ALTER TABLE tiradas_personales ADD COLUMN maquina TEXT NOT NULL DEFAULT 'robot'"
+                )
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
                     context.applicationContext,
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
-                ).addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+                ).addMigrations(
+                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6
+                )
                     .build()
                     .also { INSTANCE = it }
             }

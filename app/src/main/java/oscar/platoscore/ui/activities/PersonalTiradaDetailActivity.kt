@@ -75,6 +75,11 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             } else {
                 binding.rbEntrenamiento.isChecked = true
             }
+            when (t.maquina) {
+                TiradaPersonal.MAQUINA_TRAP -> binding.rbTrap.isChecked = true
+                TiradaPersonal.MAQUINA_OLIMPICO -> binding.rbOlimpico.isChecked = true
+                else -> binding.rbRobot.isChecked = true
+            }
             calendario.timeInMillis = t.fechaHora
             actualizarCampoFechaHora()
 
@@ -174,12 +179,19 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             if (binding.rbCompeticion.isChecked) TiradaPersonal.TIPO_COMPETICION
             else TiradaPersonal.TIPO_ENTRENAMIENTO
 
+        val maquina = when {
+            binding.rbTrap.isChecked -> TiradaPersonal.MAQUINA_TRAP
+            binding.rbOlimpico.isChecked -> TiradaPersonal.MAQUINA_OLIMPICO
+            else -> TiradaPersonal.MAQUINA_ROBOT
+        }
+
         val tirada = TiradaPersonal(
             id = tiradaId,
             lugar = lugar,
             fechaHora = calendario.timeInMillis,
             numeroEscuadra = escuadra,
             tipo = tipo,
+            maquina = maquina,
             notas = binding.etNotas.text?.toString()?.trim().orEmpty()
         )
 

@@ -27,10 +27,18 @@ class TiradaPersonalAdapter(
                 if (item.tirada.tipo == TiradaPersonal.TIPO_COMPETICION) R.string.tipo_competicion
                 else R.string.tipo_entrenamiento
             )
+            val maquinaLabel = contexto.getString(
+                when (item.tirada.maquina) {
+                    TiradaPersonal.MAQUINA_TRAP -> R.string.maquina_trap
+                    TiradaPersonal.MAQUINA_OLIMPICO -> R.string.maquina_olimpico
+                    else -> R.string.maquina_robot
+                }
+            )
             binding.tvEscuadraPuesto.text = contexto.getString(
                 R.string.item_personal_escuadra_tipo,
                 item.tirada.numeroEscuadra,
-                tipoLabel
+                tipoLabel,
+                maquinaLabel
             )
             binding.tvResumen.text = contexto.getString(
                 R.string.item_personal_resumen,

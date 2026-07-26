@@ -125,7 +125,7 @@
     <string name="personal_vacio">Aún no has registrado ninguna tirada. Pulsa + para añadir una.</string>
     <string name="menu_estadisticas">Estadísticas</string>
     <string name="cd_anadir_tirada_personal">Añadir tirada</string>
-    <string name="item_personal_escuadra_tipo">Escuadra %1$d · %2$s</string>
+    <string name="item_personal_escuadra_tipo">Escuadra %1$d · %2$s · %3$s</string>
     <string name="item_personal_resumen">%1$d/%2$d platos · %3$s%%</string>
     <string name="titulo_eliminar_tirada_personal">Eliminar tirada</string>
     <string name="msg_eliminar_tirada_personal">¿Seguro que quieres eliminar esta tirada de %1$s?</string>
@@ -141,6 +141,10 @@
     <string name="label_tipo">Tipo de tirada</string>
     <string name="tipo_competicion">Competición</string>
     <string name="tipo_entrenamiento">Entrenamiento</string>
+    <string name="label_maquina">Máquina</string>
+    <string name="maquina_robot">Robot</string>
+    <string name="maquina_trap">Trap</string>
+    <string name="maquina_olimpico">Olímpico</string>
     <string name="label_numero_series">Nº de series (25 platos cada una)</string>
     <string name="label_notas">Notas</string>
     <string name="series_titulo">Series</string>
