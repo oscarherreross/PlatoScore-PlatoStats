@@ -15,6 +15,8 @@ import oscar.platoscore.models.ResumenEstadisticas
 import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.TiradaPersonalConSeries
 import oscar.platoscore.ui.views.LineChartView
+import oscar.platoscore.utils.InsetsUtil
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaPersonalViewModel
 
 /**
@@ -39,8 +41,12 @@ class EstadisticasActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityEstadisticasBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padTop(binding.toolbar)
+        InsetsUtil.padBottom(binding.contenidoScrollEstadisticas)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(R.string.estadisticas_titulo)

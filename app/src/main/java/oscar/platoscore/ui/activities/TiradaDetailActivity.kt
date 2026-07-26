@@ -15,6 +15,8 @@ import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.EscuadraAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
+import oscar.platoscore.utils.InsetsUtil
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.EscuadraViewModel
 import oscar.platoscore.viewmodels.TiradaViewModel
 
@@ -33,8 +35,12 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padTop(binding.toolbar)
+        InsetsUtil.padBottom(binding.bottomBar)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(R.string.titulo_detalle_tirada)

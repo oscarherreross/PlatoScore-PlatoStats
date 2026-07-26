@@ -14,6 +14,8 @@ import oscar.platoscore.databinding.DialogAddTiradorBinding
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.TiradorAdapter
 import oscar.platoscore.utils.Extras
+import oscar.platoscore.utils.InsetsUtil
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
 
@@ -34,8 +36,13 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityEscuadraDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padTop(binding.toolbar)
+        InsetsUtil.padBottom(binding.rvTiradores)
+        InsetsUtil.addMarginBottom(binding.fabAddTirador)
 
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
         escuadraId = intent.getIntExtra(Extras.ESCUADRA_ID, 0)

@@ -14,6 +14,8 @@ import oscar.platoscore.models.SeriePersonal
 import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
+import oscar.platoscore.utils.InsetsUtil
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaPersonalViewModel
 import java.util.Calendar
 
@@ -37,8 +39,12 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityPersonalTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padTop(binding.toolbar)
+        InsetsUtil.addMarginBottom(binding.btnGuardar)
 
         tiradaId = intent.getIntExtra(Extras.TIRADA_PERSONAL_ID, 0)
         editando = tiradaId != 0

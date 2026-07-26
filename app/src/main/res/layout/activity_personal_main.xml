@@ -15,7 +15,8 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintTop_toTopOf="parent"
@@ -72,14 +73,15 @@
 
     <!-- Menú lateral (perfil) -->
     <LinearLayout
+        android:id="@+id/drawerContainer"
         android:layout_width="300dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:orientation="vertical"
-        android:background="?android:attr/colorBackground"
-        android:fitsSystemWindows="true">
+        android:background="?android:attr/colorBackground">
 
         <LinearLayout
+            android:id="@+id/drawerHeader"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

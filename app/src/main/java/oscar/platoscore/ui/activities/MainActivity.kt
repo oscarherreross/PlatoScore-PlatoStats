@@ -5,10 +5,15 @@ import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -21,6 +26,7 @@ import oscar.platoscore.ui.CuentaUi
 import oscar.platoscore.ui.adapters.TiradaAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
 
 class MainActivity : AppCompatActivity() {
@@ -32,13 +38,36 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupDrawer()
+        aplicarInsets()
         setupRecyclerView()
         observeTiradas()
         setupFAB()
+    }
+
+    /**
+     * Reparte los insets del sistema (edge-to-edge). El listener va en el
+     * DrawerLayout porque este intercepta los insets antes que sus hijos.
+     */
+    private fun aplicarInsets() {
+        val fabBase = (binding.fabAddTirada.layoutParams as ViewGroup.MarginLayoutParams).bottomMargin
+        val listaBase = binding.rvTiradas.paddingBottom
+        val cabeceraBase = binding.drawerHeader.paddingTop
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout) { _, insets ->
+            val barras = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            binding.toolbar.updatePadding(top = barras.top)
+            binding.rvTiradas.updatePadding(bottom = listaBase + barras.bottom)
+            binding.fabAddTirada.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = fabBase + barras.bottom
+            }
+            binding.drawerHeader.updatePadding(top = cabeceraBase + barras.top)
+            binding.drawerContainer.updatePadding(bottom = barras.bottom)
+            insets
+        }
     }
 
     private fun setupDrawer() {

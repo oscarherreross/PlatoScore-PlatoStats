@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Patterns
 import android.view.View
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityLoginBinding
 import oscar.platoscore.utils.Extras
+import oscar.platoscore.utils.InsetsUtil
 import oscar.platoscore.utils.Sesion
 
 /**
@@ -31,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         rol = intent.getStringExtra(Extras.ROL) ?: Sesion.ROL_PROFESIONAL
         auth = FirebaseAuth.getInstance()
@@ -42,6 +45,8 @@ class LoginActivity : AppCompatActivity() {
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padVertical(binding.root)
 
         binding.btnAccion.setOnClickListener { enviar() }
         binding.tvCambiarModo.setOnClickListener { cambiarModo() }

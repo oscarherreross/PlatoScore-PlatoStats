@@ -17,6 +17,8 @@ import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.ResultadoAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
+import oscar.platoscore.utils.InsetsUtil
+import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
 
@@ -44,8 +46,12 @@ class ResultadosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdgeConToolbar()
         binding = ActivityResultadosBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padTop(binding.toolbar)
+        InsetsUtil.padBottom(binding.contenidoResultados)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(R.string.titulo_resultados)

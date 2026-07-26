@@ -2,10 +2,12 @@ package oscar.platoscore.ui.activities
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import oscar.platoscore.databinding.ActivityRoleSelectionBinding
 import oscar.platoscore.utils.Extras
+import oscar.platoscore.utils.InsetsUtil
 import oscar.platoscore.utils.Sesion
 
 /**
@@ -20,8 +22,11 @@ class RoleSelectionActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         binding = ActivityRoleSelectionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        InsetsUtil.padVertical(binding.root)
 
         binding.btnProfesional.setOnClickListener { entrarComo(Sesion.ROL_PROFESIONAL) }
         binding.btnPersonal.setOnClickListener { entrarComo(Sesion.ROL_PERSONAL) }
