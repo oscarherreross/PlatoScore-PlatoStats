@@ -45,6 +45,7 @@ class PersonalMainActivity : AppCompatActivity() {
     }
 
     private fun setupDrawer() {
+        setSupportActionBar(binding.toolbar)
         drawerToggle = ActionBarDrawerToggle(
             this, binding.drawerLayout, R.string.drawer_abrir, R.string.drawer_cerrar
         )

@@ -13,4 +13,14 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!--
+        Variante sin ActionBar del sistema: se usa en las pantallas con menú
+        lateral, que ponen su propio Toolbar dentro del DrawerLayout para que
+        el menú se superponga a la barra. Hereda los colores del tema base.
+    -->
+    <style name="Theme.PlatoScore.NoActionBar" parent="Theme.PlatoScore">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>

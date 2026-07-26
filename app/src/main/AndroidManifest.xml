@@ -31,7 +31,8 @@
 
         <activity
             android:name=".ui.activities.MainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.PlatoScore.NoActionBar" />
 
         <activity
             android:name=".ui.activities.TiradaDetailActivity"
@@ -47,7 +48,8 @@
 
         <activity
             android:name=".ui.activities.PersonalMainActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.PlatoScore.NoActionBar" />
 
         <activity
             android:name=".ui.activities.PersonalTiradaDetailActivity"
