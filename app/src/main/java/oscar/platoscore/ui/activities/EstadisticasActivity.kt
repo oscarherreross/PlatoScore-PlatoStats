@@ -1,11 +1,13 @@
 package oscar.platoscore.ui.activities
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,6 +20,7 @@ import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.TiradaPersonalConSeries
 import oscar.platoscore.ui.FiltrosDialog
 import oscar.platoscore.ui.views.LineChartView
+import oscar.platoscore.utils.Fechas
 import oscar.platoscore.utils.InsetsUtil
 import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaPersonalViewModel
@@ -35,6 +38,7 @@ class EstadisticasActivity : AppCompatActivity() {
 
     private var todas: List<TiradaPersonalConSeries> = emptyList()
     private var filtro = FiltroTiradas()
+    private var ultimoResumen: ResumenEstadisticas? = null
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -55,6 +59,7 @@ class EstadisticasActivity : AppCompatActivity() {
         colorTotal = resolverColorPrimario()
         colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
         prepararLeyenda()
+        binding.btnCompartir.setOnClickListener { compartir() }
 
         viewModel.todas.observe(this) { lista ->
             todas = lista
@@ -90,6 +95,7 @@ class EstadisticasActivity : AppCompatActivity() {
     }
 
     private fun mostrar(resumen: ResumenEstadisticas) {
+        ultimoResumen = resumen
         if (!resumen.hayDatos) {
             binding.tvVacio.visibility = View.VISIBLE
             binding.contenido.visibility = View.GONE
@@ -166,6 +172,89 @@ class EstadisticasActivity : AppCompatActivity() {
             binding.containerMaquinas.addView(tv)
         }
     }
+
+    private fun compartir() {
+        val texto = generarTexto() ?: run {
+            Toast.makeText(this, R.string.toast_nada_que_compartir, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, texto)
+        }
+        startActivity(Intent.createChooser(intent, getString(R.string.btn_compartir_estadisticas)))
+    }
+
+    /** Genera el resumen de estadísticas en texto plano, respetando el filtro activo. */
+    private fun generarTexto(): String? {
+        val resumen = ultimoResumen
+        if (resumen == null || !resumen.hayDatos) return null
+
+        val sb = StringBuilder()
+        sb.appendLine(getString(R.string.compartir_estadisticas_cabecera))
+        if (filtro.activo) {
+            val partes = mutableListOf<String>()
+            filtro.tipo?.let { partes.add(etiquetaTipo(it)) }
+            filtro.maquina?.let { partes.add(etiquetaMaquina(it)) }
+            if (filtro.desde != null || filtro.hasta != null) {
+                val desde = filtro.desde?.let { Fechas.mostrarFecha(it) } ?: "…"
+                val hasta = filtro.hasta?.let { Fechas.mostrarFecha(it) } ?: "…"
+                partes.add("$desde – $hasta")
+            }
+            sb.appendLine(getString(R.string.compartir_estadisticas_filtro, partes.joinToString(" · ")))
+        }
+
+        sb.appendLine()
+        sb.appendLine(getString(R.string.estadisticas_num_tiradas, resumen.numTiradas))
+        sb.appendLine(getString(R.string.estadisticas_media_platos, "%.1f".format(resumen.mediaPlatos)))
+        sb.appendLine(getString(R.string.estadisticas_media_porcentaje, "%.1f".format(resumen.mediaPorcentaje)))
+        sb.appendLine(getString(R.string.estadisticas_mejor, "%.1f".format(resumen.mejorPorcentaje)))
+        resumen.mediaPorcentajePrimerTiro?.let {
+            sb.appendLine(getString(R.string.estadisticas_media_primer_tiro, "%.1f".format(it)))
+        }
+
+        if (resumen.mediaPorPuesto.isNotEmpty()) {
+            sb.appendLine()
+            sb.appendLine(getString(R.string.estadisticas_por_puesto_titulo) + ":")
+            resumen.mediaPorPuesto.forEach {
+                sb.appendLine(
+                    getString(
+                        R.string.estadisticas_puesto_linea,
+                        it.puesto, "%.1f".format(it.porcentaje), it.numSeries
+                    )
+                )
+            }
+        }
+        if (resumen.mediaPorMaquina.isNotEmpty()) {
+            sb.appendLine()
+            sb.appendLine(getString(R.string.estadisticas_por_maquina_titulo) + ":")
+            resumen.mediaPorMaquina.forEach {
+                sb.appendLine(
+                    getString(
+                        R.string.estadisticas_maquina_linea,
+                        etiquetaMaquina(it.maquina), "%.1f".format(it.porcentaje), it.numTiradas
+                    )
+                )
+            }
+        }
+
+        sb.appendLine()
+        sb.appendLine(getString(R.string.estadisticas_grafica_titulo) + ":")
+        resumen.puntos.forEach { p ->
+            sb.appendLine(
+                getString(
+                    R.string.compartir_estadisticas_evolucion_linea,
+                    Fechas.mostrarFecha(p.fechaHora), "%.1f".format(p.porcentaje)
+                )
+            )
+        }
+        return sb.toString().trimEnd()
+    }
+
+    private fun etiquetaTipo(tipo: String): String = getString(
+        if (tipo == TiradaPersonal.TIPO_COMPETICION) R.string.tipo_competicion
+        else R.string.tipo_entrenamiento
+    )
 
     private fun etiquetaMaquina(maquina: String): String = getString(
         when (maquina) {

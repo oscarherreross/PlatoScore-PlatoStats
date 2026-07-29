@@ -149,6 +149,13 @@
                 android:layout_height="260dp"
                 android:layout_marginBottom="20dp" />
 
+            <Button
+                android:id="@+id/btnCompartir"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/btn_compartir_estadisticas"
+                android:layout_marginBottom="16dp" />
+
         </LinearLayout>
 
         </LinearLayout>
