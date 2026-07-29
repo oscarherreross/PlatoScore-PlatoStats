@@ -179,6 +179,12 @@
     <string name="estadisticas_filtro_todas">Todas</string>
     <string name="estadisticas_filtro_hint">Categoría</string>
 
+    <!-- Filtro por fechas (reutilizable) -->
+    <string name="filtro_desde">Desde</string>
+    <string name="filtro_hasta">Hasta</string>
+    <string name="cd_quitar_filtro_fechas">Quitar filtro de fechas</string>
+    <string name="personal_vacio_filtro">No hay tiradas en ese rango de fechas.</string>
+
     <!-- Menú lateral de perfil (personal) -->
     <string name="drawer_abrir">Abrir menú de perfil</string>
     <string name="drawer_cerrar">Cerrar menú de perfil</string>

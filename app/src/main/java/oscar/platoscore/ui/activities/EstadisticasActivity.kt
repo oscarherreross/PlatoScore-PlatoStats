@@ -14,6 +14,7 @@ import oscar.platoscore.models.EstadisticasPersonales
 import oscar.platoscore.models.ResumenEstadisticas
 import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.TiradaPersonalConSeries
+import oscar.platoscore.ui.FiltroFechas
 import oscar.platoscore.ui.views.LineChartView
 import oscar.platoscore.utils.InsetsUtil
 import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
@@ -35,6 +36,9 @@ class EstadisticasActivity : AppCompatActivity() {
     private var tipoSeleccionado: String? = null
     /** Máquina filtrada, o null para ver todas las máquinas juntas. */
     private var maquinaSeleccionada: String? = null
+    /** Rango de fechas filtrado (epoch millis); null = sin límite por ese lado. */
+    private var desdeMillis: Long? = null
+    private var hastaMillis: Long? = null
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -58,6 +62,11 @@ class EstadisticasActivity : AppCompatActivity() {
 
         configurarFiltroCategoria()
         configurarFiltroMaquina()
+        FiltroFechas(binding.filtroFechas) { desde, hasta ->
+            desdeMillis = desde
+            hastaMillis = hasta
+            render()
+        }
 
         viewModel.todas.observe(this) { lista ->
             todas = lista
@@ -109,7 +118,9 @@ class EstadisticasActivity : AppCompatActivity() {
     private fun render() {
         val filtradas = todas.filter { t ->
             (tipoSeleccionado == null || t.tirada.tipo == tipoSeleccionado) &&
-                (maquinaSeleccionada == null || t.tirada.maquina == maquinaSeleccionada)
+                (maquinaSeleccionada == null || t.tirada.maquina == maquinaSeleccionada) &&
+                (desdeMillis == null || t.tirada.fechaHora >= desdeMillis!!) &&
+                (hastaMillis == null || t.tirada.fechaHora <= hastaMillis!!)
         }
         mostrar(EstadisticasPersonales.calcular(filtradas))
     }

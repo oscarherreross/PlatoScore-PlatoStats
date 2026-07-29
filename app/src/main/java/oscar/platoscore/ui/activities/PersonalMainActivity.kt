@@ -23,6 +23,7 @@ import oscar.platoscore.models.PerfilUsuario
 import oscar.platoscore.models.ResumenUsuario
 import oscar.platoscore.models.TiradaPersonalConSeries
 import oscar.platoscore.ui.CuentaUi
+import oscar.platoscore.ui.FiltroFechas
 import oscar.platoscore.ui.adapters.TiradaPersonalAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
@@ -36,6 +37,10 @@ class PersonalMainActivity : AppCompatActivity() {
     private lateinit var adapter: TiradaPersonalAdapter
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
+    private var todas: List<TiradaPersonalConSeries> = emptyList()
+    private var desdeMillis: Long? = null
+    private var hastaMillis: Long? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdgeConToolbar()
@@ -46,6 +51,12 @@ class PersonalMainActivity : AppCompatActivity() {
         aplicarInsets()
         setupRecyclerView()
         observar()
+
+        FiltroFechas(binding.filtroFechas) { desde, hasta ->
+            desdeMillis = desde
+            hastaMillis = hasta
+            render()
+        }
 
         binding.fabAddTirada.setOnClickListener {
             startActivity(Intent(this, PersonalTiradaDetailActivity::class.java))
@@ -120,10 +131,23 @@ class PersonalMainActivity : AppCompatActivity() {
 
     private fun observar() {
         viewModel.todas.observe(this) { tiradas ->
-            adapter.submitList(tiradas)
-            binding.tvEmpty.visibility = if (tiradas.isEmpty()) View.VISIBLE else View.GONE
+            todas = tiradas
+            // El resumen del perfil (menú lateral) es global, sin filtro de fechas.
             mostrarResumen(PerfilUsuario.calcular(tiradas))
+            render()
         }
+    }
+
+    private fun render() {
+        val filtradas = todas.filter { t ->
+            (desdeMillis == null || t.tirada.fechaHora >= desdeMillis!!) &&
+                (hastaMillis == null || t.tirada.fechaHora <= hastaMillis!!)
+        }
+        adapter.submitList(filtradas)
+        binding.tvEmpty.visibility = if (filtradas.isEmpty()) View.VISIBLE else View.GONE
+        binding.tvEmpty.setText(
+            if (todas.isEmpty()) R.string.personal_vacio else R.string.personal_vacio_filtro
+        )
     }
 
     private fun mostrarResumen(resumen: ResumenUsuario) {

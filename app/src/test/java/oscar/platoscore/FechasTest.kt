@@ -39,4 +39,25 @@ class FechasTest {
         val (anio, mes, dia) = Fechas.partesIso("2025-01-09")
         assertEquals("2025-01-09", Fechas.aIso(anio, mes, dia))
     }
+
+    @Test
+    fun `inicio y fin del dia mantienen el mismo dia y su orden`() {
+        val inicio = Fechas.inicioDelDiaMillis(2026, 7, 12)
+        val fin = Fechas.finDelDiaMillis(2026, 7, 12)
+        assertTrue(inicio < fin)
+        assertEquals("2026-07-12", Fechas.isoDeMillis(inicio))
+        assertEquals("2026-07-12", Fechas.isoDeMillis(fin))
+        assertEquals(Triple(2026, 7, 12), Fechas.partesDeMillis(inicio))
+    }
+
+    @Test
+    fun `un instante del dia cae dentro del rango inicio-fin`() {
+        val inicio = Fechas.inicioDelDiaMillis(2026, 7, 12)
+        val fin = Fechas.finDelDiaMillis(2026, 7, 12)
+        // Mediodía de ese mismo día.
+        val (a, m, d) = Fechas.partesDeMillis(inicio)
+        assertEquals(2026, a); assertEquals(7, m); assertEquals(12, d)
+        val medioDia = inicio + 12 * 60 * 60 * 1000L
+        assertTrue(medioDia in inicio..fin)
+    }
 }

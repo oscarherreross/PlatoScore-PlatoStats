@@ -66,6 +66,13 @@
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
+        <include
+            android:id="@+id/filtroFechas"
+            layout="@layout/view_filtro_fechas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp" />
+
         <TextView
             android:id="@+id/tvVacio"
             android:layout_width="match_parent"

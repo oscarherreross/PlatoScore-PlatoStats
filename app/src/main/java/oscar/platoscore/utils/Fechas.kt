@@ -25,6 +25,49 @@ object Fechas {
     fun mostrarFechaHora(millis: Long): String =
         SimpleDateFormat(FORMATO_FECHA_HORA, Locale.getDefault()).format(Date(millis))
 
+    /** Fecha (epoch millis) mostrada como dd/MM/yyyy. */
+    fun mostrarFecha(millis: Long): String =
+        SimpleDateFormat(FORMATO_VISUAL, Locale.getDefault()).format(Date(millis))
+
+    /** Fecha (epoch millis) en formato ISO yyyy-MM-dd (para comparar con Tirada.fecha). */
+    fun isoDeMillis(millis: Long): String =
+        SimpleDateFormat(FORMATO_ISO, Locale.getDefault()).format(Date(millis))
+
+    /** Descompone una fecha (epoch millis) en (año, mes 1-12, día). */
+    fun partesDeMillis(millis: Long): Triple<Int, Int, Int> {
+        val cal = Calendar.getInstance().apply { timeInMillis = millis }
+        return Triple(
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH) + 1,
+            cal.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
+    /** Epoch millis del inicio del día (00:00:00.000). Mes en 1-12. */
+    fun inicioDelDiaMillis(anio: Int, mes: Int, dia: Int): Long =
+        diaMillis(anio, mes, dia, finDelDia = false)
+
+    /** Epoch millis del final del día (23:59:59.999). Mes en 1-12. */
+    fun finDelDiaMillis(anio: Int, mes: Int, dia: Int): Long =
+        diaMillis(anio, mes, dia, finDelDia = true)
+
+    private fun diaMillis(anio: Int, mes: Int, dia: Int, finDelDia: Boolean): Long {
+        val cal = Calendar.getInstance()
+        cal.set(anio, mes - 1, dia)
+        if (finDelDia) {
+            cal.set(Calendar.HOUR_OF_DAY, 23)
+            cal.set(Calendar.MINUTE, 59)
+            cal.set(Calendar.SECOND, 59)
+            cal.set(Calendar.MILLISECOND, 999)
+        } else {
+            cal.set(Calendar.HOUR_OF_DAY, 0)
+            cal.set(Calendar.MINUTE, 0)
+            cal.set(Calendar.SECOND, 0)
+            cal.set(Calendar.MILLISECOND, 0)
+        }
+        return cal.timeInMillis
+    }
+
     fun mostrar(fechaIso: String): String = try {
         val fecha = SimpleDateFormat(FORMATO_ISO, Locale.getDefault()).parse(fechaIso)
         if (fecha != null) {
