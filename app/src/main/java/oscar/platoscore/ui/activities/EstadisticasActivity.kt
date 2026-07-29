@@ -2,8 +2,9 @@ package oscar.platoscore.ui.activities
 
 import android.os.Bundle
 import android.util.TypedValue
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -12,9 +13,10 @@ import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityEstadisticasBinding
 import oscar.platoscore.models.EstadisticasPersonales
 import oscar.platoscore.models.ResumenEstadisticas
+import oscar.platoscore.models.FiltroTiradas
 import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.TiradaPersonalConSeries
-import oscar.platoscore.ui.FiltroFechas
+import oscar.platoscore.ui.FiltrosDialog
 import oscar.platoscore.ui.views.LineChartView
 import oscar.platoscore.utils.InsetsUtil
 import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
@@ -32,13 +34,7 @@ class EstadisticasActivity : AppCompatActivity() {
     private val viewModel: TiradaPersonalViewModel by viewModels()
 
     private var todas: List<TiradaPersonalConSeries> = emptyList()
-    /** Tipo filtrado, o null para ver todas las categorías juntas. */
-    private var tipoSeleccionado: String? = null
-    /** Máquina filtrada, o null para ver todas las máquinas juntas. */
-    private var maquinaSeleccionada: String? = null
-    /** Rango de fechas filtrado (epoch millis); null = sin límite por ese lado. */
-    private var desdeMillis: Long? = null
-    private var hastaMillis: Long? = null
+    private var filtro = FiltroTiradas()
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -60,17 +56,27 @@ class EstadisticasActivity : AppCompatActivity() {
         colorPrimerTiro = ContextCompat.getColor(this, R.color.chart_primer_tiro)
         prepararLeyenda()
 
-        configurarFiltroCategoria()
-        configurarFiltroMaquina()
-        FiltroFechas(binding.filtroFechas) { desde, hasta ->
-            desdeMillis = desde
-            hastaMillis = hasta
-            render()
-        }
-
         viewModel.todas.observe(this) { lista ->
             todas = lista
             render()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_filtro, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_filtros -> {
+                FiltrosDialog.mostrar(this, filtro, conTipoYMaquina = true) { nuevo ->
+                    filtro = nuevo
+                    render()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -79,50 +85,8 @@ class EstadisticasActivity : AppCompatActivity() {
         return true
     }
 
-    private fun configurarFiltroCategoria() {
-        // Cada posición del desplegable se asocia a un tipo filtrado (null = todas).
-        val opciones = listOf(
-            getString(R.string.estadisticas_filtro_todas) to null,
-            getString(R.string.tipo_entrenamiento) to TiradaPersonal.TIPO_ENTRENAMIENTO,
-            getString(R.string.tipo_competicion) to TiradaPersonal.TIPO_COMPETICION
-        )
-        binding.dropdownTipo.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, opciones.map { it.first })
-        )
-        // Selección inicial: Todas (sin disparar filtrado de texto).
-        binding.dropdownTipo.setText(opciones.first().first, false)
-        binding.dropdownTipo.setOnItemClickListener { _, _, posicion, _ ->
-            tipoSeleccionado = opciones[posicion].second
-            render()
-        }
-    }
-
-    private fun configurarFiltroMaquina() {
-        // Cada posición del desplegable se asocia a una máquina filtrada (null = todas).
-        val opciones = listOf(
-            getString(R.string.estadisticas_filtro_todas) to null,
-            getString(R.string.maquina_robot) to TiradaPersonal.MAQUINA_ROBOT,
-            getString(R.string.maquina_trap) to TiradaPersonal.MAQUINA_TRAP,
-            getString(R.string.maquina_olimpico) to TiradaPersonal.MAQUINA_OLIMPICO
-        )
-        binding.dropdownMaquina.setAdapter(
-            ArrayAdapter(this, android.R.layout.simple_list_item_1, opciones.map { it.first })
-        )
-        binding.dropdownMaquina.setText(opciones.first().first, false)
-        binding.dropdownMaquina.setOnItemClickListener { _, _, posicion, _ ->
-            maquinaSeleccionada = opciones[posicion].second
-            render()
-        }
-    }
-
     private fun render() {
-        val filtradas = todas.filter { t ->
-            (tipoSeleccionado == null || t.tirada.tipo == tipoSeleccionado) &&
-                (maquinaSeleccionada == null || t.tirada.maquina == maquinaSeleccionada) &&
-                (desdeMillis == null || t.tirada.fechaHora >= desdeMillis!!) &&
-                (hastaMillis == null || t.tirada.fechaHora <= hastaMillis!!)
-        }
-        mostrar(EstadisticasPersonales.calcular(filtradas))
+        mostrar(EstadisticasPersonales.calcular(todas.filter { filtro.acepta(it) }))
     }
 
     private fun mostrar(resumen: ResumenEstadisticas) {

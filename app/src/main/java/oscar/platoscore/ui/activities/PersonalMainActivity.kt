@@ -3,6 +3,7 @@ package oscar.platoscore.ui.activities
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +20,12 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityPersonalMainBinding
+import oscar.platoscore.models.FiltroTiradas
 import oscar.platoscore.models.PerfilUsuario
 import oscar.platoscore.models.ResumenUsuario
 import oscar.platoscore.models.TiradaPersonalConSeries
 import oscar.platoscore.ui.CuentaUi
-import oscar.platoscore.ui.FiltroFechas
+import oscar.platoscore.ui.FiltrosDialog
 import oscar.platoscore.ui.adapters.TiradaPersonalAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
@@ -38,8 +40,7 @@ class PersonalMainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     private var todas: List<TiradaPersonalConSeries> = emptyList()
-    private var desdeMillis: Long? = null
-    private var hastaMillis: Long? = null
+    private var filtro = FiltroTiradas()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,12 +52,6 @@ class PersonalMainActivity : AppCompatActivity() {
         aplicarInsets()
         setupRecyclerView()
         observar()
-
-        FiltroFechas(binding.filtroFechas) { desde, hasta ->
-            desdeMillis = desde
-            hastaMillis = hasta
-            render()
-        }
 
         binding.fabAddTirada.setOnClickListener {
             startActivity(Intent(this, PersonalTiradaDetailActivity::class.java))
@@ -110,10 +105,24 @@ class PersonalMainActivity : AppCompatActivity() {
         drawerToggle.onConfigurationChanged(newConfig)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_filtro, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Solo el icono de hamburguesa (home) abre/cierra el menú lateral.
+        // El icono de hamburguesa (home) abre/cierra el menú lateral.
         if (drawerToggle.onOptionsItemSelected(item)) return true
-        return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_filtros -> {
+                FiltrosDialog.mostrar(this, filtro, conTipoYMaquina = true) { nuevo ->
+                    filtro = nuevo
+                    render()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -139,10 +148,7 @@ class PersonalMainActivity : AppCompatActivity() {
     }
 
     private fun render() {
-        val filtradas = todas.filter { t ->
-            (desdeMillis == null || t.tirada.fechaHora >= desdeMillis!!) &&
-                (hastaMillis == null || t.tirada.fechaHora <= hastaMillis!!)
-        }
+        val filtradas = todas.filter { filtro.acepta(it) }
         adapter.submitList(filtradas)
         binding.tvEmpty.visibility = if (filtradas.isEmpty()) View.VISIBLE else View.GONE
         binding.tvEmpty.setText(

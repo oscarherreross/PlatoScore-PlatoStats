@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -21,11 +22,12 @@ import com.google.firebase.auth.FirebaseAuth
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.databinding.DialogAddTiradaBinding
+import oscar.platoscore.models.FiltroTiradas
 import oscar.platoscore.models.ResumenProfesional
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
 import oscar.platoscore.ui.CuentaUi
-import oscar.platoscore.ui.FiltroFechas
+import oscar.platoscore.ui.FiltrosDialog
 import oscar.platoscore.ui.adapters.TiradaAdapter
 import oscar.platoscore.utils.Extras
 import oscar.platoscore.utils.Fechas
@@ -40,8 +42,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
     private var todasTiradas: List<TiradaConContadores> = emptyList()
-    private var desdeMillis: Long? = null
-    private var hastaMillis: Long? = null
+    private var filtro = FiltroTiradas()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,12 +55,6 @@ class MainActivity : AppCompatActivity() {
         setupRecyclerView()
         observeTiradas()
         setupFAB()
-
-        FiltroFechas(binding.filtroFechas) { desde, hasta ->
-            desdeMillis = desde
-            hastaMillis = hasta
-            render()
-        }
     }
 
     /**
@@ -121,10 +116,24 @@ class MainActivity : AppCompatActivity() {
         drawerToggle.onConfigurationChanged(newConfig)
     }
 
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_filtro, menu)
+        return true
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Solo el icono de hamburguesa (home) abre/cierra el menú lateral.
+        // El icono de hamburguesa (home) abre/cierra el menú lateral.
         if (drawerToggle.onOptionsItemSelected(item)) return true
-        return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_filtros -> {
+                FiltrosDialog.mostrar(this, filtro, conTipoYMaquina = false) { nuevo ->
+                    filtro = nuevo
+                    render()
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun setupRecyclerView() {
@@ -162,12 +171,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun render() {
-        val desdeIso = desdeMillis?.let { Fechas.isoDeMillis(it) }
-        val hastaIso = hastaMillis?.let { Fechas.isoDeMillis(it) }
-        val filtradas = todasTiradas.filter { t ->
-            (desdeIso == null || t.tirada.fecha >= desdeIso) &&
-                (hastaIso == null || t.tirada.fecha <= hastaIso)
-        }
+        val filtradas = todasTiradas.filter { filtro.acepta(it) }
         tiradaAdapter.submitList(filtradas)
         binding.tvEmpty.visibility =
             if (filtradas.isEmpty() && todasTiradas.isNotEmpty()) View.VISIBLE else View.GONE
