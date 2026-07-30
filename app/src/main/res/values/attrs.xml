@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color de la barra de aplicación (toolbar + cabecera del drawer). Se desacopla de
+         colorPrimary para que en modo noche la barra pueda ser grafito sin perder el naranja
+         como color de acento (botones, enlaces, gráfica). -->
+    <attr name="platoAppBar" format="color" />
+    <!-- Color del texto/iconos sobre la barra de aplicación. -->
+    <attr name="platoOnAppBar" format="color" />
+</resources>

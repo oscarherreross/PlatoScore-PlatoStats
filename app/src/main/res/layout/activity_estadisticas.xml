@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="?attr/platoAppBar"
         android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar" />
 
     <androidx.core.widget.NestedScrollView

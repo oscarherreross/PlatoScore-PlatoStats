@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/platoAppBar"
             android:theme="@style/ThemeOverlay.MaterialComponents.Dark.ActionBar"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:background="?attr/colorPrimary"
+            android:background="?attr/platoAppBar"
             android:padding="16dp"
             android:paddingTop="24dp">
 
@@ -90,7 +90,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/drawer_titulo_perfil"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="?attr/platoOnAppBar"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -98,7 +98,7 @@
                 android:id="@+id/tvEmail"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnPrimary"
+                android:textColor="?attr/platoOnAppBar"
                 android:layout_marginTop="4dp"
                 tools:text="organizador@correo.com" />
         </LinearLayout>

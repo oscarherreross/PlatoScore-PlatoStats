@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 2.ª línea de la gráfica (% al primer tiro): teal más luminoso para que contraste
+         bien sobre el fondo oscuro del modo noche. -->
+    <color name="chart_primer_tiro">#FF26A69A</color>
+</resources>

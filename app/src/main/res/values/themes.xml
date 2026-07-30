@@ -1,14 +1,17 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!-- Base application theme (modo día · paleta Grafito). -->
     <style name="Theme.PlatoScore" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <!-- Primary brand color (naranja del plato). -->
+        <item name="colorPrimary">@color/naranja</item>
+        <item name="colorPrimaryVariant">@color/naranja_oscuro</item>
         <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
+        <!-- Secondary brand color (grafito). -->
+        <item name="colorSecondary">@color/grafito</item>
+        <item name="colorSecondaryVariant">@color/grafito_oscuro</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Barra de app (toolbar + cabecera del drawer). En día coincide con el naranja primario. -->
+        <item name="platoAppBar">@color/naranja</item>
+        <item name="platoOnAppBar">@color/white</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

@@ -274,7 +274,7 @@ class EstadisticasActivity : AppCompatActivity() {
     private fun resolverColorPrimario(): Int {
         val tv = TypedValue()
         val ok = theme.resolveAttribute(com.google.android.material.R.attr.colorPrimary, tv, true)
-        return if (ok) tv.data else ContextCompat.getColor(this, R.color.purple_500)
+        return if (ok) tv.data else ContextCompat.getColor(this, R.color.naranja)
     }
 
     private fun dp(valor: Int): Int =
