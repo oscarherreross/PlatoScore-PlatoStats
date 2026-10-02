@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Primer plano del icono adaptativo (PROVISIONAL): monograma "S" de PlatoStats
-     con el plato en el hueco superior de la letra, hermano de la "P" de PlatoScore.
+<!-- Primer plano del icono adaptativo de PlatoStats: una gráfica de evolución que
+     sube y termina en el plato (cúpula grafito, reborde crema y punto naranja).
      Todo el arte vive dentro de la zona segura (círculo central de 66) del lienzo de 108. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -8,28 +8,29 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- La S: dos arcos de radio 11 (centros 54,43 y 54,65) con trazo grueso y extremos redondos -->
+    <!-- Línea de la gráfica (crema), con uniones y extremos redondos -->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FBF5EE"
-        android:strokeWidth="8.5"
+        android:strokeWidth="6.6"
         android:strokeLineCap="round"
-        android:pathData="M62.43,35.93 A11,11 0 1,0 54,54 A11,11 0 1,1 45.57,72.07" />
+        android:strokeLineJoin="round"
+        android:pathData="M32,72.5 L45.5,58 L57.5,64 L72.5,41" />
 
-    <!-- Cúpula del plato (grafito) en el hueco superior -->
+    <!-- Último punto de la gráfica: el plato. Cúpula (grafito) -->
     <path
         android:fillColor="#37474F"
-        android:pathData="M49.4,43 a4.6,4.6 0 1,0 9.2,0 a4.6,4.6 0 1,0 -9.2,0 Z" />
+        android:pathData="M65,41 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0 Z" />
 
-    <!-- Reborde del plato (crema fino) -->
+    <!-- Reborde del plato (crema) -->
     <path
         android:fillColor="#00000000"
         android:strokeColor="#FBF5EE"
-        android:strokeWidth="0.9"
-        android:pathData="M49.4,43 a4.6,4.6 0 1,0 9.2,0 a4.6,4.6 0 1,0 -9.2,0 Z" />
+        android:strokeWidth="1.5"
+        android:pathData="M65,41 a7.5,7.5 0 1,0 15,0 a7.5,7.5 0 1,0 -15,0 Z" />
 
     <!-- Punto central del plato (naranja) -->
     <path
         android:fillColor="#FF9152"
-        android:pathData="M52.4,43 a1.6,1.6 0 1,0 3.2,0 a1.6,1.6 0 1,0 -3.2,0 Z" />
+        android:pathData="M69.9,41 a2.6,2.6 0 1,0 5.2,0 a2.6,2.6 0 1,0 -5.2,0 Z" />
 </vector>
