@@ -16,4 +16,10 @@
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <!-- Tema de la pantalla de carga: el fondo naranja se pinta ya desde
+         windowBackground para que no haya parpadeo en blanco en el arranque. -->
+    <style name="Theme.PlatoScore.Splash" parent="Theme.PlatoScore">
+        <item name="android:windowBackground">@color/naranja</item>
+    </style>
 </resources>

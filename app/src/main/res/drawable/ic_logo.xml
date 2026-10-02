@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Logo de PlatoScore: la "P" del icono, ampliada para usarse como logotipo
+     (p. ej. en la pantalla de carga). Sin fondo: se coloca sobre el naranja. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="55"
+        android:pivotY="55.5"
+        android:scaleX="1.75"
+        android:scaleY="1.75">
+
+        <!-- Astil de la P (crema) -->
+        <path
+            android:fillColor="#FBF5EE"
+            android:pathData="M41.5,31 L45.5,31 A3,3 0 0 1 48.5,34 L48.5,77 A3,3 0 0 1 45.5,80 L41.5,80 A3,3 0 0 1 38.5,77 L38.5,34 A3,3 0 0 1 41.5,31 Z" />
+        <!-- Cuenco de la P como anillo crema -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FBF5EE"
+            android:strokeWidth="8.5"
+            android:pathData="M43.75,48 a11.75,11.75 0 1,0 23.5,0 a11.75,11.75 0 1,0 -23.5,0 Z" />
+        <!-- Cúpula del plato (grafito) -->
+        <path
+            android:fillColor="#37474F"
+            android:pathData="M49.5,48 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 Z" />
+        <!-- Reborde del plato (crema fino) -->
+        <path
+            android:fillColor="#00000000"
+            android:strokeColor="#FBF5EE"
+            android:strokeWidth="1"
+            android:pathData="M49.5,48 a6,6 0 1,0 12,0 a6,6 0 1,0 -12,0 Z" />
+        <!-- Punto central (naranja) -->
+        <path
+            android:fillColor="#FF9152"
+            android:pathData="M53.5,48 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 Z" />
+    </group>
+</vector>

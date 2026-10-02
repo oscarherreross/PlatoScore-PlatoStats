@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">PlatoScore</string>
 
+    <!-- Pantalla de carga -->
+    <string name="splash_tagline">Tiro al plato</string>
+    <string name="cd_logo">Logo de PlatoScore</string>
+
     <!-- Acciones genéricas -->
     <string name="accion_cancelar">Cancelar</string>
     <string name="accion_eliminar">Eliminar</string>

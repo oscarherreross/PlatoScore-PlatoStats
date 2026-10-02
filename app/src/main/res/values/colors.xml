@@ -2,6 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="crema">#FFFBF5EE</color>   <!-- crema del logo / textos sobre naranja -->
+
 
     <!-- Marca · Naranja (primario): barra, cabeceras, botones. -->
     <color name="naranja_claro">#FFFFAB91</color>   <!-- tinte claro -->
