@@ -9,6 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.utils.Fechas
+import oscar.plato.core.utils.InsetsUtil
+import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityResultadosBinding
 import oscar.platoscore.models.Clasificacion
@@ -16,11 +19,9 @@ import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.ResultadoAdapter
 import oscar.platoscore.utils.Extras
-import oscar.platoscore.utils.Fechas
-import oscar.platoscore.utils.InsetsUtil
-import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
+import oscar.plato.core.R as CoreR
 
 class ResultadosActivity : AppCompatActivity() {
 
@@ -97,7 +98,7 @@ class ResultadosActivity : AppCompatActivity() {
         binding.btnCompartir.setOnClickListener {
             val texto = generarTextoResultados()
             if (texto == null) {
-                Toast.makeText(this, R.string.toast_nada_que_compartir, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, CoreR.string.toast_nada_que_compartir, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val intent = Intent(Intent.ACTION_SEND).apply {
@@ -203,7 +204,7 @@ class ResultadosActivity : AppCompatActivity() {
                     grupo.forEach { tiradorViewModel.updateTirador(it.copy(ordenDesempate = 0)) }
                     Toast.makeText(this, R.string.toast_desempate_eliminado, Toast.LENGTH_SHORT).show()
                 }
-                .setNegativeButton(R.string.accion_cancelar, null)
+                .setNegativeButton(CoreR.string.accion_cancelar, null)
                 .show()
         } else {
             pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
@@ -235,7 +236,7 @@ class ResultadosActivity : AppCompatActivity() {
                     ordenados + pendientes[which]
                 )
             }
-            .setNegativeButton(R.string.accion_cancelar, null)
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
             .show()
     }
 

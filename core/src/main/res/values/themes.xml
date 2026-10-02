@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme (modo día · paleta Grafito). -->
+    <style name="Theme.Plato" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color (naranja del plato). -->
+        <item name="colorPrimary">@color/naranja</item>
+        <item name="colorPrimaryVariant">@color/naranja_oscuro</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color (grafito). -->
+        <item name="colorSecondary">@color/grafito</item>
+        <item name="colorSecondaryVariant">@color/grafito_oscuro</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Barra de app (toolbar + cabecera del drawer). En día coincide con el naranja primario. -->
+        <item name="platoAppBar">@color/naranja</item>
+        <item name="platoOnAppBar">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <!-- Tema de la pantalla de carga: el fondo naranja se pinta ya desde
+         windowBackground para que no haya parpadeo en blanco en el arranque. -->
+    <style name="Theme.Plato.Splash" parent="Theme.Plato">
+        <item name="android:windowBackground">@color/naranja</item>
+    </style>
+</resources>

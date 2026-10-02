@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import oscar.plato.core.utils.Sesion
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.ResumenProfesional
 import oscar.platoscore.models.ResumenProfesionalCalc
@@ -13,7 +14,6 @@ import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
 import oscar.platoscore.models.TiradorConTirada
 import oscar.platoscore.repositories.TiradaRepository
-import oscar.platoscore.utils.Sesion
 
 class TiradaViewModel(application: Application) : AndroidViewModel(application) {
 

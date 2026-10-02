@@ -7,17 +7,12 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import oscar.platoscore.models.Escuadra
-import oscar.platoscore.models.SeriePersonal
 import oscar.platoscore.models.Tirada
-import oscar.platoscore.models.TiradaPersonal
 import oscar.platoscore.models.Tirador
 
 @Database(
-    entities = [
-        Tirada::class, Escuadra::class, Tirador::class,
-        TiradaPersonal::class, SeriePersonal::class
-    ],
-    version = 6,
+    entities = [Tirada::class, Escuadra::class, Tirador::class],
+    version = 7,
     exportSchema = true
 )
 abstract class PlatoScoreDatabase : RoomDatabase() {
@@ -25,7 +20,6 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
     abstract fun tiradaDao(): TiradaDao
     abstract fun escuadraDao(): EscuadraDao
     abstract fun tiradorDao(): TiradorDao
-    abstract fun tiradaPersonalDao(): TiradaPersonalDao
 
     companion object {
         @Volatile private var INSTANCE: PlatoScoreDatabase? = null
@@ -214,6 +208,19 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * v6 -> v7: el modo personal pasa a ser la app PlatoStats, con su propia
+         * base de datos, y PlatoScore deja de tener tiradas personales. Se
+         * eliminan sus tablas (primero series_personales, la hija de la clave
+         * foránea). Sus índices desaparecen con ellas.
+         */
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DROP TABLE IF EXISTS series_personales")
+                db.execSQL("DROP TABLE IF EXISTS tiradas_personales")
+            }
+        }
+
         fun getDatabase(context: Context): PlatoScoreDatabase {
             return INSTANCE ?: synchronized(this) {
                 Room.databaseBuilder(
@@ -221,7 +228,8 @@ abstract class PlatoScoreDatabase : RoomDatabase() {
                     PlatoScoreDatabase::class.java,
                     "platoscore_database"
                 ).addMigrations(
-                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6
+                    MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6,
+                    MIGRATION_6_7
                 )
                     .build()
                     .also { INSTANCE = it }

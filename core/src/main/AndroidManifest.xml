@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Firebase Authentication necesita acceso a internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application>
+        <!-- Inicio de sesión común a las dos apps. La pantalla de carga
+             (oscar.plato.core.ui.SplashActivity) la declara cada app como launcher. -->
+        <activity
+            android:name="oscar.plato.core.ui.LoginActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

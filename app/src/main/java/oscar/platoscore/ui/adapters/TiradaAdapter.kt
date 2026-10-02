@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import oscar.plato.core.utils.Fechas
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ItemTiradaBinding
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
-import oscar.platoscore.utils.Fechas
 
 class TiradaAdapter(
     private val onClickListener: (Tirada) -> Unit,

@@ -1,14 +1,9 @@
 <resources>
     <string name="app_name">PlatoScore</string>
-
-    <!-- Pantalla de carga -->
+    <!-- Lema de la pantalla de carga -->
     <string name="splash_tagline">Tiro al plato</string>
-    <string name="cd_logo">Logo de PlatoScore</string>
 
     <!-- Acciones genéricas -->
-    <string name="accion_cancelar">Cancelar</string>
-    <string name="accion_eliminar">Eliminar</string>
-    <string name="accion_guardar">Guardar</string>
     <string name="accion_crear">Crear</string>
     <string name="error_nombre_obligatorio">El nombre es obligatorio</string>
 
@@ -86,7 +81,6 @@
     <string name="item_platos">%1$d platos</string>
     <string name="item_precio">%1$s€</string>
     <string name="btn_compartir_resultados">Compartir resultados</string>
-    <string name="toast_nada_que_compartir">No hay resultados que compartir</string>
     <string name="compartir_cabecera">🏆 %1$s — %2$s</string>
     <string name="compartir_num_tiradores">Tiradores: %1$d</string>
     <string name="compartir_linea_resultado">%1$s%2$d. %3$s — %4$d platos</string>
@@ -97,125 +91,6 @@
     <string name="toast_desempate_eliminado">Desempate eliminado</string>
     <string name="titulo_desempate_puesto">Desempate a %1$d platos: ¿quién queda en el puesto %2$d?</string>
     <string name="toast_desempate_guardado">Desempate guardado</string>
-
-    <!-- Inicio de sesión -->
-    <string name="login_subtitulo">Inicia sesión para continuar</string>
-    <string name="label_email">Correo electrónico</string>
-    <string name="label_password">Contraseña</string>
-    <string name="label_password_confirm">Repite la contraseña</string>
-    <string name="accion_iniciar_sesion">Iniciar sesión</string>
-    <string name="accion_crear_cuenta">Crear cuenta</string>
-    <string name="login_no_tengo_cuenta">¿No tienes cuenta? Crea una</string>
-    <string name="login_ya_tengo_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
-    <string name="login_olvide_password">He olvidado mi contraseña</string>
-    <string name="login_error_email_invalido">Introduce un correo válido</string>
-    <string name="login_error_password_corta">La contraseña debe tener al menos 6 caracteres</string>
-    <string name="login_error_password_no_coincide">Las contraseñas no coinciden</string>
-    <string name="login_error_credenciales">Correo o contraseña incorrectos</string>
-    <string name="login_error_email_en_uso">Ya existe una cuenta con ese correo</string>
-    <string name="login_error_usuario_no_existe">No existe ninguna cuenta con ese correo</string>
-    <string name="login_error_red">Sin conexión: comprueba tu acceso a internet</string>
-    <string name="login_error_generico">No se ha podido completar la operación. Inténtalo de nuevo.</string>
-    <string name="login_reset_enviado">Te hemos enviado un correo para restablecer la contraseña</string>
-    <string name="accion_cerrar_sesion">Cerrar sesión</string>
-    <string name="toast_sesion_cerrada">Sesión cerrada</string>
-
-    <!-- Selección de rol -->
-    <string name="role_subtitulo">¿Cómo quieres entrar?</string>
-    <string name="role_entrar_profesional">Entrar como profesional</string>
-    <string name="role_entrar_personal">Entrar como personal</string>
-
-    <!-- Modo personal: lista -->
-    <string name="personal_titulo">Mis tiradas</string>
-    <string name="personal_vacio">Aún no has registrado ninguna tirada. Pulsa + para añadir una.</string>
-    <string name="menu_estadisticas">Estadísticas</string>
-    <string name="cd_anadir_tirada_personal">Añadir tirada</string>
-    <string name="item_personal_escuadra_tipo">Escuadra %1$d · %2$s · %3$s</string>
-    <string name="item_personal_resumen">%1$d/%2$d platos · %3$s%%</string>
-    <string name="titulo_eliminar_tirada_personal">Eliminar tirada</string>
-    <string name="msg_eliminar_tirada_personal">¿Seguro que quieres eliminar esta tirada de %1$s?</string>
-    <string name="toast_tirada_personal_eliminada">Tirada eliminada</string>
-
-    <!-- Modo personal: formulario -->
-    <string name="personal_form_titulo_nueva">Nueva tirada</string>
-    <string name="personal_form_titulo_editar">Editar tirada</string>
-    <string name="label_lugar">Lugar</string>
-    <string name="hint_lugar">Ej: Club de tiro de Madrid</string>
-    <string name="label_fecha_hora">Fecha y hora</string>
-    <string name="label_numero_escuadra">Nº de escuadra</string>
-    <string name="label_tipo">Tipo de tirada</string>
-    <string name="tipo_competicion">Competición</string>
-    <string name="tipo_entrenamiento">Entrenamiento</string>
-    <string name="label_maquina">Máquina</string>
-    <string name="maquina_robot">Robot</string>
-    <string name="maquina_trap">Trap</string>
-    <string name="maquina_olimpico">Olímpico</string>
-    <string name="label_numero_series">Nº de series (25 platos cada una)</string>
-    <string name="label_notas">Notas</string>
-    <string name="series_titulo">Series</string>
-    <string name="serie_label">Serie %1$d</string>
-    <string name="hint_puesto_serie">Puesto</string>
-    <string name="hint_platos_rotos_serie">Platos rotos</string>
-    <string name="hint_platos_primer_tiro">1.er tiro (opcional)</string>
-    <string name="toast_tirada_personal_guardada">Tirada guardada</string>
-    <string name="personal_error_lugar">Indica el lugar de la tirada</string>
-    <string name="personal_error_escuadra">Indica el número de escuadra</string>
-    <string name="personal_error_series">Indica cuántas series (entre 1 y 20)</string>
-    <string name="personal_error_puesto_serie">Serie %1$d: introduce el puesto de tiro</string>
-    <string name="personal_error_platos_serie">Serie %1$d: introduce los platos rotos (0 a 25)</string>
-    <string name="personal_error_primer_tiro">Serie %1$d: el 1.er tiro no puede superar los platos rotos ni 25</string>
-
-    <!-- Modo personal: estadísticas -->
-    <string name="estadisticas_titulo">Estadísticas</string>
-    <string name="estadisticas_vacio">Registra alguna tirada para ver tu evolución.</string>
-    <string name="estadisticas_grafica_titulo">Aciertos por tirada (%)</string>
-    <string name="estadisticas_num_tiradas">Tiradas registradas: %1$d</string>
-    <string name="estadisticas_media_platos">Media de platos: %1$s</string>
-    <string name="estadisticas_media_porcentaje">Media de aciertos: %1$s%%</string>
-    <string name="estadisticas_mejor">Mejor tirada: %1$s%%</string>
-    <string name="estadisticas_media_primer_tiro">Media al 1.er tiro: %1$s%%</string>
-    <string name="estadisticas_leyenda_total">Total</string>
-    <string name="estadisticas_leyenda_primer_tiro">1.er tiro</string>
-    <string name="estadisticas_por_puesto_titulo">Media de aciertos por puesto</string>
-    <string name="estadisticas_puesto_linea">Puesto %1$d: %2$s%% (%3$d series)</string>
-    <string name="estadisticas_por_maquina_titulo">Media de aciertos por máquina</string>
-    <string name="estadisticas_maquina_linea">%1$s: %2$s%% (%3$d tiradas)</string>
-    <string name="btn_compartir_estadisticas">Compartir estadísticas</string>
-    <string name="compartir_estadisticas_cabecera">📊 Mis estadísticas de tiro</string>
-    <string name="compartir_estadisticas_filtro">Filtro: %1$s</string>
-    <string name="compartir_estadisticas_evolucion_linea">%1$s: %2$s%%</string>
-    <string name="estadisticas_filtro_todas">Todas</string>
-    <string name="estadisticas_filtro_hint">Categoría</string>
-
-    <!-- Filtros (botón + diálogo) -->
-    <string name="menu_filtros">Filtros</string>
-    <string name="accion_aplicar">Aplicar</string>
-    <string name="accion_limpiar">Limpiar</string>
-    <string name="filtro_desde">Desde</string>
-    <string name="filtro_hasta">Hasta</string>
-    <string name="filtro_seccion_fechas">Fechas</string>
-    <string name="personal_vacio_filtro">No hay tiradas que coincidan con el filtro.</string>
-
-    <!-- Menú lateral de perfil (personal) -->
-    <string name="drawer_abrir">Abrir menú de perfil</string>
-    <string name="drawer_cerrar">Cerrar menú de perfil</string>
-    <string name="drawer_titulo_perfil">Mi perfil</string>
-    <string name="drawer_resumen_titulo">Resumen</string>
-    <string name="drawer_total_platos">Platos disparados: %1$d</string>
-    <string name="drawer_total_tiros">Tiros realizados: %1$d</string>
-    <string name="drawer_pct_entrenamiento">Acierto en entrenamiento: %1$s</string>
-    <string name="drawer_pct_competicion">Acierto en competición: %1$s</string>
-    <string name="drawer_pct_general">Acierto general: %1$s</string>
-    <string name="valor_sin_datos">—</string>
-
-    <!-- Cambiar contraseña -->
-    <string name="accion_cambiar_password">Cambiar contraseña</string>
-    <string name="label_password_actual">Contraseña actual</string>
-    <string name="label_password_nueva">Nueva contraseña</string>
-    <string name="label_password_nueva_confirm">Repite la nueva contraseña</string>
-    <string name="password_error_actual">Introduce tu contraseña actual</string>
-    <string name="password_error_actual_incorrecta">La contraseña actual no es correcta</string>
-    <string name="toast_password_cambiada">Contraseña actualizada</string>
 
     <!-- Menú lateral de perfil (profesional) -->
     <string name="drawer_prof_num_tiradas">Tiradas organizadas: %1$d</string>

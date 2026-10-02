@@ -10,7 +10,7 @@ data class Tirada(
     /** UID de Firebase del profesional dueño de la tirada; aísla los datos por usuario. */
     val userId: String = "",
     val nombre: String = "",
-    /** Fecha en formato ISO (yyyy-MM-dd); ver [oscar.platoscore.utils.Fechas]. */
+    /** Fecha en formato ISO (yyyy-MM-dd); ver [oscar.plato.core.utils.Fechas]. */
     val fecha: String = "",
     val precioLocal: Float = 0f,
     val precioGeneral: Float = 0f,

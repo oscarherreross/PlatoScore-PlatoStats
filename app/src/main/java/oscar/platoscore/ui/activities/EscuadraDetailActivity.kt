@@ -8,16 +8,17 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.utils.InsetsUtil
+import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityEscuadraDetailBinding
 import oscar.platoscore.databinding.DialogAddTiradorBinding
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.ui.adapters.TiradorAdapter
 import oscar.platoscore.utils.Extras
-import oscar.platoscore.utils.InsetsUtil
-import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
 import oscar.platoscore.viewmodels.TiradorViewModel
+import oscar.plato.core.R as CoreR
 
 class EscuadraDetailActivity : AppCompatActivity() {
 
@@ -104,8 +105,8 @@ class EscuadraDetailActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_anadir_tirador)
             .setView(dialogBinding.root)
-            .setNegativeButton(R.string.accion_cancelar, null)
-            .setPositiveButton(R.string.accion_guardar) { _, _ ->
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
+            .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
                 val tirador = buildTiradorFromDialog(dialogBinding, existente = null)
                 if (tirador != null) {
                     tiradorViewModel.insertTirador(tirador)
@@ -133,12 +134,12 @@ class EscuadraDetailActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_editar_tirador)
             .setView(dialogBinding.root)
-            .setNeutralButton(R.string.accion_eliminar) { _, _ ->
+            .setNeutralButton(CoreR.string.accion_eliminar) { _, _ ->
                 tiradorViewModel.deleteTirador(tirador)
                 Toast.makeText(this, R.string.toast_tirador_eliminado, Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton(R.string.accion_cancelar, null)
-            .setPositiveButton(R.string.accion_guardar) { _, _ ->
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
+            .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
                 val tiradorActualizado = buildTiradorFromDialog(dialogBinding, existente = tirador)
                 if (tiradorActualizado != null) {
                     tiradorViewModel.updateTirador(tiradorActualizado)

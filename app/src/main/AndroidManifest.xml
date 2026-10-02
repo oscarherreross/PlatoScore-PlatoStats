@@ -2,10 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Firebase Authentication necesita acceso a internet -->
-    <uses-permission android:name="android.permission.INTERNET" />
-
+    <!-- El permiso de internet (Firebase Auth) y el inicio de sesión vienen de :core. -->
     <application
+        android:name=".PlatoScoreApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -13,26 +12,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PlatoScore"
+        android:theme="@style/Theme.Plato"
         tools:targetApi="31">
 
+        <!-- Pantalla de carga común (:core): entra en MainActivity o en el login. -->
         <activity
-            android:name=".ui.activities.SplashActivity"
+            android:name="oscar.plato.core.ui.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlatoScore.Splash">
+            android:theme="@style/Theme.Plato.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".ui.activities.RoleSelectionActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.activities.LoginActivity"
-            android:exported="false" />
 
         <activity
             android:name=".ui.activities.MainActivity"
@@ -48,18 +40,6 @@
 
         <activity
             android:name=".ui.activities.ResultadosActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.activities.PersonalMainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.activities.PersonalTiradaDetailActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ui.activities.EstadisticasActivity"
             android:exported="false" />
 
     </application>

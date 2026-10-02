@@ -8,17 +8,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.utils.Fechas
+import oscar.plato.core.utils.InsetsUtil
+import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityTiradaDetailBinding
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.ui.adapters.EscuadraAdapter
 import oscar.platoscore.utils.Extras
-import oscar.platoscore.utils.Fechas
-import oscar.platoscore.utils.InsetsUtil
-import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.EscuadraViewModel
 import oscar.platoscore.viewmodels.TiradaViewModel
+import oscar.plato.core.R as CoreR
 
 class TiradaDetailActivity : AppCompatActivity() {
 
@@ -114,8 +115,8 @@ class TiradaDetailActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_eliminar_escuadra)
             .setMessage(getString(R.string.msg_eliminar_escuadra, escuadra.numeroEscuadra))
-            .setNegativeButton(R.string.accion_cancelar, null)
-            .setPositiveButton(R.string.accion_eliminar) { _, _ ->
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
+            .setPositiveButton(CoreR.string.accion_eliminar) { _, _ ->
                 escuadraViewModel.deleteEscuadra(escuadra)
                 Toast.makeText(this, R.string.toast_escuadra_eliminada, Toast.LENGTH_SHORT).show()
             }

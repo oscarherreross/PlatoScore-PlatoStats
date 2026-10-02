@@ -19,20 +19,22 @@ import androidx.core.view.updatePadding
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import oscar.plato.core.models.FiltroTiradas
+import oscar.plato.core.ui.CuentaUi
+import oscar.plato.core.ui.FiltrosDialog
+import oscar.plato.core.utils.Fechas
+import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
 import oscar.platoscore.databinding.ActivityMainBinding
 import oscar.platoscore.databinding.DialogAddTiradaBinding
-import oscar.platoscore.models.FiltroTiradas
 import oscar.platoscore.models.ResumenProfesional
 import oscar.platoscore.models.Tirada
 import oscar.platoscore.models.TiradaConContadores
-import oscar.platoscore.ui.CuentaUi
-import oscar.platoscore.ui.FiltrosDialog
+import oscar.platoscore.models.acepta
 import oscar.platoscore.ui.adapters.TiradaAdapter
 import oscar.platoscore.utils.Extras
-import oscar.platoscore.utils.Fechas
-import oscar.platoscore.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.viewmodels.TiradaViewModel
+import oscar.plato.core.R as CoreR
 
 class MainActivity : AppCompatActivity() {
 
@@ -81,7 +83,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupDrawer() {
         setSupportActionBar(binding.toolbar)
         drawerToggle = ActionBarDrawerToggle(
-            this, binding.drawerLayout, R.string.drawer_abrir, R.string.drawer_cerrar
+            this, binding.drawerLayout, CoreR.string.drawer_abrir, CoreR.string.drawer_cerrar
         )
         binding.drawerLayout.addDrawerListener(drawerToggle)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -117,7 +119,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_filtro, menu)
+        menuInflater.inflate(CoreR.menu.menu_filtro, menu)
         return true
     }
 
@@ -125,8 +127,8 @@ class MainActivity : AppCompatActivity() {
         // El icono de hamburguesa (home) abre/cierra el menú lateral.
         if (drawerToggle.onOptionsItemSelected(item)) return true
         return when (item.itemId) {
-            R.id.action_filtros -> {
-                FiltrosDialog.mostrar(this, filtro, conTipoYMaquina = false) { nuevo ->
+            CoreR.id.action_filtros -> {
+                FiltrosDialog.mostrar(this, filtro) { nuevo ->
                     filtro = nuevo
                     render()
                 }
@@ -155,8 +157,8 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_eliminar_tirada)
             .setMessage(getString(R.string.msg_eliminar_tirada, tirada.nombre))
-            .setNegativeButton(R.string.accion_cancelar, null)
-            .setPositiveButton(R.string.accion_eliminar) { _, _ ->
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
+            .setPositiveButton(CoreR.string.accion_eliminar) { _, _ ->
                 tiradaViewModel.deleteTirada(tirada)
                 Toast.makeText(this, R.string.toast_tirada_eliminada, Toast.LENGTH_SHORT).show()
             }
@@ -199,7 +201,7 @@ class MainActivity : AppCompatActivity() {
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_nueva_tirada)
             .setView(dialogBinding.root)
-            .setNegativeButton(R.string.accion_cancelar, null)
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
             .setPositiveButton(R.string.accion_crear) { _, _ ->
                 val nombre = dialogBinding.etNombreTirada.text?.toString()?.trim().orEmpty()
                 if (nombre.isBlank()) {

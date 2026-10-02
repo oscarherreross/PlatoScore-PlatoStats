@@ -1,0 +1,67 @@
+<resources>
+    <!-- Textos comunes a PlatoScore y PlatoStats (login, cuenta, filtros, acciones) -->
+
+    <!-- Pantalla de carga -->
+    <string name="cd_logo">Logo de %1$s</string>
+
+    <!-- Acciones genéricas -->
+    <string name="accion_cancelar">Cancelar</string>
+    <string name="accion_eliminar">Eliminar</string>
+    <string name="accion_guardar">Guardar</string>
+
+    <!-- Resultados -->
+    <string name="toast_nada_que_compartir">No hay resultados que compartir</string>
+
+    <!-- Inicio de sesión -->
+    <string name="login_subtitulo">Inicia sesión para continuar</string>
+    <string name="label_email">Correo electrónico</string>
+    <string name="label_password">Contraseña</string>
+    <string name="label_password_confirm">Repite la contraseña</string>
+    <string name="accion_iniciar_sesion">Iniciar sesión</string>
+    <string name="accion_crear_cuenta">Crear cuenta</string>
+    <string name="login_no_tengo_cuenta">¿No tienes cuenta? Crea una</string>
+    <string name="login_ya_tengo_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
+    <string name="login_olvide_password">He olvidado mi contraseña</string>
+    <string name="login_error_email_invalido">Introduce un correo válido</string>
+    <string name="login_error_password_corta">La contraseña debe tener al menos 6 caracteres</string>
+    <string name="login_error_password_no_coincide">Las contraseñas no coinciden</string>
+    <string name="login_error_credenciales">Correo o contraseña incorrectos</string>
+    <string name="login_error_email_en_uso">Ya existe una cuenta con ese correo</string>
+    <string name="login_error_usuario_no_existe">No existe ninguna cuenta con ese correo</string>
+    <string name="login_error_red">Sin conexión: comprueba tu acceso a internet</string>
+    <string name="login_error_generico">No se ha podido completar la operación. Inténtalo de nuevo.</string>
+    <string name="login_reset_enviado">Te hemos enviado un correo para restablecer la contraseña</string>
+    <string name="accion_cerrar_sesion">Cerrar sesión</string>
+    <string name="toast_sesion_cerrada">Sesión cerrada</string>
+
+    <!-- Modo personal: formulario -->
+    <string name="label_maquina">Máquina</string>
+
+    <!-- Modo personal: estadísticas -->
+    <string name="estadisticas_filtro_todas">Todas</string>
+    <string name="estadisticas_filtro_hint">Categoría</string>
+
+    <!-- Filtros (botón + diálogo) -->
+    <string name="menu_filtros">Filtros</string>
+    <string name="accion_aplicar">Aplicar</string>
+    <string name="accion_limpiar">Limpiar</string>
+    <string name="filtro_desde">Desde</string>
+    <string name="filtro_hasta">Hasta</string>
+    <string name="filtro_seccion_fechas">Fechas</string>
+    <string name="personal_vacio_filtro">No hay tiradas que coincidan con el filtro.</string>
+
+    <!-- Menú lateral de perfil (personal) -->
+    <string name="drawer_abrir">Abrir menú de perfil</string>
+    <string name="drawer_cerrar">Cerrar menú de perfil</string>
+    <string name="drawer_titulo_perfil">Mi perfil</string>
+    <string name="drawer_resumen_titulo">Resumen</string>
+
+    <!-- Cambiar contraseña -->
+    <string name="accion_cambiar_password">Cambiar contraseña</string>
+    <string name="label_password_actual">Contraseña actual</string>
+    <string name="label_password_nueva">Nueva contraseña</string>
+    <string name="label_password_nueva_confirm">Repite la nueva contraseña</string>
+    <string name="password_error_actual">Introduce tu contraseña actual</string>
+    <string name="password_error_actual_incorrecta">La contraseña actual no es correcta</string>
+    <string name="toast_password_cambiada">Contraseña actualizada</string>
+</resources>
