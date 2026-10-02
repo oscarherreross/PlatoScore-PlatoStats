@@ -24,26 +24,26 @@ object PerfilUsuario {
      * primero. En las series sin dato de primer tiro se asume que los platos
      * rotos lo fueron al primer disparo.
      */
-    fun calcular(tiradas: List<TiradaPersonalConSeries>): ResumenUsuario {
+    fun calcular(tiradas: List<TiradaConSeries>): ResumenUsuario {
         val totalPlatos = tiradas.sumOf { it.platosPosibles }
         val totalTiros = tiradas.flatMap { it.series }.sumOf { serie ->
             val primerTiro = serie.platosPrimerTiro ?: serie.platosRotos
-            2 * SeriePersonal.PLATOS_POR_SERIE - primerTiro
+            2 * Serie.PLATOS_POR_SERIE - primerTiro
         }
         return ResumenUsuario(
             totalPlatos = totalPlatos,
             totalTiros = totalTiros,
             porcentajeEntrenamiento = porcentaje(
-                tiradas.filter { it.tirada.tipo == TiradaPersonal.TIPO_ENTRENAMIENTO }
+                tiradas.filter { it.tirada.tipo == Tirada.TIPO_ENTRENAMIENTO }
             ),
             porcentajeCompeticion = porcentaje(
-                tiradas.filter { it.tirada.tipo == TiradaPersonal.TIPO_COMPETICION }
+                tiradas.filter { it.tirada.tipo == Tirada.TIPO_COMPETICION }
             ),
             porcentajeGeneral = porcentaje(tiradas)
         )
     }
 
-    private fun porcentaje(tiradas: List<TiradaPersonalConSeries>): Float? {
+    private fun porcentaje(tiradas: List<TiradaConSeries>): Float? {
         val posibles = tiradas.sumOf { it.platosPosibles }
         if (posibles == 0) return null
         return tiradas.sumOf { it.platosRotos } * 100f / posibles

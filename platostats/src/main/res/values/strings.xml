@@ -3,20 +3,20 @@
     <!-- Lema de la pantalla de carga -->
     <string name="splash_tagline">Estadísticas de tiro</string>
 
-    <!-- Modo personal: lista -->
-    <string name="personal_titulo">Mis tiradas</string>
-    <string name="personal_vacio">Aún no has registrado ninguna tirada. Pulsa + para añadir una.</string>
+    <!-- Lista de tiradas -->
+    <string name="titulo_mis_tiradas">Mis tiradas</string>
+    <string name="lista_vacia">Aún no has registrado ninguna tirada. Pulsa + para añadir una.</string>
     <string name="menu_estadisticas">Estadísticas</string>
-    <string name="cd_anadir_tirada_personal">Añadir tirada</string>
-    <string name="item_personal_escuadra_tipo">Escuadra %1$d · %2$s · %3$s</string>
-    <string name="item_personal_resumen">%1$d/%2$d platos · %3$s%%</string>
-    <string name="titulo_eliminar_tirada_personal">Eliminar tirada</string>
-    <string name="msg_eliminar_tirada_personal">¿Seguro que quieres eliminar esta tirada de %1$s?</string>
-    <string name="toast_tirada_personal_eliminada">Tirada eliminada</string>
+    <string name="cd_anadir_tirada">Añadir tirada</string>
+    <string name="item_escuadra_tipo">Escuadra %1$d · %2$s · %3$s</string>
+    <string name="item_resumen">%1$d/%2$d platos · %3$s%%</string>
+    <string name="titulo_eliminar_tirada">Eliminar tirada</string>
+    <string name="msg_eliminar_tirada">¿Seguro que quieres eliminar esta tirada de %1$s?</string>
+    <string name="toast_tirada_eliminada">Tirada eliminada</string>
 
-    <!-- Modo personal: formulario -->
-    <string name="personal_form_titulo_nueva">Nueva tirada</string>
-    <string name="personal_form_titulo_editar">Editar tirada</string>
+    <!-- Formulario de tirada -->
+    <string name="form_titulo_nueva">Nueva tirada</string>
+    <string name="form_titulo_editar">Editar tirada</string>
     <string name="label_lugar">Lugar</string>
     <string name="label_fecha_hora">Fecha y hora</string>
     <string name="label_numero_escuadra">Nº de escuadra</string>
@@ -33,15 +33,15 @@
     <string name="hint_puesto_serie">Puesto</string>
     <string name="hint_platos_rotos_serie">Platos rotos</string>
     <string name="hint_platos_primer_tiro">1.er tiro (opcional)</string>
-    <string name="toast_tirada_personal_guardada">Tirada guardada</string>
-    <string name="personal_error_lugar">Indica el lugar de la tirada</string>
-    <string name="personal_error_escuadra">Indica el número de escuadra</string>
-    <string name="personal_error_series">Indica cuántas series (entre 1 y 20)</string>
-    <string name="personal_error_puesto_serie">Serie %1$d: introduce el puesto de tiro</string>
-    <string name="personal_error_platos_serie">Serie %1$d: introduce los platos rotos (0 a 25)</string>
-    <string name="personal_error_primer_tiro">Serie %1$d: el 1.er tiro no puede superar los platos rotos ni 25</string>
+    <string name="toast_tirada_guardada">Tirada guardada</string>
+    <string name="error_lugar">Indica el lugar de la tirada</string>
+    <string name="error_escuadra">Indica el número de escuadra</string>
+    <string name="error_series">Indica cuántas series (entre 1 y 20)</string>
+    <string name="error_puesto_serie">Serie %1$d: introduce el puesto de tiro</string>
+    <string name="error_platos_serie">Serie %1$d: introduce los platos rotos (0 a 25)</string>
+    <string name="error_primer_tiro">Serie %1$d: el 1.er tiro no puede superar los platos rotos ni 25</string>
 
-    <!-- Modo personal: estadísticas -->
+    <!-- Estadísticas -->
     <string name="estadisticas_titulo">Estadísticas</string>
     <string name="estadisticas_vacio">Registra alguna tirada para ver tu evolución.</string>
     <string name="estadisticas_grafica_titulo">Aciertos por tirada (%)</string>
@@ -61,7 +61,7 @@
     <string name="compartir_estadisticas_filtro">Filtro: %1$s</string>
     <string name="compartir_estadisticas_evolucion_linea">%1$s: %2$s%%</string>
 
-    <!-- Menú lateral de perfil (personal) -->
+    <!-- Menú lateral de perfil -->
     <string name="drawer_total_platos">Platos disparados: %1$d</string>
     <string name="drawer_total_tiros">Tiros realizados: %1$d</string>
     <string name="drawer_pct_entrenamiento">Acierto en entrenamiento: %1$s</string>

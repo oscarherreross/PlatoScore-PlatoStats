@@ -37,15 +37,15 @@ data class ResumenEstadisticas(
     val hayDatos: Boolean get() = puntos.isNotEmpty()
 }
 
-object EstadisticasPersonales {
+object Estadisticas {
 
     private val VACIO = ResumenEstadisticas(emptyList(), 0, 0f, 0f, 0f, null, emptyList(), emptyList())
 
     /** Orden fijo de las máquinas para mostrarlas siempre igual. */
     private val ORDEN_MAQUINAS = listOf(
-        TiradaPersonal.MAQUINA_ROBOT,
-        TiradaPersonal.MAQUINA_TRAP,
-        TiradaPersonal.MAQUINA_OLIMPICO
+        Tirada.MAQUINA_ROBOT,
+        Tirada.MAQUINA_TRAP,
+        Tirada.MAQUINA_OLIMPICO
     )
 
     /**
@@ -53,7 +53,7 @@ object EstadisticasPersonales {
      * evolución quedan ordenados cronológicamente (de la más antigua a la más
      * reciente) para poder pintar la curva de progreso.
      */
-    fun calcular(tiradas: List<TiradaPersonalConSeries>): ResumenEstadisticas {
+    fun calcular(tiradas: List<TiradaConSeries>): ResumenEstadisticas {
         val validas = tiradas.filter { it.series.isNotEmpty() }
             .sortedBy { it.tirada.fechaHora }
 
@@ -89,12 +89,12 @@ object EstadisticasPersonales {
     }
 
     /** Agrupa todas las series por puesto de tiro y calcula el % de aciertos de cada uno. */
-    private fun mediaPorPuesto(tiradas: List<TiradaPersonalConSeries>): List<AciertoPorPuesto> {
+    private fun mediaPorPuesto(tiradas: List<TiradaConSeries>): List<AciertoPorPuesto> {
         return tiradas.flatMap { it.series }
             .groupBy { it.puesto }
             .toSortedMap()
             .map { (puesto, series) ->
-                val posibles = series.size * SeriePersonal.PLATOS_POR_SERIE
+                val posibles = series.size * Serie.PLATOS_POR_SERIE
                 val rotos = series.sumOf { it.platosRotos }
                 AciertoPorPuesto(
                     puesto = puesto,
@@ -105,7 +105,7 @@ object EstadisticasPersonales {
     }
 
     /** Agrupa las tiradas por máquina y calcula el % de aciertos de cada una. */
-    private fun mediaPorMaquina(tiradas: List<TiradaPersonalConSeries>): List<AciertoPorMaquina> {
+    private fun mediaPorMaquina(tiradas: List<TiradaConSeries>): List<AciertoPorMaquina> {
         return tiradas.groupBy { it.tirada.maquina }
             .map { (maquina, lista) ->
                 val posibles = lista.sumOf { it.platosPosibles }

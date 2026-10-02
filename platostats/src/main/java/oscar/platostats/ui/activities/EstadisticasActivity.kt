@@ -17,18 +17,18 @@ import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platostats.R
 import oscar.platostats.databinding.ActivityEstadisticasBinding
-import oscar.platostats.models.EstadisticasPersonales
+import oscar.platostats.models.Estadisticas
 import oscar.platostats.models.ResumenEstadisticas
-import oscar.platostats.models.TiradaPersonal
-import oscar.platostats.models.TiradaPersonalConSeries
+import oscar.platostats.models.Tirada
+import oscar.platostats.models.TiradaConSeries
 import oscar.platostats.models.acepta
-import oscar.platostats.ui.FiltrosPersonales
+import oscar.platostats.ui.Filtros
 import oscar.platostats.ui.views.LineChartView
-import oscar.platostats.viewmodels.TiradaPersonalViewModel
+import oscar.platostats.viewmodels.TiradaViewModel
 import oscar.plato.core.R as CoreR
 
 /**
- * Evolución del tirador (rol personal). Se muestran por separado las
+ * Evolución del tirador. Se muestran por separado las
  * estadísticas de competición y de entrenamiento (selector superior), con la
  * gráfica de aciertos por tirada —total y al primer tiro— y la media de
  * aciertos por puesto de tiro.
@@ -36,9 +36,9 @@ import oscar.plato.core.R as CoreR
 class EstadisticasActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityEstadisticasBinding
-    private val viewModel: TiradaPersonalViewModel by viewModels()
+    private val viewModel: TiradaViewModel by viewModels()
 
-    private var todas: List<TiradaPersonalConSeries> = emptyList()
+    private var todas: List<TiradaConSeries> = emptyList()
     private var filtro = FiltroTiradas()
     private var ultimoResumen: ResumenEstadisticas? = null
 
@@ -77,7 +77,7 @@ class EstadisticasActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             CoreR.id.action_filtros -> {
-                FiltrosPersonales.mostrar(this, filtro) { nuevo ->
+                Filtros.mostrar(this, filtro) { nuevo ->
                     filtro = nuevo
                     render()
                 }
@@ -93,7 +93,7 @@ class EstadisticasActivity : AppCompatActivity() {
     }
 
     private fun render() {
-        mostrar(EstadisticasPersonales.calcular(todas.filter { filtro.acepta(it) }))
+        mostrar(Estadisticas.calcular(todas.filter { filtro.acepta(it) }))
     }
 
     private fun mostrar(resumen: ResumenEstadisticas) {
@@ -254,14 +254,14 @@ class EstadisticasActivity : AppCompatActivity() {
     }
 
     private fun etiquetaTipo(tipo: String): String = getString(
-        if (tipo == TiradaPersonal.TIPO_COMPETICION) R.string.tipo_competicion
+        if (tipo == Tirada.TIPO_COMPETICION) R.string.tipo_competicion
         else R.string.tipo_entrenamiento
     )
 
     private fun etiquetaMaquina(maquina: String): String = getString(
         when (maquina) {
-            TiradaPersonal.MAQUINA_TRAP -> R.string.maquina_trap
-            TiradaPersonal.MAQUINA_OLIMPICO -> R.string.maquina_olimpico
+            Tirada.MAQUINA_TRAP -> R.string.maquina_trap
+            Tirada.MAQUINA_OLIMPICO -> R.string.maquina_olimpico
             else -> R.string.maquina_robot
         }
     )

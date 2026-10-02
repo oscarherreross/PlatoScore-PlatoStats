@@ -11,19 +11,19 @@ import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platostats.R
-import oscar.platostats.databinding.ActivityPersonalTiradaDetailBinding
+import oscar.platostats.databinding.ActivityTiradaDetailBinding
 import oscar.platostats.databinding.ItemSerieInputBinding
-import oscar.platostats.models.SeriePersonal
-import oscar.platostats.models.TiradaPersonal
+import oscar.platostats.models.Serie
+import oscar.platostats.models.Tirada
 import oscar.platostats.utils.Extras
-import oscar.platostats.viewmodels.TiradaPersonalViewModel
+import oscar.platostats.viewmodels.TiradaViewModel
 import java.util.Calendar
 
-/** Alta y edición de una tirada del rol personal, con sus series de 25 platos. */
-class PersonalTiradaDetailActivity : AppCompatActivity() {
+/** Alta y edición de una tirada, con sus series de 25 platos. */
+class TiradaDetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPersonalTiradaDetailBinding
-    private val viewModel: TiradaPersonalViewModel by viewModels()
+    private lateinit var binding: ActivityTiradaDetailBinding
+    private val viewModel: TiradaViewModel by viewModels()
 
     private val calendario = Calendar.getInstance()
     private val filasSeries = mutableListOf<ItemSerieInputBinding>()
@@ -34,24 +34,24 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
 
     companion object {
         private const val MAX_SERIES = 20
-        private const val MAX_PLATOS = SeriePersonal.PLATOS_POR_SERIE
+        private const val MAX_PLATOS = Serie.PLATOS_POR_SERIE
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdgeConToolbar()
-        binding = ActivityPersonalTiradaDetailBinding.inflate(layoutInflater)
+        binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         InsetsUtil.padTop(binding.toolbar)
         InsetsUtil.addMarginBottom(binding.btnGuardar)
 
-        tiradaId = intent.getIntExtra(Extras.TIRADA_PERSONAL_ID, 0)
+        tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
         editando = tiradaId != 0
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(
-            if (editando) R.string.personal_form_titulo_editar else R.string.personal_form_titulo_nueva
+            if (editando) R.string.form_titulo_editar else R.string.form_titulo_nueva
         )
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -83,14 +83,14 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
             binding.etLugar.setText(t.lugar)
             binding.etEscuadra.setText(t.numeroEscuadra.toString())
             binding.etNotas.setText(t.notas)
-            if (t.tipo == TiradaPersonal.TIPO_COMPETICION) {
+            if (t.tipo == Tirada.TIPO_COMPETICION) {
                 binding.rbCompeticion.isChecked = true
             } else {
                 binding.rbEntrenamiento.isChecked = true
             }
             when (t.maquina) {
-                TiradaPersonal.MAQUINA_TRAP -> binding.rbTrap.isChecked = true
-                TiradaPersonal.MAQUINA_OLIMPICO -> binding.rbOlimpico.isChecked = true
+                Tirada.MAQUINA_TRAP -> binding.rbTrap.isChecked = true
+                Tirada.MAQUINA_OLIMPICO -> binding.rbOlimpico.isChecked = true
                 else -> binding.rbRobot.isChecked = true
             }
             calendario.timeInMillis = t.fechaHora
@@ -153,33 +153,33 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
     private fun guardar() {
         val lugar = binding.etLugar.text?.toString()?.trim().orEmpty()
         if (lugar.isBlank()) {
-            toast(R.string.personal_error_lugar); return
+            toast(R.string.error_lugar); return
         }
         val escuadra = binding.etEscuadra.text?.toString()?.toIntOrNull()
         if (escuadra == null || escuadra < 1) {
-            toast(R.string.personal_error_escuadra); return
+            toast(R.string.error_escuadra); return
         }
         if (filasSeries.isEmpty()) {
-            toast(R.string.personal_error_series); return
+            toast(R.string.error_series); return
         }
 
-        val series = mutableListOf<SeriePersonal>()
+        val series = mutableListOf<Serie>()
         filasSeries.forEachIndexed { i, fila ->
             val puesto = fila.etPuesto.text?.toString()?.toIntOrNull()
             if (puesto == null || puesto < 1) {
-                toast(getString(R.string.personal_error_puesto_serie, i + 1)); return
+                toast(getString(R.string.error_puesto_serie, i + 1)); return
             }
             val rotos = fila.etPlatosRotos.text?.toString()?.toIntOrNull()
             if (rotos == null || rotos !in 0..MAX_PLATOS) {
-                toast(getString(R.string.personal_error_platos_serie, i + 1)); return
+                toast(getString(R.string.error_platos_serie, i + 1)); return
             }
             val primerTexto = fila.etPrimerTiro.text?.toString()?.trim().orEmpty()
             val primer = if (primerTexto.isEmpty()) null else primerTexto.toIntOrNull()
             if (primerTexto.isNotEmpty() && (primer == null || primer !in 0..MAX_PLATOS || primer > rotos)) {
-                toast(getString(R.string.personal_error_primer_tiro, i + 1)); return
+                toast(getString(R.string.error_primer_tiro, i + 1)); return
             }
             series.add(
-                SeriePersonal(
+                Serie(
                     numeroSerie = i + 1,
                     puesto = puesto,
                     platosRotos = rotos,
@@ -189,16 +189,16 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
         }
 
         val tipo =
-            if (binding.rbCompeticion.isChecked) TiradaPersonal.TIPO_COMPETICION
-            else TiradaPersonal.TIPO_ENTRENAMIENTO
+            if (binding.rbCompeticion.isChecked) Tirada.TIPO_COMPETICION
+            else Tirada.TIPO_ENTRENAMIENTO
 
         val maquina = when {
-            binding.rbTrap.isChecked -> TiradaPersonal.MAQUINA_TRAP
-            binding.rbOlimpico.isChecked -> TiradaPersonal.MAQUINA_OLIMPICO
-            else -> TiradaPersonal.MAQUINA_ROBOT
+            binding.rbTrap.isChecked -> Tirada.MAQUINA_TRAP
+            binding.rbOlimpico.isChecked -> Tirada.MAQUINA_OLIMPICO
+            else -> Tirada.MAQUINA_ROBOT
         }
 
-        val tirada = TiradaPersonal(
+        val tirada = Tirada(
             id = tiradaId,
             lugar = lugar,
             fechaHora = calendario.timeInMillis,
@@ -209,7 +209,7 @@ class PersonalTiradaDetailActivity : AppCompatActivity() {
         )
 
         if (editando) viewModel.actualizar(tirada, series) else viewModel.guardarNueva(tirada, series)
-        Toast.makeText(this, R.string.toast_tirada_personal_guardada, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, R.string.toast_tirada_guardada, Toast.LENGTH_SHORT).show()
         finish()
     }
 

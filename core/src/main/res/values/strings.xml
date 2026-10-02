@@ -34,10 +34,10 @@
     <string name="accion_cerrar_sesion">Cerrar sesión</string>
     <string name="toast_sesion_cerrada">Sesión cerrada</string>
 
-    <!-- Modo personal: formulario -->
+    <!-- Formulario de tirada -->
     <string name="label_maquina">Máquina</string>
 
-    <!-- Modo personal: estadísticas -->
+    <!-- Estadísticas -->
     <string name="estadisticas_filtro_todas">Todas</string>
     <string name="estadisticas_filtro_hint">Categoría</string>
 
@@ -48,9 +48,9 @@
     <string name="filtro_desde">Desde</string>
     <string name="filtro_hasta">Hasta</string>
     <string name="filtro_seccion_fechas">Fechas</string>
-    <string name="personal_vacio_filtro">No hay tiradas que coincidan con el filtro.</string>
+    <string name="lista_vacia_filtro">No hay tiradas que coincidan con el filtro.</string>
 
-    <!-- Menú lateral de perfil (personal) -->
+    <!-- Menú lateral de perfil -->
     <string name="drawer_abrir">Abrir menú de perfil</string>
     <string name="drawer_cerrar">Cerrar menú de perfil</string>
     <string name="drawer_titulo_perfil">Mi perfil</string>

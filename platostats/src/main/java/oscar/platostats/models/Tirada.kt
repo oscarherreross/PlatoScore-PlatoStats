@@ -4,11 +4,11 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * Registro que hace un tirador (rol personal) de una tirada en la que ha
- * participado. Los platos de cada serie se guardan en [SeriePersonal].
+ * Registro que hace el tirador de una tirada en la que ha
+ * participado. Los platos de cada serie se guardan en [Serie].
  */
-@Entity(tableName = "tiradas_personales")
-data class TiradaPersonal(
+@Entity(tableName = "tiradas")
+data class Tirada(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
     /** UID de Firebase del tirador dueño del registro. */

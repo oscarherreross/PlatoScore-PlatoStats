@@ -2,7 +2,7 @@ package oscar.platostats
 
 import android.app.Application
 import oscar.plato.core.PlatoApp
-import oscar.platostats.ui.activities.PersonalMainActivity
+import oscar.platostats.ui.activities.MainActivity
 
 /**
  * Aplicación PlatoStats: el tirador registra sus tiradas y consulta sus
@@ -10,7 +10,7 @@ import oscar.platostats.ui.activities.PersonalMainActivity
  * pantalla de carga) a dónde ir y qué marca mostrar.
  */
 class PlatoStatsApp : Application(), PlatoApp {
-    override val pantallaPrincipal = PersonalMainActivity::class.java
+    override val pantallaPrincipal = MainActivity::class.java
     override val logo = R.drawable.ic_logo
     override val lema = R.string.splash_tagline
 }

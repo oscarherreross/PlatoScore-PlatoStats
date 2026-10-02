@@ -22,32 +22,32 @@ import oscar.plato.core.models.FiltroTiradas
 import oscar.plato.core.ui.CuentaUi
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platostats.R
-import oscar.platostats.databinding.ActivityPersonalMainBinding
+import oscar.platostats.databinding.ActivityMainBinding
 import oscar.platostats.models.PerfilUsuario
 import oscar.platostats.models.ResumenUsuario
-import oscar.platostats.models.TiradaPersonalConSeries
+import oscar.platostats.models.TiradaConSeries
 import oscar.platostats.models.acepta
-import oscar.platostats.ui.FiltrosPersonales
-import oscar.platostats.ui.adapters.TiradaPersonalAdapter
+import oscar.platostats.ui.Filtros
+import oscar.platostats.ui.adapters.TiradaAdapter
 import oscar.platostats.utils.Extras
-import oscar.platostats.viewmodels.TiradaPersonalViewModel
+import oscar.platostats.viewmodels.TiradaViewModel
 import oscar.plato.core.R as CoreR
 
-/** Pantalla principal del rol personal: lista de tiradas y menú lateral de perfil. */
-class PersonalMainActivity : AppCompatActivity() {
+/** Pantalla principal de PlatoStats: lista de tiradas y menú lateral de perfil. */
+class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPersonalMainBinding
-    private val viewModel: TiradaPersonalViewModel by viewModels()
-    private lateinit var adapter: TiradaPersonalAdapter
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel: TiradaViewModel by viewModels()
+    private lateinit var adapter: TiradaAdapter
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
-    private var todas: List<TiradaPersonalConSeries> = emptyList()
+    private var todas: List<TiradaConSeries> = emptyList()
     private var filtro = FiltroTiradas()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdgeConToolbar()
-        binding = ActivityPersonalMainBinding.inflate(layoutInflater)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupDrawer()
@@ -56,7 +56,7 @@ class PersonalMainActivity : AppCompatActivity() {
         observar()
 
         binding.fabAddTirada.setOnClickListener {
-            startActivity(Intent(this, PersonalTiradaDetailActivity::class.java))
+            startActivity(Intent(this, TiradaDetailActivity::class.java))
         }
     }
 
@@ -117,7 +117,7 @@ class PersonalMainActivity : AppCompatActivity() {
         if (drawerToggle.onOptionsItemSelected(item)) return true
         return when (item.itemId) {
             CoreR.id.action_filtros -> {
-                FiltrosPersonales.mostrar(this, filtro) { nuevo ->
+                Filtros.mostrar(this, filtro) { nuevo ->
                     filtro = nuevo
                     render()
                 }
@@ -128,10 +128,10 @@ class PersonalMainActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        adapter = TiradaPersonalAdapter(
+        adapter = TiradaAdapter(
             onClickListener = { item ->
-                val intent = Intent(this, PersonalTiradaDetailActivity::class.java)
-                intent.putExtra(Extras.TIRADA_PERSONAL_ID, item.tirada.id)
+                val intent = Intent(this, TiradaDetailActivity::class.java)
+                intent.putExtra(Extras.TIRADA_ID, item.tirada.id)
                 startActivity(intent)
             },
             onLongClickListener = { item -> confirmarEliminar(item) }
@@ -154,7 +154,7 @@ class PersonalMainActivity : AppCompatActivity() {
         adapter.submitList(filtradas)
         binding.tvEmpty.visibility = if (filtradas.isEmpty()) View.VISIBLE else View.GONE
         binding.tvEmpty.setText(
-            if (todas.isEmpty()) R.string.personal_vacio else CoreR.string.personal_vacio_filtro
+            if (todas.isEmpty()) R.string.lista_vacia else CoreR.string.lista_vacia_filtro
         )
     }
 
@@ -174,14 +174,14 @@ class PersonalMainActivity : AppCompatActivity() {
     private fun formatoPorcentaje(valor: Float?): String =
         if (valor == null) getString(R.string.valor_sin_datos) else "%.1f %%".format(valor)
 
-    private fun confirmarEliminar(item: TiradaPersonalConSeries) {
+    private fun confirmarEliminar(item: TiradaConSeries) {
         MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.titulo_eliminar_tirada_personal)
-            .setMessage(getString(R.string.msg_eliminar_tirada_personal, item.tirada.lugar))
+            .setTitle(R.string.titulo_eliminar_tirada)
+            .setMessage(getString(R.string.msg_eliminar_tirada, item.tirada.lugar))
             .setNegativeButton(CoreR.string.accion_cancelar, null)
             .setPositiveButton(CoreR.string.accion_eliminar) { _, _ ->
                 viewModel.eliminar(item.tirada)
-                Toast.makeText(this, R.string.toast_tirada_personal_eliminada, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, R.string.toast_tirada_eliminada, Toast.LENGTH_SHORT).show()
             }
             .show()
     }

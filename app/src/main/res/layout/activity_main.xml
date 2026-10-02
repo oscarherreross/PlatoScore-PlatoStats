@@ -38,7 +38,7 @@
             android:id="@+id/tvEmpty"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/personal_vacio_filtro"
+            android:text="@string/lista_vacia_filtro"
             android:gravity="center"
             android:visibility="gone"
             android:layout_margin="32dp"

@@ -5,23 +5,23 @@ import androidx.room.ForeignKey
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/** Una serie de 25 platos dentro de una [TiradaPersonal]. */
+/** Una serie de 25 platos dentro de una [Tirada]. */
 @Entity(
-    tableName = "series_personales",
+    tableName = "series",
     foreignKeys = [
         ForeignKey(
-            entity = TiradaPersonal::class,
+            entity = Tirada::class,
             parentColumns = ["id"],
-            childColumns = ["tiradaPersonalId"],
+            childColumns = ["tiradaId"],
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index("tiradaPersonalId")]
+    indices = [Index("tiradaId")]
 )
-data class SeriePersonal(
+data class Serie(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val tiradaPersonalId: Int = 0,
+    val tiradaId: Int = 0,
     val numeroSerie: Int = 0,
     /** Puesto de tiro en el que se disputa esta serie. */
     val puesto: Int = 0,

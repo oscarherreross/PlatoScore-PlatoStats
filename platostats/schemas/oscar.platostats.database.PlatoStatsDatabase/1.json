@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e2ccef090c16a1be13b12bde5b228648",
+    "identityHash": "c5dcc9efc5baba3dc7a909793c6b9a05",
     "entities": [
       {
-        "tableName": "tiradas_personales",
+        "tableName": "tiradas",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `userId` TEXT NOT NULL, `lugar` TEXT NOT NULL, `fechaHora` INTEGER NOT NULL, `numeroEscuadra` INTEGER NOT NULL, `tipo` TEXT NOT NULL, `maquina` TEXT NOT NULL, `notas` TEXT NOT NULL)",
         "fields": [
           {
@@ -65,8 +65,8 @@
         }
       },
       {
-        "tableName": "series_personales",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tiradaPersonalId` INTEGER NOT NULL, `numeroSerie` INTEGER NOT NULL, `puesto` INTEGER NOT NULL, `platosRotos` INTEGER NOT NULL, `platosPrimerTiro` INTEGER, FOREIGN KEY(`tiradaPersonalId`) REFERENCES `tiradas_personales`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "tableName": "series",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tiradaId` INTEGER NOT NULL, `numeroSerie` INTEGER NOT NULL, `puesto` INTEGER NOT NULL, `platosRotos` INTEGER NOT NULL, `platosPrimerTiro` INTEGER, FOREIGN KEY(`tiradaId`) REFERENCES `tiradas`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -75,8 +75,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "tiradaPersonalId",
-            "columnName": "tiradaPersonalId",
+            "fieldPath": "tiradaId",
+            "columnName": "tiradaId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -112,22 +112,22 @@
         },
         "indices": [
           {
-            "name": "index_series_personales_tiradaPersonalId",
+            "name": "index_series_tiradaId",
             "unique": false,
             "columnNames": [
-              "tiradaPersonalId"
+              "tiradaId"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_series_personales_tiradaPersonalId` ON `${TABLE_NAME}` (`tiradaPersonalId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_series_tiradaId` ON `${TABLE_NAME}` (`tiradaId`)"
           }
         ],
         "foreignKeys": [
           {
-            "table": "tiradas_personales",
+            "table": "tiradas",
             "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
-              "tiradaPersonalId"
+              "tiradaId"
             ],
             "referencedColumns": [
               "id"
@@ -138,7 +138,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e2ccef090c16a1be13b12bde5b228648')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c5dcc9efc5baba3dc7a909793c6b9a05')"
     ]
   }
 }

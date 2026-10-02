@@ -5,27 +5,27 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import oscar.platostats.models.EstadisticasPersonales
-import oscar.platostats.models.SeriePersonal
-import oscar.platostats.models.TiradaPersonal
-import oscar.platostats.models.TiradaPersonalConSeries
+import oscar.platostats.models.Estadisticas
+import oscar.platostats.models.Serie
+import oscar.platostats.models.Tirada
+import oscar.platostats.models.TiradaConSeries
 
-class EstadisticasPersonalesTest {
+class EstadisticasTest {
 
     private fun tirada(
         id: Int,
         fechaHora: Long,
-        series: List<SeriePersonal>,
-        maquina: String = TiradaPersonal.MAQUINA_ROBOT
-    ) = TiradaPersonalConSeries(
-        tirada = TiradaPersonal(
+        series: List<Serie>,
+        maquina: String = Tirada.MAQUINA_ROBOT
+    ) = TiradaConSeries(
+        tirada = Tirada(
             id = id, userId = "u", lugar = "L", fechaHora = fechaHora, maquina = maquina
         ),
         series = series
     )
 
     private fun serie(rotos: Int, primer: Int? = null, puesto: Int = 1) =
-        SeriePersonal(puesto = puesto, platosRotos = rotos, platosPrimerTiro = primer)
+        Serie(puesto = puesto, platosRotos = rotos, platosPrimerTiro = primer)
 
     @Test
     fun `totales y porcentaje de una tirada`() {
@@ -49,7 +49,7 @@ class EstadisticasPersonalesTest {
 
     @Test
     fun `sin tiradas el resumen no tiene datos`() {
-        val resumen = EstadisticasPersonales.calcular(emptyList())
+        val resumen = Estadisticas.calcular(emptyList())
         assertFalse(resumen.hayDatos)
         assertEquals(0, resumen.numTiradas)
         assertNull(resumen.mediaPorcentajePrimerTiro)
@@ -57,7 +57,7 @@ class EstadisticasPersonalesTest {
 
     @Test
     fun `las tiradas sin series se ignoran`() {
-        val resumen = EstadisticasPersonales.calcular(
+        val resumen = Estadisticas.calcular(
             listOf(tirada(1, 1000, emptyList()))
         )
         assertFalse(resumen.hayDatos)
@@ -67,7 +67,7 @@ class EstadisticasPersonalesTest {
     fun `los puntos se ordenan cronologicamente aunque lleguen desordenados`() {
         val reciente = tirada(1, 5000, listOf(serie(25)))
         val antigua = tirada(2, 1000, listOf(serie(10)))
-        val resumen = EstadisticasPersonales.calcular(listOf(reciente, antigua))
+        val resumen = Estadisticas.calcular(listOf(reciente, antigua))
 
         assertEquals(listOf(1000L, 5000L), resumen.puntos.map { it.fechaHora })
         assertEquals(2, resumen.numTiradas)
@@ -79,7 +79,7 @@ class EstadisticasPersonalesTest {
         // Tirada 2: puesto 1 -> 15/25
         val t1 = tirada(1, 1000, listOf(serie(25, puesto = 2), serie(20, puesto = 1)))
         val t2 = tirada(2, 2000, listOf(serie(15, puesto = 1)))
-        val resumen = EstadisticasPersonales.calcular(listOf(t1, t2))
+        val resumen = Estadisticas.calcular(listOf(t1, t2))
 
         // Ordenado por número de puesto.
         assertEquals(listOf(1, 2), resumen.mediaPorPuesto.map { it.puesto })
@@ -98,22 +98,22 @@ class EstadisticasPersonalesTest {
     fun `media por maquina agrupa por maquina y respeta el orden robot-trap-olimpico`() {
         // Robot: 20/25 y 24/25 -> 44/50 = 88 %, 2 tiradas
         // Trap: 15/25 -> 60 %, 1 tirada
-        val resumen = EstadisticasPersonales.calcular(
+        val resumen = Estadisticas.calcular(
             listOf(
-                tirada(1, 1000, listOf(serie(20)), maquina = TiradaPersonal.MAQUINA_ROBOT),
-                tirada(2, 2000, listOf(serie(24)), maquina = TiradaPersonal.MAQUINA_ROBOT),
-                tirada(3, 3000, listOf(serie(15)), maquina = TiradaPersonal.MAQUINA_TRAP)
+                tirada(1, 1000, listOf(serie(20)), maquina = Tirada.MAQUINA_ROBOT),
+                tirada(2, 2000, listOf(serie(24)), maquina = Tirada.MAQUINA_ROBOT),
+                tirada(3, 3000, listOf(serie(15)), maquina = Tirada.MAQUINA_TRAP)
             )
         )
 
         assertEquals(
-            listOf(TiradaPersonal.MAQUINA_ROBOT, TiradaPersonal.MAQUINA_TRAP),
+            listOf(Tirada.MAQUINA_ROBOT, Tirada.MAQUINA_TRAP),
             resumen.mediaPorMaquina.map { it.maquina }
         )
-        val robot = resumen.mediaPorMaquina.first { it.maquina == TiradaPersonal.MAQUINA_ROBOT }
+        val robot = resumen.mediaPorMaquina.first { it.maquina == Tirada.MAQUINA_ROBOT }
         assertEquals(88f, robot.porcentaje, 0.001f)
         assertEquals(2, robot.numTiradas)
-        val trap = resumen.mediaPorMaquina.first { it.maquina == TiradaPersonal.MAQUINA_TRAP }
+        val trap = resumen.mediaPorMaquina.first { it.maquina == Tirada.MAQUINA_TRAP }
         assertEquals(60f, trap.porcentaje, 0.001f)
         assertEquals(1, trap.numTiradas)
     }
@@ -124,7 +124,7 @@ class EstadisticasPersonalesTest {
         // Tirada B: 1 serie, 25/25 = 100%, sin primer tiro
         val a = tirada(1, 1000, listOf(serie(20, 10)))
         val b = tirada(2, 2000, listOf(serie(25)))
-        val resumen = EstadisticasPersonales.calcular(listOf(a, b))
+        val resumen = Estadisticas.calcular(listOf(a, b))
 
         assertTrue(resumen.hayDatos)
         assertEquals(22.5f, resumen.mediaPlatos, 0.001f)

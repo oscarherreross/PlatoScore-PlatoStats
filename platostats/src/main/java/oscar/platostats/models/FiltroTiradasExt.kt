@@ -2,8 +2,8 @@ package oscar.platostats.models
 
 import oscar.plato.core.models.FiltroTiradas
 
-/** ¿Pasa una tirada personal el filtro? (tipo, máquina y fechas). */
-fun FiltroTiradas.acepta(t: TiradaPersonalConSeries): Boolean {
+/** ¿Pasa una tirada el filtro? (tipo, máquina y fechas). */
+fun FiltroTiradas.acepta(t: TiradaConSeries): Boolean {
     // Copias locales: las propiedades de un módulo externo (:core) no admiten smart cast.
     val desde = desde
     val hasta = hasta
