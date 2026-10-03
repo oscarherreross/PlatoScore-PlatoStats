@@ -96,12 +96,12 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 
 ## 5. Autenticación (¡importante!)
 
-- **Proyectos Firebase separados**: PlatoScore usa el proyecto **"platoscore"** (`app/google-services.json`); PlatoStats usa el proyecto **"platostats"** (`platostats/google-services.json`). Los dos archivos están versionados en git. **Las cuentas son independientes**: quien use las dos apps se registra en cada una.
+- **Proyectos Firebase separados**: PlatoScore usa el proyecto **"platoscore"** (`app/google-services.json`); PlatoStats usa el proyecto **"platostats"** (`platostats/google-services.json`). **Los dos archivos reales NO están en git** (están en el `.gitignore`); en el repositorio solo van las plantillas `app/google-services.json.example` y `platostats/google-services.json.example`, con valores falsos. **Las cuentas son independientes**: quien use las dos apps se registra en cada una.
 - **Ya no hay roles** ni pantalla de selección de rol: cada app es un solo modo.
 - **Aislamiento de datos por usuario**: cada `Tirada` (en las dos apps) lleva `userId` (UID de Firebase) y todas las consultas filtran por él (`Sesion.uid()`).
 - **NO hay sincronización en la nube**: los datos viven en Room **local del dispositivo**, particionados por UID. Firebase se usa SOLO para autenticar.
-- Setup requerido en cada consola Firebase: proveedor **Email/Password habilitado** y el `google-services.json` en la carpeta del módulo. **Sin él, ese módulo no compila.** Si se pierde, se vuelve a descargar desde la consola (Configuración del proyecto → General → Tus apps → la app Android → `google-services.json`).
-- Sin su `google-services.json` un módulo **no compila**, y no se puede saltar la tarea de Firebase (`-x processDebugGoogleServices` rompe `mergeDebugResources`). Para verificar sin el archivo real, compilar en una **copia aparte** del repositorio (p. ej. `git worktree add`) con un JSON de prueba. **Nunca** sustituir el de la carpeta del proyecto por uno de prueba: es la configuración real.
+- Setup requerido en cada consola Firebase: proveedor **Email/Password habilitado** y el `google-services.json` real en la carpeta del módulo. **Sin él, ese módulo no compila.** Quien clone el repositorio debe descargarlo de su consola (Configuración del proyecto → General → Tus apps → la app Android → `google-services.json`) o, solo para compilar sin poder iniciar sesión, copiar la plantilla `.example` como `google-services.json`. Como no está en git, conviene guardar una copia aparte.
+- Sin su `google-services.json` un módulo **no compila**, y no se puede saltar la tarea de Firebase (`-x processDebugGoogleServices` rompe `mergeDebugResources`). Para verificar sin el archivo real, compilar en una **copia aparte** del repositorio (un `git clone` en otra carpeta) usando las plantillas `.example`. **Nunca** sustituir el de la carpeta del proyecto por uno de prueba: es la configuración real y, al no estar en git, no se puede recuperar de ahí.
 
 ## 6. Pantallas y flujos
 

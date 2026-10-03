@@ -1,0 +1,30 @@
+{
+  "_comment": "PLANTILLA con valores falsos. Copia este archivo como google-services.json y sustituye su contenido por el que descargas de tu proyecto de Firebase (ver README). El google-services.json real NO se sube a git.",
+  "project_info": {
+    "project_number": "000000000000",
+    "project_id": "tu-proyecto-platostats",
+    "storage_bucket": "tu-proyecto-platostats.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:000000000000:android:0000000000000000",
+        "android_client_info": {
+          "package_name": "oscar.platostats"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "SUSTITUIR_POR_TU_API_KEY_DE_FIREBASE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
