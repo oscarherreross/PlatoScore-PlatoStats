@@ -1,13 +1,17 @@
 package oscar.platoscore.ui.activities
 
+import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
@@ -29,11 +33,16 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private lateinit var tiradorAdapter: TiradorAdapter
 
+    private val dialogos = DialogosRestaurables(this)
+
     private var tiradaId: Int = 0
     private var escuadraId: Int = 0
 
     /** Histórico de todos los tiradores (más recientes primero) para autocompletar. */
     private var historicoTiradores: List<Tirador> = emptyList()
+
+    /** Formulario de alta abierto, para darle el autocompletado cuando llegue el histórico. */
+    private var formularioAlta: DialogAddTiradorBinding? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +61,11 @@ class EscuadraDetailActivity : AppCompatActivity() {
         supportActionBar?.title = getString(R.string.titulo_escuadra)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        // Registrado aquí, el diálogo sigue abierto si la pantalla se recrea (giro).
+        dialogos.registrar(DIALOGO_TIRADOR) { args ->
+            crearDialogoTirador(BundleCompat.getParcelable(args, ARG_TIRADOR, Tirador::class.java))
+        }
+
         setupRecycler()
         observeData()
         setupFab()
@@ -64,7 +78,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     private fun setupRecycler() {
         tiradorAdapter = TiradorAdapter { tirador ->
-            showEditTiradorDialog(tirador)
+            dialogos.mostrar(DIALOGO_TIRADOR, bundleOf(ARG_TIRADOR to tirador))
         }
 
         binding.rvTiradores.apply {
@@ -86,66 +100,62 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
         tiradorViewModel.getAllTiradores().observe(this) { todos ->
             historicoTiradores = todos
+            // Un alta reabierta tras recrearse la pantalla nace antes de que llegue el histórico.
+            formularioAlta?.let { configurarAutocompletado(it) }
         }
     }
 
     private fun setupFab() {
         binding.fabAddTirador.setOnClickListener {
-            showAddTiradorDialog()
+            dialogos.mostrar(DIALOGO_TIRADOR)
         }
     }
 
-    // ─── DIÁLOGO: AÑADIR TIRADOR ───
+    // ─── DIÁLOGO: AÑADIR O EDITAR TIRADOR ───
 
-    private fun showAddTiradorDialog() {
-        val dialogBinding = DialogAddTiradorBinding.inflate(layoutInflater)
-        configurarValidaciones(dialogBinding)
-        configurarAutocompletado(dialogBinding)
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.titulo_anadir_tirador)
-            .setView(dialogBinding.root)
-            .setNegativeButton(CoreR.string.accion_cancelar, null)
-            .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
-                val tirador = buildTiradorFromDialog(dialogBinding, existente = null)
-                if (tirador != null) {
-                    tiradorViewModel.insertTirador(tirador)
-                }
-            }
-            .show()
-    }
-
-    // ─── DIÁLOGO: EDITAR TIRADOR ───
-
-    private fun showEditTiradorDialog(tirador: Tirador) {
+    /** Alta si [existente] es null; si no, edición de ese tirador. */
+    private fun crearDialogoTirador(existente: Tirador?): Dialog {
         val dialogBinding = DialogAddTiradorBinding.inflate(layoutInflater)
         configurarValidaciones(dialogBinding)
 
-        // Precargar los campos con los datos actuales
-        dialogBinding.etNombreApellidos.setText(tirador.nombreApellidos)
-        dialogBinding.etDni.setText(tirador.dni)
-        dialogBinding.etNumeroLicencia.setText(tirador.numeroLicencia)
-        dialogBinding.etPlatosRotos.setText(tirador.platosRotos.toString())
-        dialogBinding.cbLocal.isChecked = tirador.esLocal
-        dialogBinding.cbJunior.isChecked = tirador.esJunior
-        dialogBinding.cbSenior.isChecked = tirador.esSenior
-        dialogBinding.cbDama.isChecked = tirador.esDama
-
-        MaterialAlertDialogBuilder(this)
-            .setTitle(R.string.titulo_editar_tirador)
+        val builder = MaterialAlertDialogBuilder(this)
             .setView(dialogBinding.root)
-            .setNeutralButton(CoreR.string.accion_eliminar) { _, _ ->
-                tiradorViewModel.deleteTirador(tirador)
-                Toast.makeText(this, R.string.toast_tirador_eliminado, Toast.LENGTH_SHORT).show()
-            }
             .setNegativeButton(CoreR.string.accion_cancelar, null)
-            .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
-                val tiradorActualizado = buildTiradorFromDialog(dialogBinding, existente = tirador)
-                if (tiradorActualizado != null) {
-                    tiradorViewModel.updateTirador(tiradorActualizado)
+
+        if (existente == null) {
+            formularioAlta = dialogBinding
+            configurarAutocompletado(dialogBinding)
+            builder
+                .setTitle(R.string.titulo_anadir_tirador)
+                .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
+                    buildTiradorFromDialog(dialogBinding, existente = null)
+                        ?.let { tiradorViewModel.insertTirador(it) }
                 }
-            }
-            .show()
+        } else {
+            formularioAlta = null
+
+            // Precargar los campos con los datos actuales
+            dialogBinding.etNombreApellidos.setText(existente.nombreApellidos)
+            dialogBinding.etDni.setText(existente.dni)
+            dialogBinding.etNumeroLicencia.setText(existente.numeroLicencia)
+            dialogBinding.etPlatosRotos.setText(existente.platosRotos.toString())
+            dialogBinding.cbLocal.isChecked = existente.esLocal
+            dialogBinding.cbJunior.isChecked = existente.esJunior
+            dialogBinding.cbSenior.isChecked = existente.esSenior
+            dialogBinding.cbDama.isChecked = existente.esDama
+
+            builder
+                .setTitle(R.string.titulo_editar_tirador)
+                .setNeutralButton(CoreR.string.accion_eliminar) { _, _ ->
+                    tiradorViewModel.deleteTirador(existente)
+                    Toast.makeText(this, R.string.toast_tirador_eliminado, Toast.LENGTH_SHORT).show()
+                }
+                .setPositiveButton(CoreR.string.accion_guardar) { _, _ ->
+                    buildTiradorFromDialog(dialogBinding, existente)
+                        ?.let { tiradorViewModel.updateTirador(it) }
+                }
+        }
+        return builder.create()
     }
 
     /**
@@ -218,5 +228,10 @@ class EscuadraDetailActivity : AppCompatActivity() {
                 0
             }
         )
+    }
+
+    private companion object {
+        const val DIALOGO_TIRADOR = "tirador"
+        const val ARG_TIRADOR = "tirador"
     }
 }

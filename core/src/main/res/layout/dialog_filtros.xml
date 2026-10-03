@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Los campos no guardan su texto (saveEnabled="false"): lo pinta FiltrosDialog a
+     partir del filtro en curso, que es lo que se conserva si se recrea la pantalla. -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -28,7 +30,8 @@
                     android:id="@+id/dropdownTipo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:saveEnabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -43,7 +46,8 @@
                     android:id="@+id/dropdownMaquina"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:saveEnabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -74,7 +78,8 @@
                     android:focusable="false"
                     android:clickable="true"
                     android:cursorVisible="false"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:saveEnabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -91,7 +96,8 @@
                     android:focusable="false"
                     android:clickable="true"
                     android:cursorVisible="false"
-                    android:inputType="none" />
+                    android:inputType="none"
+                    android:saveEnabled="false" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 

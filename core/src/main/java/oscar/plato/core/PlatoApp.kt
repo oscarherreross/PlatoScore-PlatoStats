@@ -8,7 +8,8 @@ import androidx.annotation.StringRes
  * Lo que cada aplicación (PlatoScore, PlatoStats) aporta a las pantallas comunes
  * de :core. Lo implementa la clase Application de cada app: así el inicio de
  * sesión, la pantalla de carga y la cuenta son compartidos, pero cada app entra
- * en su propia pantalla principal y muestra su propia marca.
+ * en su propia pantalla principal, muestra su propia marca y borra sus propios
+ * datos.
  */
 interface PlatoApp {
 
@@ -22,6 +23,15 @@ interface PlatoApp {
     /** Lema que aparece bajo el nombre en la pantalla de carga. */
     @get:StringRes
     val lema: Int
+
+    /** Dirección web de la política de privacidad; vacía si todavía no está publicada. */
+    val urlPrivacidad: String
+
+    /**
+     * Borra de este dispositivo todos los datos guardados por el usuario [uid].
+     * Se llama al eliminar la cuenta, cuando esta ya no existe.
+     */
+    suspend fun borrarDatosDe(uid: String)
 }
 
 /** Configuración de la app en curso. */

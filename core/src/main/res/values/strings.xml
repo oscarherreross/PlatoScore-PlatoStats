@@ -64,4 +64,16 @@
     <string name="password_error_actual">Introduce tu contraseña actual</string>
     <string name="password_error_actual_incorrecta">La contraseña actual no es correcta</string>
     <string name="toast_password_cambiada">Contraseña actualizada</string>
+
+    <!-- Eliminar cuenta -->
+    <string name="accion_eliminar_cuenta">Eliminar cuenta</string>
+    <string name="eliminar_cuenta_aviso">Se eliminarán para siempre tu cuenta y todos los datos que has guardado con ella en este dispositivo. No se puede deshacer.\n\nEscribe tu contraseña para confirmarlo.</string>
+    <string name="password_error_vacia">Introduce tu contraseña</string>
+    <string name="password_error_incorrecta">La contraseña no es correcta</string>
+    <string name="toast_cuenta_eliminada">Cuenta eliminada</string>
+    <string name="toast_cuenta_eliminada_sin_datos">Cuenta eliminada, pero no se han podido borrar los datos de este dispositivo. Bórralos desde los ajustes del sistema o desinstala la app.</string>
+
+    <!-- Política de privacidad -->
+    <string name="accion_privacidad">Política de privacidad</string>
+    <string name="toast_privacidad_no_disponible">No se ha podido abrir la política de privacidad</string>
 </resources>

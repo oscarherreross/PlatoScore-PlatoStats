@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import oscar.plato.core.models.FiltroTiradas
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -38,9 +39,14 @@ class EstadisticasActivity : AppCompatActivity() {
     private lateinit var binding: ActivityEstadisticasBinding
     private val viewModel: TiradaViewModel by viewModels()
 
+    private val dialogos = DialogosRestaurables(this)
+
     private var todas: List<TiradaConSeries> = emptyList()
-    private var filtro = FiltroTiradas()
     private var ultimoResumen: ResumenEstadisticas? = null
+
+    /** El filtro vive en el ViewModel para sobrevivir a la recreación de la pantalla. */
+    private val filtro: FiltroTiradas
+        get() = viewModel.filtro.value ?: FiltroTiradas()
 
     private var colorTotal = 0
     private var colorPrimerTiro = 0
@@ -63,10 +69,14 @@ class EstadisticasActivity : AppCompatActivity() {
         prepararLeyenda()
         binding.btnCompartir.setOnClickListener { compartir() }
 
+        // Registrado aquí, el diálogo sigue abierto si la pantalla se recrea (giro).
+        Filtros.registrar(this, dialogos) { nuevo -> viewModel.filtro.value = nuevo }
+
         viewModel.todas.observe(this) { lista ->
             todas = lista
             render()
         }
+        viewModel.filtro.observe(this) { render() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -77,10 +87,7 @@ class EstadisticasActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             CoreR.id.action_filtros -> {
-                Filtros.mostrar(this, filtro) { nuevo ->
-                    filtro = nuevo
-                    render()
-                }
+                Filtros.mostrar(dialogos, filtro)
                 true
             }
             else -> super.onOptionsItemSelected(item)

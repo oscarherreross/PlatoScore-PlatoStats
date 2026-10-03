@@ -1,6 +1,7 @@
 package oscar.platoscore.ui.activities
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
@@ -12,6 +13,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
@@ -21,7 +24,9 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import oscar.plato.core.models.FiltroTiradas
 import oscar.plato.core.ui.CuentaUi
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.ui.FiltrosDialog
+import oscar.plato.core.ui.abrirPoliticaPrivacidad
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
@@ -43,8 +48,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tiradaAdapter: TiradaAdapter
     private lateinit var drawerToggle: ActionBarDrawerToggle
 
+    private val dialogos = DialogosRestaurables(this)
+    private lateinit var cuenta: CuentaUi
+
     private var todasTiradas: List<TiradaConContadores> = emptyList()
-    private var filtro = FiltroTiradas()
+
+    /** El filtro vive en el ViewModel para sobrevivir a la recreación de la pantalla. */
+    private val filtro: FiltroTiradas
+        get() = tiradaViewModel.filtro.value ?: FiltroTiradas()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,11 +63,20 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        registrarDialogos()
         setupDrawer()
         aplicarInsets()
         setupRecyclerView()
         observeTiradas()
         setupFAB()
+    }
+
+    /** Los diálogos registrados aquí siguen abiertos si la pantalla se recrea (giro). */
+    private fun registrarDialogos() {
+        cuenta = CuentaUi(this, dialogos)
+        FiltrosDialog.registrar(this, dialogos) { nuevo -> tiradaViewModel.filtro.value = nuevo }
+        dialogos.registrar(DIALOGO_NUEVA_TIRADA) { args -> crearDialogoNuevaTirada(args) }
+        dialogos.registrar(DIALOGO_ELIMINAR_TIRADA) { args -> crearDialogoEliminarTirada(args) }
     }
 
     /**
@@ -89,8 +109,10 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
-        binding.btnCambiarPassword.setOnClickListener { CuentaUi.mostrarCambiarPassword(this) }
-        binding.btnCerrarSesion.setOnClickListener { CuentaUi.cerrarSesion(this) }
+        binding.btnCambiarPassword.setOnClickListener { cuenta.mostrarCambiarPassword() }
+        binding.btnCerrarSesion.setOnClickListener { cuenta.cerrarSesion() }
+        binding.btnPrivacidad.setOnClickListener { abrirPoliticaPrivacidad() }
+        binding.btnEliminarCuenta.setOnClickListener { cuenta.mostrarEliminarCuenta() }
 
         tiradaViewModel.resumenProfesional.observe(this) { resumen ->
             mostrarResumen(resumen)
@@ -128,10 +150,7 @@ class MainActivity : AppCompatActivity() {
         if (drawerToggle.onOptionsItemSelected(item)) return true
         return when (item.itemId) {
             CoreR.id.action_filtros -> {
-                FiltrosDialog.mostrar(this, filtro) { nuevo ->
-                    filtro = nuevo
-                    render()
-                }
+                FiltrosDialog.mostrar(dialogos, filtro)
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -146,15 +165,16 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onLongClickListener = { tirada ->
-                confirmarEliminarTirada(tirada)
+                dialogos.mostrar(DIALOGO_ELIMINAR_TIRADA, bundleOf(ARG_TIRADA to tirada))
             }
         )
         binding.rvTiradas.adapter = tiradaAdapter
         binding.rvTiradas.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun confirmarEliminarTirada(tirada: Tirada) {
-        MaterialAlertDialogBuilder(this)
+    private fun crearDialogoEliminarTirada(args: Bundle): Dialog {
+        val tirada = checkNotNull(BundleCompat.getParcelable(args, ARG_TIRADA, Tirada::class.java))
+        return MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_eliminar_tirada)
             .setMessage(getString(R.string.msg_eliminar_tirada, tirada.nombre))
             .setNegativeButton(CoreR.string.accion_cancelar, null)
@@ -162,7 +182,7 @@ class MainActivity : AppCompatActivity() {
                 tiradaViewModel.deleteTirada(tirada)
                 Toast.makeText(this, R.string.toast_tirada_eliminada, Toast.LENGTH_SHORT).show()
             }
-            .show()
+            .create()
     }
 
     private fun observeTiradas() {
@@ -170,6 +190,7 @@ class MainActivity : AppCompatActivity() {
             todasTiradas = tiradas
             render()
         }
+        tiradaViewModel.filtro.observe(this) { render() }
     }
 
     private fun render() {
@@ -181,24 +202,27 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupFAB() {
         binding.fabAddTirada.setOnClickListener {
-            showNuevaTiradaDialog()
+            dialogos.mostrar(DIALOGO_NUEVA_TIRADA)
         }
     }
 
-    private fun showNuevaTiradaDialog() {
+    private fun crearDialogoNuevaTirada(args: Bundle): Dialog {
         val dialogBinding = DialogAddTiradaBinding.inflate(layoutInflater)
 
-        var fechaIso = Fechas.hoyIso()
+        // La fecha elegida se anota en los argumentos, para conservarla si la
+        // pantalla se recrea con el diálogo abierto.
+        var fechaIso = args.getString(ARG_FECHA) ?: Fechas.hoyIso()
         dialogBinding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
         dialogBinding.etFechaTirada.setOnClickListener {
             val (anio, mes, dia) = Fechas.partesIso(fechaIso)
-            DatePickerDialog(this, { _, a, m, d ->
+            dialogos.mostrarDePaso(DatePickerDialog(this, { _, a, m, d ->
                 fechaIso = Fechas.aIso(a, m + 1, d)
+                args.putString(ARG_FECHA, fechaIso)
                 dialogBinding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
-            }, anio, mes - 1, dia).show()
+            }, anio, mes - 1, dia))
         }
 
-        MaterialAlertDialogBuilder(this)
+        return MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_nueva_tirada)
             .setView(dialogBinding.root)
             .setNegativeButton(CoreR.string.accion_cancelar, null)
@@ -210,6 +234,13 @@ class MainActivity : AppCompatActivity() {
                     tiradaViewModel.insertTirada(Tirada(nombre = nombre, fecha = fechaIso))
                 }
             }
-            .show()
+            .create()
+    }
+
+    private companion object {
+        const val DIALOGO_NUEVA_TIRADA = "nueva_tirada"
+        const val DIALOGO_ELIMINAR_TIRADA = "eliminar_tirada"
+        const val ARG_FECHA = "fecha"
+        const val ARG_TIRADA = "tirada"
     }
 }

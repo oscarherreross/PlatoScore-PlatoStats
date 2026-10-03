@@ -106,16 +106,21 @@
                 tools:text="tirador@correo.com" />
         </LinearLayout>
 
+        <!-- Todo el contenido se desplaza: en horizontal no caben a la vez el resumen
+             y las acciones. Con sitio de sobra, las acciones quedan abajo. -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:fillViewport="true">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="16dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -159,39 +164,58 @@
                     android:layout_height="wrap_content"
                     tools:text="Acierto general: 85,0 %" />
 
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:minHeight="16dp" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#22808080" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEstadisticas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/menu_estadisticas"
+                    android:layout_marginTop="12dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCambiarPassword"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accion_cambiar_password"
+                    android:layout_marginTop="8dp" />
+
+                <Button
+                    android:id="@+id/btnCerrarSesion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accion_cerrar_sesion"
+                    android:layout_marginTop="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPrivacidad"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accion_privacidad"
+                    android:layout_marginTop="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnEliminarCuenta"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/accion_eliminar_cuenta"
+                    android:textColor="?attr/colorError"
+                    android:layout_marginBottom="8dp" />
+
             </LinearLayout>
         </ScrollView>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#22808080" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnEstadisticas"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/menu_estadisticas"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="12dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCambiarPassword"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/accion_cambiar_password"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp" />
-
-        <Button
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/accion_cerrar_sesion"
-            android:layout_marginHorizontal="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="16dp" />
 
     </LinearLayout>
 

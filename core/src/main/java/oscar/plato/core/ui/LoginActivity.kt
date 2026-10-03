@@ -51,7 +51,15 @@ class LoginActivity : AppCompatActivity() {
         binding.btnAccion.setOnClickListener { enviar() }
         binding.tvCambiarModo.setOnClickListener { cambiarModo() }
         binding.tvOlvidePassword.setOnClickListener { recuperarPassword() }
+        binding.tvPrivacidad.setOnClickListener { abrirPoliticaPrivacidad() }
+
+        modoRegistro = savedInstanceState?.getBoolean(ESTADO_MODO_REGISTRO) ?: false
         actualizarModo()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(ESTADO_MODO_REGISTRO, modoRegistro)
     }
 
     private fun cambiarModo() {
@@ -156,5 +164,9 @@ class LoginActivity : AppCompatActivity() {
     private fun irAPrincipal() {
         startActivity(Intent(this, platoApp.pantallaPrincipal))
         finish()
+    }
+
+    private companion object {
+        const val ESTADO_MODO_REGISTRO = "modo_registro"
     }
 }
