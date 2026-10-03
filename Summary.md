@@ -18,7 +18,8 @@ Todo está en español (textos en `strings.xml`).
 ## 2. Stack tecnológico (versiones reales)
 
 - **Lenguaje**: Kotlin. **UI**: Views XML clásicas con **ViewBinding** (NO Jetpack Compose, NO dataBinding, NO Fragments — todo son **Activities**).
-- **SDK**: `compileSdk`/`targetSdk` **34**, `minSdk` **24**, Java 11, `versionCode 1` / `versionName "1.0"` en ambas apps.
+- **SDK**: `compileSdk`/`targetSdk` **36** (Android 16, lo que exige Google Play a las apps nuevas desde agosto de 2026), `minSdk` **24**, Java 11.
+- **Versión y release**: las dos apps están en la **1.0.0** y se numeran por separado; el `versionCode` se calcula a partir de `versionMayor/Menor/Parche` (al principio de cada `build.gradle.kts`). La variante release usa **R8** (`isMinifyEnabled` + `isShrinkResources`) y se firma con `keystore.properties` (fuera de git) si existe. Ver `PUBLICACION.md`.
 - **Proyecto multi-módulo**: `:app` y `:platostats` (aplicaciones) dependen de `:core` (librería Android). `:core` expone con `api` appcompat, material, constraintlayout, activity-ktx y Firebase Auth.
 - **Arquitectura**: **MVVM** → Activities → ViewModels (`AndroidViewModel` + `LiveData`) → Repositories → DAOs.
 - **Persistencia**: **Room 2.8.4** (SQLite local), compilado con **KSP** (no kapt). **Cada app tiene su propia BD** (ver §4), con `exportSchema=true` y migraciones reales (sin `fallbackToDestructiveMigration`).
@@ -38,8 +39,10 @@ Todo está en español (textos en `strings.xml`).
 :core   oscar.plato.core
 ├── PlatoApp           Interfaz que implementa la Application de cada app (pantalla principal, logo, lema)
 ├── models/            FiltroTiradas (genérico)
-├── ui/                SplashActivity, LoginActivity, CuentaUi (cambiar contraseña / cerrar sesión),
-│                      FiltrosDialog (+ OpcionFiltro)
+├── ui/                SplashActivity, LoginActivity, CuentaUi (cambiar contraseña / cerrar sesión /
+│                      eliminar cuenta), FiltrosDialog (+ OpcionFiltro), DialogosRestaurables,
+│                      Privacidad (enlace a la política)
+├── viewmodels/        CuentaViewModel (operaciones de cuenta contra Firebase)
 ├── utils/             Fechas, Sesion, InsetsUtil, EdgeToEdgeExt
 └── res/               Tema Theme.Plato, paleta Grafito, attrs (platoAppBar), textos comunes,
                        layouts de login / splash / diálogos de filtros y contraseña
@@ -65,7 +68,9 @@ Todo está en español (textos en `strings.xml`).
 └── utils/Extras
 ```
 
-**Regla:** nada de `:core` puede conocer clases de una app concreta; lo que varía por app pasa por `PlatoApp`. Las dos apps tienen clases con el mismo nombre (`MainActivity`, `Tirada`, `TiradaDao`…) en paquetes distintos: no hay conflicto porque nunca se compilan juntas.
+En la raíz: `legal/` (plantillas de las páginas legales), `datos-legales.properties` (responsable, contacto y dirección de esas páginas) y `PUBLICACION.md` (guía de publicación).
+
+**Regla:** nada de `:core` puede conocer clases de una app concreta; lo que varía por app pasa por `PlatoApp` (pantalla principal, logo, lema, dirección de la política de privacidad y borrado de los datos de un usuario). Las dos apps tienen clases con el mismo nombre (`MainActivity`, `Tirada`, `TiradaDao`…) en paquetes distintos: no hay conflicto porque nunca se compilan juntas.
 
 ## 4. Modelo de datos (Room)
 
@@ -100,6 +105,8 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 - **Ya no hay roles** ni pantalla de selección de rol: cada app es un solo modo.
 - **Aislamiento de datos por usuario**: cada `Tirada` (en las dos apps) lleva `userId` (UID de Firebase) y todas las consultas filtran por él (`Sesion.uid()`).
 - **NO hay sincronización en la nube**: los datos viven en Room **local del dispositivo**, particionados por UID. Firebase se usa SOLO para autenticar.
+- **Eliminar cuenta** (menú lateral, exigido por Google Play): pide la contraseña, reautentica, llama a `FirebaseUser.delete()` y después borra del dispositivo las tiradas de ese UID (`PlatoApp.borrarDatosDe`; el resto cae en cascada). Lo hace `CuentaViewModel`, para que la operación siga su curso aunque la pantalla se recree.
+- **Copia de seguridad de Android**: solo se copia la base de datos (`backup_rules.xml` y `data_extraction_rules.xml` de cada app), no la sesión de Firebase. En PlatoScore, que guarda DNI de terceros, a la nube solo sube si la copia va cifrada.
 - Setup requerido en cada consola Firebase: proveedor **Email/Password habilitado** y el `google-services.json` real en la carpeta del módulo. **Sin él, ese módulo no compila.** Quien clone el repositorio debe descargarlo de su consola (Configuración del proyecto → General → Tus apps → la app Android → `google-services.json`) o, solo para compilar sin poder iniciar sesión, copiar la plantilla `.example` como `google-services.json`. Como no está en git, conviene guardar una copia aparte.
 - Sin su `google-services.json` un módulo **no compila**, y no se puede saltar la tarea de Firebase (`-x processDebugGoogleServices` rompe `mergeDebugResources`). Para verificar sin el archivo real, compilar en una **copia aparte** del repositorio (un `git clone` en otra carpeta) usando las plantillas `.example`. **Nunca** sustituir el de la carpeta del proyecto por uno de prueba: es la configuración real y, al no estar en git, no se puede recuperar de ahí.
 
@@ -107,8 +114,8 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 
 **Comunes (`:core`):**
 - **`SplashActivity`** (launcher de las dos apps, declarada en el manifest de cada una): logo, nombre y lema de la app en curso sobre el naranja de marca durante ~1,3 s; luego entra en la pantalla principal si hay sesión, o en el login si no. El fondo se pinta desde `windowBackground` (`Theme.Plato.Splash`) para evitar el parpadeo blanco.
-- **`LoginActivity`**: email+contraseña, alterna iniciar sesión / crear cuenta, recuperación por correo, errores traducidos. Muestra el nombre de la app en curso. Sin barra superior.
-- Cerrar sesión (`CuentaUi`) vuelve al login vaciando la pila.
+- **`LoginActivity`**: email+contraseña, alterna iniciar sesión / crear cuenta, recuperación por correo, errores traducidos, enlace a la política de privacidad. Muestra el nombre de la app en curso. Sin barra superior.
+- Cerrar sesión y eliminar la cuenta (`CuentaUi`) vuelven al login vaciando la pila.
 
 **PlatoScore:**
 - **`MainActivity`**: lista de tiradas + menú lateral de perfil. FAB crea tirada (diálogo nombre+fecha con DatePicker). Pulsación larga = eliminar.
@@ -127,8 +134,9 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 - **Paleta Grafito** (en `:core`, compartida): naranja del plato como primario + grafito como secundario. Tokens semánticos en `colors.xml` (`naranja`, `naranja_oscuro`, `naranja_claro`, `naranja_acento`, `grafito`, `grafito_oscuro`, `grafito_claro`, `crema`). Día = barra naranja; noche = **Grafito nocturno** (barra grafito + naranja como acento).
 - **Barras con `?attr/platoAppBar`, no con `colorPrimary`**: las toolbars y cabeceras del drawer se pintan con el atributo propio `platoAppBar` (naranja de día, `grafito_oscuro` de noche) y su texto con `?attr/platoOnAppBar`. Así el naranja sigue siendo el acento (botones, enlaces, línea principal de la gráfica) también de noche. **Toda pantalla nueva debe pintar su toolbar con `?attr/platoAppBar`.**
 - **Iconos**: adaptativos (`VectorDrawable` de fondo + primer plano dentro de la zona segura) con respaldos `webp` para API 24–25. PlatoScore: monograma **«P»** con el plato en el ojo de la letra. PlatoStats: **gráfica de evolución** que sube y termina en el plato. El logo de la splash es `ic_logo` de cada app.
-- **Menú lateral (drawer)** en la pantalla principal de cada app: `DrawerLayout` con hamburguesa a la izquierda; cabecera con email + resumen (PlatoScore = tiradas/escuadras/tiradores/recaudación; PlatoStats = platos disparados/tiros/aciertos por tipo). Botones inferiores compartidos vía **`CuentaUi`** (cambiar contraseña con reautenticación; cerrar sesión). El menú se **superpone** a la barra (el toolbar va dentro del DrawerLayout).
-- **Edge-to-edge activado** en todas las pantallas (`enableEdgeToEdge`/helper `enableEdgeToEdgeConToolbar` para iconos de barra de estado claros sobre la barra). Gestión de *insets* con **`InsetsUtil`** (toolbar padTop; listas/botones/FAB respetan la barra de navegación). En pantallas con drawer, el listener de insets va **en el `DrawerLayout`** porque intercepta los insets antes que sus hijos. **Está listo para subir a `targetSdk 35`** sin más trabajo de UI. Regla: **toda pantalla nueva debe aplicar sus insets** o el contenido quedará bajo las barras.
+- **Menú lateral (drawer)** en la pantalla principal de cada app: `DrawerLayout` con hamburguesa a la izquierda; cabecera con email + resumen (PlatoScore = tiradas/escuadras/tiradores/recaudación; PlatoStats = platos disparados/tiros/aciertos por tipo). Acciones compartidas vía **`CuentaUi`** (cambiar contraseña con reautenticación; cerrar sesión; política de privacidad; eliminar cuenta). Todo el contenido del menú se desplaza, porque en horizontal no cabe. El menú se **superpone** a la barra (el toolbar va dentro del DrawerLayout).
+- **Edge-to-edge activado** en todas las pantallas (`enableEdgeToEdge`/helper `enableEdgeToEdgeConToolbar` para iconos de barra de estado claros sobre la barra). Gestión de *insets* con **`InsetsUtil`** (toolbar padTop; listas/botones/FAB respetan la barra de navegación). En pantallas con drawer, el listener de insets va **en el `DrawerLayout`** porque intercepta los insets antes que sus hijos. Desde `targetSdk 35` el borde a borde es obligatorio. Regla: **toda pantalla nueva debe aplicar sus insets** o el contenido quedará bajo las barras.
+- **Estado al girar** (o al recrearse la pantalla por cualquier otro motivo): los **filtros** viven en el `SavedStateHandle` de `TiradaViewModel` (`filtro`); los **diálogos** se registran en el `onCreate` de su pantalla con **`DialogosRestaurables`** (`:core`), que guarda cuál está abierto, sus argumentos y lo escrito en él, y lo reabre. Lo que un diálogo deba recordar y no esté en sus vistas (una fecha elegida) va en sus argumentos; las entidades que viajan en ellos son `Parcelable` (`@Parcelize`). Los selectores de fecha abiertos desde otro diálogo no se reabren (`mostrarDePaso`). El formulario de PlatoStats guarda sus filas de series en `onSaveInstanceState`, porque se crean por código y comparten id. **Todo diálogo nuevo debe abrirse con `dialogos.mostrar(...)`, no con `.show()`.**
 - **Filtros**: agrupados tras un **botón de embudo** en la barra que abre un **diálogo** (`FiltrosDialog`). `FiltroTiradas` es genérico (en `:core`) y cada app define su extensión `acepta(...)`: PlatoScore filtra solo por fechas (sus tiradas no tienen tipo ni máquina); PlatoStats también por tipo y máquina, cuyas opciones pasa `ui/Filtros` al diálogo.
 - **Fechas**: utilidad `Fechas` centraliza formatos. PlatoScore persiste ISO `yyyy-MM-dd` (para que `ORDER BY fecha` sea cronológico); PlatoStats usa epoch millis.
 - **Compartir** (las dos apps): genera texto plano y abre `Intent.createChooser` (`ACTION_SEND`, `text/plain`). Respeta el filtro activo en estadísticas.
@@ -148,14 +156,16 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 2. **Precio del tirador nunca persistido** — siempre `Tirada.precioPara()`.
 3. **Fechas de PlatoScore en ISO**; de PlatoStats en epoch millis.
 4. **Migraciones reales** con esquemas exportados; patrón de respaldo-sin-FK para quitar columnas.
-5. **compileSdk/targetSdk 34** a propósito (edge-to-edge ya implementado manualmente para preparar el salto a 35).
+5. **compileSdk/targetSdk 36**, el nivel que exige Google Play. Subirlo cuando Play lo pida, y volver a probar las dos apps al hacerlo.
 6. **Todas las pantallas con Toolbar propio** (no ActionBar del sistema), pintado con `?attr/platoAppBar`.
 7. **Todo texto en `strings.xml`** (lo común en `:core`, lo propio en cada app); extras de Intent en `utils/Extras` de cada app.
 8. **`:core` no conoce a ninguna app**: lo específico de cada una entra por `PlatoApp`.
+9. **Las pantallas conservan su estado al girar**: filtros en `SavedStateHandle` y diálogos con `DialogosRestaurables`, sin Fragments.
+10. **Los datos legales se escriben en un solo sitio** (`datos-legales.properties`); las páginas de `docs/` se generan desde `legal/` con `./gradlew generarPaginasLegales` y no se editan a mano.
 
 ## 10. Limitaciones y trabajo pendiente conocido
 
-- **Flujos tras iniciar sesión sin probar en dispositivo**: la separación se ha verificado con compilación limpia, tests, lint, inspección de los APK, arranque en emulador (splash → login) y la migración 6→7 contra los esquemas exportados; las pantallas posteriores al login no se han recorrido en un dispositivo.
+- **Flujos con cuenta real sin probar**: las pantallas posteriores al login se han recorrido en el emulador (Android 15, debug y release con R8) entrando sin sesión, con giros de pantalla y cierre del proceso incluidos. Lo que necesita una cuenta de Firebase —crear cuenta, iniciar sesión, cambiar la contraseña y **eliminar la cuenta**— no se ha probado, y tampoco nada en un dispositivo con Android 16. La lista está en `PUBLICACION.md`.
 - **Datos solo locales por dispositivo** (por UID). Sin sincronización en la nube; si se cambia de móvil no se recuperan.
 - **Recaudación** usa los **precios vigentes** de la tirada (no se "congela" al cerrar).
 - **Punto 16 pendiente**: registrar las tiradas de PlatoScore por series (hoy solo el total de platos por tirador). De ahí depende la **fase 2 del desempate** (automático por mejor última serie).
@@ -168,7 +178,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 - **Migrar a Firestore** para sincronización multi-dispositivo.
 - Implementar el **registro por series en PlatoScore** (punto 16) → habilita desempate automático.
 - **Exportar a PDF** (hoy solo texto), estadísticas cruzadas (máquina×puesto), presets de fecha, etc.
-- Antes de publicar en Play: subir a **targetSdk 35** (edge-to-edge ya cubierto), activar R8 y definir la firma de release y el versionado de cada app.
+- Antes de publicar en Play quedan pasos manuales (datos legales, alojar las páginas, clave de firma, ficha de seguridad de los datos): ver `PUBLICACION.md`.
 
 ---
 
