@@ -1,12 +1,15 @@
 package oscar.platostats.models
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 /**
  * Registro que hace el tirador de una tirada en la que ha
  * participado. Los platos de cada serie se guardan en [Serie].
  */
+@Parcelize
 @Entity(tableName = "tiradas")
 data class Tirada(
     @PrimaryKey(autoGenerate = true)
@@ -22,7 +25,7 @@ data class Tirada(
     /** Máquina de lanzamiento: [MAQUINA_ROBOT], [MAQUINA_TRAP] u [MAQUINA_OLIMPICO]. */
     val maquina: String = MAQUINA_ROBOT,
     val notas: String = ""
-) {
+) : Parcelable {
     companion object {
         const val TIPO_COMPETICION = "competicion"
         const val TIPO_ENTRENAMIENTO = "entrenamiento"

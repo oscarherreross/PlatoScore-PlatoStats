@@ -1,12 +1,17 @@
 package oscar.platostats.ui.activities
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.os.Parcelable
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
 import androidx.core.widget.doAfterTextChanged
+import kotlinx.parcelize.Parcelize
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -19,22 +24,45 @@ import oscar.platostats.utils.Extras
 import oscar.platostats.viewmodels.TiradaViewModel
 import java.util.Calendar
 
+/** Lo escrito en la fila de una serie, tal cual (puede estar a medias o vacío). */
+@Parcelize
+private data class TextosSerie(
+    val puesto: String,
+    val platosRotos: String,
+    val primerTiro: String
+) : Parcelable
+
 /** Alta y edición de una tirada, con sus series de 25 platos. */
 class TiradaDetailActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityTiradaDetailBinding
     private val viewModel: TiradaViewModel by viewModels()
 
+    private val dialogos = DialogosRestaurables(this)
+
     private val calendario = Calendar.getInstance()
     private val filasSeries = mutableListOf<ItemSerieInputBinding>()
 
     private var tiradaId = 0
     private var editando = false
-    private var prefilled = false
+
+    /**
+     * El formulario ya tiene sus datos: en un alta, desde el principio; en una
+     * edición, desde que se cargan de la base de datos. A partir de ahí manda lo
+     * que haya en pantalla, también cuando esta se recrea (giro).
+     */
+    private var formularioListo = false
 
     companion object {
         private const val MAX_SERIES = 20
         private const val MAX_PLATOS = Serie.PLATOS_POR_SERIE
+
+        private const val DIALOGO_FECHA = "fecha"
+        private const val DIALOGO_HORA = "hora"
+
+        private const val ESTADO_FORMULARIO_LISTO = "formulario_listo"
+        private const val ESTADO_FECHA_HORA = "fecha_hora"
+        private const val ESTADO_SERIES = "series"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,24 +77,50 @@ class TiradaDetailActivity : AppCompatActivity() {
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
         editando = tiradaId != 0
 
+        formularioListo = savedInstanceState?.getBoolean(ESTADO_FORMULARIO_LISTO) ?: !editando
+        savedInstanceState?.let { calendario.timeInMillis = it.getLong(ESTADO_FECHA_HORA) }
+
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setTitle(
             if (editando) R.string.form_titulo_editar else R.string.form_titulo_nueva
         )
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        binding.etFechaHora.setOnClickListener { abrirSelectorFechaHora() }
+        // Registrados aquí, los selectores siguen abiertos si la pantalla se recrea (giro).
+        dialogos.registrar(DIALOGO_FECHA) { crearSelectorFecha() }
+        dialogos.registrar(DIALOGO_HORA) { crearSelectorHora() }
+
+        binding.etFechaHora.setOnClickListener { dialogos.mostrar(DIALOGO_FECHA) }
         binding.etNumeroSeries.doAfterTextChanged {
             val n = it?.toString()?.toIntOrNull() ?: 0
             if (n in 1..MAX_SERIES) construirFilas(n)
         }
         binding.btnGuardar.setOnClickListener { guardar() }
 
-        if (editando) {
-            cargarExistente()
-        } else {
+        if (formularioListo) {
             actualizarCampoFechaHora()
+        } else {
+            cargarExistente()
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(ESTADO_FORMULARIO_LISTO, formularioListo)
+        outState.putLong(ESTADO_FECHA_HORA, calendario.timeInMillis)
+        // Las filas de series se crean por código y comparten id: Android no sabe
+        // guardar lo escrito en ellas, así que se guarda aquí.
+        outState.putParcelableArrayList(ESTADO_SERIES, ArrayList(textosDeFilas()))
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        // Al reponerse el nº de series se vuelven a crear las filas, vacías.
+        super.onRestoreInstanceState(savedInstanceState)
+        val textos = BundleCompat
+            .getParcelableArrayList(savedInstanceState, ESTADO_SERIES, TextosSerie::class.java)
+            .orEmpty()
+        if (filasSeries.size != textos.size) construirFilas(textos.size)
+        rellenarFilas(textos)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -76,8 +130,8 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     private fun cargarExistente() {
         viewModel.get(tiradaId).observe(this) { conSeries ->
-            if (conSeries == null || prefilled) return@observe
-            prefilled = true
+            if (conSeries == null || formularioListo) return@observe
+            formularioListo = true
 
             val t = conSeries.tirada
             binding.etLugar.setText(t.lugar)
@@ -99,13 +153,13 @@ class TiradaDetailActivity : AppCompatActivity() {
             val series = conSeries.series.sortedBy { it.numeroSerie }
             // Al fijar el número de series se construyen las filas; luego se rellenan.
             binding.etNumeroSeries.setText(series.size.toString())
-            series.forEachIndexed { i, serie ->
-                filasSeries.getOrNull(i)?.let { fila ->
-                    fila.etPuesto.setText(serie.puesto.toString())
-                    fila.etPlatosRotos.setText(serie.platosRotos.toString())
-                    fila.etPrimerTiro.setText(serie.platosPrimerTiro?.toString().orEmpty())
-                }
-            }
+            rellenarFilas(series.map {
+                TextosSerie(
+                    puesto = it.puesto.toString(),
+                    platosRotos = it.platosRotos.toString(),
+                    primerTiro = it.platosPrimerTiro?.toString().orEmpty()
+                )
+            })
         }
     }
 
@@ -114,9 +168,7 @@ class TiradaDetailActivity : AppCompatActivity() {
      * las posiciones que se mantienen.
      */
     private fun construirFilas(n: Int) {
-        val previos = filasSeries.map {
-            it.etPlatosRotos.text?.toString().orEmpty() to it.etPrimerTiro.text?.toString().orEmpty()
-        }
+        val previos = textosDeFilas()
 
         binding.containerSeries.removeAllViews()
         filasSeries.clear()
@@ -124,27 +176,45 @@ class TiradaDetailActivity : AppCompatActivity() {
         for (i in 0 until n) {
             val fila = ItemSerieInputBinding.inflate(layoutInflater, binding.containerSeries, false)
             fila.tvSerieLabel.text = getString(R.string.serie_label, i + 1)
-            previos.getOrNull(i)?.let { (rotos, primer) ->
-                fila.etPlatosRotos.setText(rotos)
-                fila.etPrimerTiro.setText(primer)
-            }
             binding.containerSeries.addView(fila.root)
             filasSeries.add(fila)
         }
+        rellenarFilas(previos)
     }
 
-    private fun abrirSelectorFechaHora() {
+    private fun textosDeFilas(): List<TextosSerie> = filasSeries.map {
+        TextosSerie(
+            puesto = it.etPuesto.text?.toString().orEmpty(),
+            platosRotos = it.etPlatosRotos.text?.toString().orEmpty(),
+            primerTiro = it.etPrimerTiro.text?.toString().orEmpty()
+        )
+    }
+
+    /** Escribe [textos] en las filas, por orden; las filas o los textos que sobren se ignoran. */
+    private fun rellenarFilas(textos: List<TextosSerie>) {
+        filasSeries.zip(textos).forEach { (fila, texto) ->
+            fila.etPuesto.setText(texto.puesto)
+            fila.etPlatosRotos.setText(texto.platosRotos)
+            fila.etPrimerTiro.setText(texto.primerTiro)
+        }
+    }
+
+    /** Primero se elige el día y, al aceptarlo, la hora. */
+    private fun crearSelectorFecha(): Dialog =
         DatePickerDialog(this, { _, anio, mes, dia ->
             calendario.set(Calendar.YEAR, anio)
             calendario.set(Calendar.MONTH, mes)
             calendario.set(Calendar.DAY_OF_MONTH, dia)
-            TimePickerDialog(this, { _, hora, minuto ->
-                calendario.set(Calendar.HOUR_OF_DAY, hora)
-                calendario.set(Calendar.MINUTE, minuto)
-                actualizarCampoFechaHora()
-            }, calendario.get(Calendar.HOUR_OF_DAY), calendario.get(Calendar.MINUTE), true).show()
-        }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH)).show()
-    }
+            actualizarCampoFechaHora()
+            dialogos.mostrar(DIALOGO_HORA)
+        }, calendario.get(Calendar.YEAR), calendario.get(Calendar.MONTH), calendario.get(Calendar.DAY_OF_MONTH))
+
+    private fun crearSelectorHora(): Dialog =
+        TimePickerDialog(this, { _, hora, minuto ->
+            calendario.set(Calendar.HOUR_OF_DAY, hora)
+            calendario.set(Calendar.MINUTE, minuto)
+            actualizarCampoFechaHora()
+        }, calendario.get(Calendar.HOUR_OF_DAY), calendario.get(Calendar.MINUTE), true)
 
     private fun actualizarCampoFechaHora() {
         binding.etFechaHora.setText(Fechas.mostrarFechaHora(calendario.timeInMillis))

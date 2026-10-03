@@ -3,11 +3,12 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
 }
 
 android {
     namespace = "oscar.plato.core"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 24
@@ -40,6 +41,11 @@ dependencies {
     // Firebase (autenticación). Cada app aporta su propio google-services.json.
     api(platform("com.google.firebase:firebase-bom:33.1.2"))
     api("com.google.firebase:firebase-auth-ktx")
+
+    // ViewModel y LiveData de las operaciones de cuenta (CuentaViewModel)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
 
     // Testing
     testImplementation("junit:junit:4.13.2")

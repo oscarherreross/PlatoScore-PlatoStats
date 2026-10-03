@@ -29,6 +29,10 @@ interface TiradaDao {
     @Query("DELETE FROM series WHERE tiradaId = :tiradaId")
     suspend fun deleteSeriesDe(tiradaId: Int)
 
+    /** Borra todas las tiradas de un usuario; sus series se van en cascada. */
+    @Query("DELETE FROM tiradas WHERE userId = :userId")
+    suspend fun deleteTiradasDe(userId: String)
+
     @Transaction
     @Query("SELECT * FROM tiradas WHERE userId = :userId ORDER BY fechaHora DESC")
     fun getAllConSeries(userId: String): LiveData<List<TiradaConSeries>>

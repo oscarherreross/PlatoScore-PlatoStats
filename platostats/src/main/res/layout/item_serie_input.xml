@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Fila de una serie. Se repite una vez por serie, así que sus campos comparten id y
+     no pueden guardar su texto por su cuenta (saveEnabled="false"): lo guarda y lo
+     repone TiradaDetailActivity al recrearse la pantalla. -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -30,7 +33,8 @@
                 android:id="@+id/etPuesto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:saveEnabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -44,7 +48,8 @@
                 android:id="@+id/etPlatosRotos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:saveEnabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -57,7 +62,8 @@
                 android:id="@+id/etPrimerTiro"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number" />
+                android:inputType="number"
+                android:saveEnabled="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>

@@ -7,7 +7,7 @@ Dos aplicaciones Android nativas para el **tiro al plato**, en un mismo reposito
 | **PlatoScore** (`oscar.platoscore`) | El organizador de una tirada | Crea tiradas, las organiza en escuadras con tiradores, anota los platos rotos y genera clasificaciones y recaudación. |
 | **PlatoStats** (`oscar.platostats`) | El tirador | Registra sus propias tiradas (lugar, fecha, máquina, tipo, series de 25 platos) y muestra estadísticas de su evolución. |
 
-Las dos comparten el inicio de sesión, la pantalla de carga, el tema y los filtros a través de un módulo común (`:core`). Cada una tiene su propia base de datos y su propio proyecto de Firebase, así que las cuentas son independientes.
+Las dos comparten el inicio de sesión, la gestión de la cuenta (cambiar la contraseña, eliminarla), la pantalla de carga, el tema y los filtros a través de un módulo común (`:core`). Cada una tiene su propia base de datos y su propio proyecto de Firebase, así que las cuentas son independientes.
 
 La interfaz está en español.
 
@@ -31,8 +31,10 @@ La interfaz está en español.
 ```
 ├── app/          PlatoScore       (oscar.platoscore)
 ├── platostats/   PlatoStats       (oscar.platostats)
-└── core/         Código común     (oscar.plato.core): login, pantalla de carga, cuenta,
-                                   filtros, fechas, insets y tema
+├── core/         Código común     (oscar.plato.core): login, pantalla de carga, cuenta,
+│                                  filtros, diálogos, fechas, insets y tema
+└── legal/        Plantillas de la política de privacidad y de la página de eliminación
+                  de cuenta de cada app
 ```
 
 Cada app implementa la interfaz `PlatoApp` de `:core` en su clase `Application` para indicar su pantalla principal, su logo y su lema. `:core` no conoce a ninguna de las dos apps.
@@ -41,7 +43,7 @@ Cada app implementa la interfaz `PlatoApp` de `:core` en su clase `Application` 
 
 Kotlin · Views XML con ViewBinding (sin Compose ni Fragments) · MVVM con `AndroidViewModel` y `LiveData` · Room 2.8 con KSP · Firebase Authentication (correo y contraseña) · Coroutines · Material Components.
 
-`compileSdk` y `targetSdk` 34, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.0.
+`compileSdk` y `targetSdk` 36, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.0. La variante release se compila con R8.
 
 Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar.
 
@@ -49,7 +51,7 @@ Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). F
 
 ### Requisitos
 - Android Studio reciente (incluye el JDK 21 con el que se ha probado; hace falta JDK 17 o superior).
-- Android SDK con la plataforma 34.
+- Android SDK con la plataforma 36 (Gradle la descarga si falta).
 
 ### 1. Configurar Firebase
 
@@ -85,12 +87,13 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`. Si Android Studio no lo ha
 - Las barras superiores se pintan con `?attr/platoAppBar`, no con `colorPrimary`, para que en modo noche la barra sea grafito y el naranja siga siendo el color de acento.
 - La app dibuja de borde a borde (edge-to-edge): cada pantalla nueva debe aplicar sus insets (`InsetsUtil`).
 - Cada cambio de base de datos necesita una migración real y su esquema exportado (`app/schemas` y `platostats/schemas`); no se usa `fallbackToDestructiveMigration`.
+- Las pantallas deben conservar su estado al girar: los filtros viven en el `SavedStateHandle` del ViewModel y los diálogos se registran en `DialogosRestaurables` (`:core`), que los reabre con lo que tuvieran escrito. Un diálogo nuevo se abre con `dialogos.mostrar(...)`, no con `.show()`.
 
 [`Summary.md`](Summary.md) recoge el detalle completo: modelo de datos, migraciones, pantallas, decisiones de diseño y limitaciones conocidas.
 
 ## Estado
 
-Proyecto en desarrollo, todavía sin publicar en Google Play. Solo hay tests unitarios (37) de la lógica de negocio; no hay tests instrumentados.
+Proyecto en desarrollo, todavía sin publicar en Google Play. [`PUBLICACION.md`](PUBLICACION.md) recoge lo que ya está preparado (firma, versiones, R8, páginas legales) y los pasos que quedan. Solo hay tests unitarios (37) de la lógica de negocio; no hay tests instrumentados.
 
 ## Licencia
 

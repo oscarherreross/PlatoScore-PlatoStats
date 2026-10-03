@@ -1,9 +1,13 @@
 package oscar.plato.core.ui
 
 import android.app.DatePickerDialog
+import android.app.Dialog
+import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.plato.core.R
 import oscar.plato.core.databinding.DialogFiltrosBinding
@@ -19,22 +23,50 @@ data class OpcionFiltro(val etiqueta: String, val valor: String)
  * cada uno incluye además la opción "Todas". El rango de fechas siempre está
  * disponible. Devuelve el filtro elegido al pulsar Aplicar (o uno vacío al
  * pulsar Limpiar).
+ *
+ * La pantalla lo registra en su onCreate ([registrar]), para que siga abierto si
+ * se recrea, y lo abre con [mostrar].
  */
 object FiltrosDialog {
 
-    fun mostrar(
+    private const val DIALOGO = "filtros"
+    private const val ARG_FILTRO = "filtro"
+
+    fun registrar(
         activity: AppCompatActivity,
-        filtroActual: FiltroTiradas,
+        dialogos: DialogosRestaurables,
         tipos: List<OpcionFiltro> = emptyList(),
         maquinas: List<OpcionFiltro> = emptyList(),
         onAplicar: (FiltroTiradas) -> Unit
     ) {
+        dialogos.registrar(DIALOGO) { args ->
+            crear(activity, dialogos, args, tipos, maquinas, onAplicar)
+        }
+    }
+
+    /** Abre el diálogo partiendo de [filtroActual]. */
+    fun mostrar(dialogos: DialogosRestaurables, filtroActual: FiltroTiradas) {
+        dialogos.mostrar(DIALOGO, bundleOf(ARG_FILTRO to filtroActual))
+    }
+
+    private fun crear(
+        activity: AppCompatActivity,
+        dialogos: DialogosRestaurables,
+        args: Bundle,
+        tipos: List<OpcionFiltro>,
+        maquinas: List<OpcionFiltro>,
+        onAplicar: (FiltroTiradas) -> Unit
+    ): Dialog {
         val binding = DialogFiltrosBinding.inflate(activity.layoutInflater)
 
-        var tipo = filtroActual.tipo
-        var maquina = filtroActual.maquina
-        var desde = filtroActual.desde
-        var hasta = filtroActual.hasta
+        // La selección en curso se anota en los argumentos, para no perderla si la
+        // pantalla se recrea con el diálogo abierto.
+        var filtro = BundleCompat.getParcelable(args, ARG_FILTRO, FiltroTiradas::class.java)
+            ?: FiltroTiradas()
+        fun cambiar(nuevo: FiltroTiradas) {
+            filtro = nuevo
+            args.putParcelable(ARG_FILTRO, nuevo)
+        }
 
         if (tipos.isNotEmpty() || maquinas.isNotEmpty()) {
             val todas = activity.getString(R.string.estadisticas_filtro_todas)
@@ -43,39 +75,47 @@ object FiltrosDialog {
             binding.dropdownTipo.setAdapter(
                 ArrayAdapter(activity, android.R.layout.simple_list_item_1, opcionesTipo.map { it.first })
             )
-            binding.dropdownTipo.setText(etiqueta(opcionesTipo, tipo), false)
-            binding.dropdownTipo.setOnItemClickListener { _, _, pos, _ -> tipo = opcionesTipo[pos].second }
+            binding.dropdownTipo.setText(etiqueta(opcionesTipo, filtro.tipo), false)
+            binding.dropdownTipo.setOnItemClickListener { _, _, pos, _ ->
+                cambiar(filtro.copy(tipo = opcionesTipo[pos].second))
+            }
 
             binding.dropdownMaquina.setAdapter(
                 ArrayAdapter(activity, android.R.layout.simple_list_item_1, opcionesMaquina.map { it.first })
             )
-            binding.dropdownMaquina.setText(etiqueta(opcionesMaquina, maquina), false)
-            binding.dropdownMaquina.setOnItemClickListener { _, _, pos, _ -> maquina = opcionesMaquina[pos].second }
+            binding.dropdownMaquina.setText(etiqueta(opcionesMaquina, filtro.maquina), false)
+            binding.dropdownMaquina.setOnItemClickListener { _, _, pos, _ ->
+                cambiar(filtro.copy(maquina = opcionesMaquina[pos].second))
+            }
         } else {
             binding.contenedorTipoMaquina.visibility = View.GONE
         }
 
         fun refrescarFechas() {
-            binding.etDesde.setText(desde?.let { Fechas.mostrarFecha(it) } ?: "")
-            binding.etHasta.setText(hasta?.let { Fechas.mostrarFecha(it) } ?: "")
+            binding.etDesde.setText(filtro.desde?.let { Fechas.mostrarFecha(it) } ?: "")
+            binding.etHasta.setText(filtro.hasta?.let { Fechas.mostrarFecha(it) } ?: "")
         }
         refrescarFechas()
         binding.etDesde.setOnClickListener {
-            elegirFecha(activity, desde, esFin = false) { millis -> desde = millis; refrescarFechas() }
+            elegirFecha(activity, dialogos, filtro.desde, esFin = false) { millis ->
+                cambiar(filtro.copy(desde = millis))
+                refrescarFechas()
+            }
         }
         binding.etHasta.setOnClickListener {
-            elegirFecha(activity, hasta, esFin = true) { millis -> hasta = millis; refrescarFechas() }
+            elegirFecha(activity, dialogos, filtro.hasta, esFin = true) { millis ->
+                cambiar(filtro.copy(hasta = millis))
+                refrescarFechas()
+            }
         }
 
-        MaterialAlertDialogBuilder(activity)
+        return MaterialAlertDialogBuilder(activity)
             .setTitle(R.string.menu_filtros)
             .setView(binding.root)
             .setNeutralButton(R.string.accion_limpiar) { _, _ -> onAplicar(FiltroTiradas()) }
             .setNegativeButton(R.string.accion_cancelar, null)
-            .setPositiveButton(R.string.accion_aplicar) { _, _ ->
-                onAplicar(FiltroTiradas(tipo = tipo, maquina = maquina, desde = desde, hasta = hasta))
-            }
-            .show()
+            .setPositiveButton(R.string.accion_aplicar) { _, _ -> onAplicar(filtro) }
+            .create()
     }
 
     private fun <T> etiqueta(opciones: List<Pair<String, T>>, valor: T): String =
@@ -83,16 +123,17 @@ object FiltrosDialog {
 
     private fun elegirFecha(
         activity: AppCompatActivity,
+        dialogos: DialogosRestaurables,
         base: Long?,
         esFin: Boolean,
         onElegida: (Long) -> Unit
     ) {
         val (anio, mes, dia) = Fechas.partesDeMillis(base ?: Fechas.ahoraMillis())
-        DatePickerDialog(activity, { _, a, m, d ->
+        dialogos.mostrarDePaso(DatePickerDialog(activity, { _, a, m, d ->
             onElegida(
                 if (esFin) Fechas.finDelDiaMillis(a, m + 1, d)
                 else Fechas.inicioDelDiaMillis(a, m + 1, d)
             )
-        }, anio, mes - 1, dia).show()
+        }, anio, mes - 1, dia))
     }
 }

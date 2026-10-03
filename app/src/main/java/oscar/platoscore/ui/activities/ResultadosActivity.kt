@@ -1,14 +1,17 @@
 package oscar.platoscore.ui.activities
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -28,6 +31,8 @@ class ResultadosActivity : AppCompatActivity() {
     private lateinit var binding: ActivityResultadosBinding
     private val tiradaViewModel: TiradaViewModel by viewModels()
     private val tiradorViewModel: TiradorViewModel by viewModels()
+
+    private val dialogos = DialogosRestaurables(this)
 
     private var tirada: Tirada? = null
     private var tiradores: List<Tirador>? = null
@@ -59,6 +64,15 @@ class ResultadosActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
+
+        // Registrados aquí, los diálogos de desempate siguen abiertos si la pantalla
+        // se recrea (giro). Llevan a los tiradores afectados en sus argumentos.
+        dialogos.registrar(DIALOGO_EMPATE_RESUELTO) { args ->
+            crearDialogoEmpateResuelto(tiradoresDe(args, ARG_GRUPO))
+        }
+        dialogos.registrar(DIALOGO_PUESTO) { args ->
+            crearDialogoPuesto(tiradoresDe(args, ARG_PENDIENTES), tiradoresDe(args, ARG_ORDENADOS))
+        }
 
         setupSecciones()
         setupCompartir()
@@ -194,22 +208,27 @@ class ResultadosActivity : AppCompatActivity() {
 
         val yaResuelto = grupo.none { it.ordenDesempate == 0 }
         if (yaResuelto) {
-            MaterialAlertDialogBuilder(this)
-                .setTitle(getString(R.string.titulo_empate, tirador.platosRotos))
-                .setMessage(R.string.msg_empate_resuelto)
-                .setPositiveButton(R.string.accion_repetir_desempate) { _, _ ->
-                    pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
-                }
-                .setNeutralButton(R.string.accion_quitar_desempate) { _, _ ->
-                    grupo.forEach { tiradorViewModel.updateTirador(it.copy(ordenDesempate = 0)) }
-                    Toast.makeText(this, R.string.toast_desempate_eliminado, Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton(CoreR.string.accion_cancelar, null)
-                .show()
+            dialogos.mostrar(DIALOGO_EMPATE_RESUELTO, Bundle().apply {
+                putParcelableArrayList(ARG_GRUPO, ArrayList(grupo))
+            })
         } else {
             pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
         }
     }
+
+    private fun crearDialogoEmpateResuelto(grupo: List<Tirador>): Dialog =
+        MaterialAlertDialogBuilder(this)
+            .setTitle(getString(R.string.titulo_empate, grupo.first().platosRotos))
+            .setMessage(R.string.msg_empate_resuelto)
+            .setPositiveButton(R.string.accion_repetir_desempate) { _, _ ->
+                pedirSiguientePuesto(ordenAlfabetico(grupo), emptyList())
+            }
+            .setNeutralButton(R.string.accion_quitar_desempate) { _, _ ->
+                grupo.forEach { tiradorViewModel.updateTirador(it.copy(ordenDesempate = 0)) }
+                Toast.makeText(this, R.string.toast_desempate_eliminado, Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton(CoreR.string.accion_cancelar, null)
+            .create()
 
     /**
      * Pide al usuario, con un diálogo por puesto, el orden final de los
@@ -221,8 +240,15 @@ class ResultadosActivity : AppCompatActivity() {
             return
         }
 
+        dialogos.mostrar(DIALOGO_PUESTO, Bundle().apply {
+            putParcelableArrayList(ARG_PENDIENTES, ArrayList(pendientes))
+            putParcelableArrayList(ARG_ORDENADOS, ArrayList(ordenados))
+        })
+    }
+
+    private fun crearDialogoPuesto(pendientes: List<Tirador>, ordenados: List<Tirador>): Dialog {
         val nombres = pendientes.map { it.nombreApellidos }.toTypedArray()
-        MaterialAlertDialogBuilder(this)
+        return MaterialAlertDialogBuilder(this)
             .setTitle(
                 getString(
                     R.string.titulo_desempate_puesto,
@@ -237,8 +263,11 @@ class ResultadosActivity : AppCompatActivity() {
                 )
             }
             .setNegativeButton(CoreR.string.accion_cancelar, null)
-            .show()
+            .create()
     }
+
+    private fun tiradoresDe(args: Bundle, clave: String): List<Tirador> =
+        BundleCompat.getParcelableArrayList(args, clave, Tirador::class.java).orEmpty()
 
     private fun guardarDesempate(orden: List<Tirador>) {
         orden.forEachIndexed { indice, tirador ->
@@ -249,4 +278,12 @@ class ResultadosActivity : AppCompatActivity() {
 
     private fun ordenAlfabetico(grupo: List<Tirador>): List<Tirador> =
         grupo.sortedBy { it.nombreApellidos.lowercase() }
+
+    private companion object {
+        const val DIALOGO_EMPATE_RESUELTO = "empate_resuelto"
+        const val DIALOGO_PUESTO = "desempate_puesto"
+        const val ARG_GRUPO = "grupo"
+        const val ARG_PENDIENTES = "pendientes"
+        const val ARG_ORDENADOS = "ordenados"
+    }
 }

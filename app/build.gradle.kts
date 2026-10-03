@@ -1,31 +1,71 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
 }
 
+// Versión de PlatoScore (cada app lleva la suya; ver PUBLICACION.md). El nombre
+// es mayor.menor.parche y el código que exige Google Play se calcula a partir de
+// él, así que en cada publicación basta con subir uno de estos tres números.
+val versionMayor = 1
+val versionMenor = 0
+val versionParche = 0
+
+// Firma de publicación: se lee de keystore.properties, que está fuera de git. Sin
+// ese archivo la variante release se compila igualmente, pero sin firmar.
+val keystoreProperties = Properties().apply {
+    val archivo = rootProject.file("keystore.properties")
+    if (archivo.exists()) archivo.inputStream().use { load(it) }
+}
+
+// Dirección donde están publicadas las páginas legales (datos-legales.properties).
+// Vacía mientras no se rellene: la app avisa en vez de abrir el enlace.
+val urlPaginasLegales: String by rootProject.extra
+
 android {
     namespace = "oscar.platoscore"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "oscar.platoscore"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = versionMayor * 10000 + versionMenor * 100 + versionParche
+        versionName = "$versionMayor.$versionMenor.$versionParche"
+
+        resValue(
+            "string", "url_privacidad",
+            if (urlPaginasLegales.isEmpty()) "" else "$urlPaginasLegales/platoscore/privacidad.html"
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (keystoreProperties.isNotEmpty()) {
+            create("release") {
+                storeFile = rootProject.file(keystoreProperties.getProperty("storeFile"))
+                storePassword = keystoreProperties.getProperty("storePassword")
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8: reduce y ofusca el código y descarta los recursos sin usar.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.findByName("release")
         }
         debug {
             isMinifyEnabled = false

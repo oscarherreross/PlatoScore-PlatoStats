@@ -1,8 +1,11 @@
 package oscar.platoscore.models
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 @Entity(tableName = "tiradas")
 data class Tirada(
     @PrimaryKey(autoGenerate = true)
@@ -17,7 +20,7 @@ data class Tirada(
     val precioJunior: Float = 0f,
     val precioSenior: Float = 0f,
     val precioDama: Float = 0f
-) {
+) : Parcelable {
 
     /**
      * Precio de inscripción para un tirador según sus categorías, con los

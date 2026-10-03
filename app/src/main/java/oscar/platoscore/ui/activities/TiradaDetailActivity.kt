@@ -1,13 +1,17 @@
 package oscar.platoscore.ui.activities
 
 import android.app.DatePickerDialog
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.BundleCompat
+import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -27,6 +31,8 @@ class TiradaDetailActivity : AppCompatActivity() {
     private val tiradaViewModel: TiradaViewModel by viewModels()
     private val escuadraViewModel: EscuadraViewModel by viewModels()
     private lateinit var escuadraAdapter: EscuadraAdapter
+
+    private val dialogos = DialogosRestaurables(this)
 
     private var tiradaId: Int = 0
     private var tirada: Tirada? = null
@@ -49,6 +55,10 @@ class TiradaDetailActivity : AppCompatActivity() {
 
         tiradaId = intent.getIntExtra(Extras.TIRADA_ID, 0)
 
+        // Registrados aquí, los diálogos siguen abiertos si la pantalla se recrea (giro).
+        dialogos.registrar(DIALOGO_FECHA) { crearSelectorFecha() }
+        dialogos.registrar(DIALOGO_ELIMINAR_ESCUADRA) { args -> crearDialogoEliminarEscuadra(args) }
+
         setupRecyclerView()
         observeTirada()
         setupFechaPicker()
@@ -62,13 +72,15 @@ class TiradaDetailActivity : AppCompatActivity() {
     }
 
     private fun setupFechaPicker() {
-        binding.etFechaTirada.setOnClickListener {
-            val (anio, mes, dia) = Fechas.partesIso(fechaIso)
-            DatePickerDialog(this, { _, a, m, d ->
-                fechaIso = Fechas.aIso(a, m + 1, d)
-                binding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
-            }, anio, mes - 1, dia).show()
-        }
+        binding.etFechaTirada.setOnClickListener { dialogos.mostrar(DIALOGO_FECHA) }
+    }
+
+    private fun crearSelectorFecha(): Dialog {
+        val (anio, mes, dia) = Fechas.partesIso(fechaIso)
+        return DatePickerDialog(this, { _, a, m, d ->
+            fechaIso = Fechas.aIso(a, m + 1, d)
+            binding.etFechaTirada.setText(Fechas.mostrar(fechaIso))
+        }, anio, mes - 1, dia)
     }
 
     override fun onPause() {
@@ -100,7 +112,7 @@ class TiradaDetailActivity : AppCompatActivity() {
                 startActivity(intent)
             },
             onLongClickListener = { escuadra ->
-                confirmarEliminarEscuadra(escuadra)
+                dialogos.mostrar(DIALOGO_ELIMINAR_ESCUADRA, bundleOf(ARG_ESCUADRA to escuadra))
             }
         )
 
@@ -111,8 +123,9 @@ class TiradaDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun confirmarEliminarEscuadra(escuadra: Escuadra) {
-        MaterialAlertDialogBuilder(this)
+    private fun crearDialogoEliminarEscuadra(args: Bundle): Dialog {
+        val escuadra = checkNotNull(BundleCompat.getParcelable(args, ARG_ESCUADRA, Escuadra::class.java))
+        return MaterialAlertDialogBuilder(this)
             .setTitle(R.string.titulo_eliminar_escuadra)
             .setMessage(getString(R.string.msg_eliminar_escuadra, escuadra.numeroEscuadra))
             .setNegativeButton(CoreR.string.accion_cancelar, null)
@@ -120,7 +133,7 @@ class TiradaDetailActivity : AppCompatActivity() {
                 escuadraViewModel.deleteEscuadra(escuadra)
                 Toast.makeText(this, R.string.toast_escuadra_eliminada, Toast.LENGTH_SHORT).show()
             }
-            .show()
+            .create()
     }
 
     private fun observeTirada() {
@@ -164,5 +177,11 @@ class TiradaDetailActivity : AppCompatActivity() {
             intent.putExtra(Extras.TIRADA_ID, tiradaId)
             startActivity(intent)
         }
+    }
+
+    private companion object {
+        const val DIALOGO_FECHA = "fecha"
+        const val DIALOGO_ELIMINAR_ESCUADRA = "eliminar_escuadra"
+        const val ARG_ESCUADRA = "escuadra"
     }
 }

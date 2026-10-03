@@ -2,22 +2,26 @@ package oscar.platostats.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import oscar.plato.core.models.FiltroTiradas
+import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.ui.FiltrosDialog
 import oscar.plato.core.ui.OpcionFiltro
 import oscar.platostats.R
 import oscar.platostats.models.Tirada
 
-/** Diálogo de filtros de PlatoStats: tipo de tirada, máquina y rango de fechas. */
+/**
+ * Diálogo de filtros de PlatoStats: tipo de tirada, máquina y rango de fechas. La
+ * pantalla lo registra en su onCreate y lo abre con [mostrar].
+ */
 object Filtros {
 
-    fun mostrar(
+    fun registrar(
         activity: AppCompatActivity,
-        filtroActual: FiltroTiradas,
+        dialogos: DialogosRestaurables,
         onAplicar: (FiltroTiradas) -> Unit
     ) {
-        FiltrosDialog.mostrar(
+        FiltrosDialog.registrar(
             activity,
-            filtroActual,
+            dialogos,
             tipos = listOf(
                 OpcionFiltro(activity.getString(R.string.tipo_entrenamiento), Tirada.TIPO_ENTRENAMIENTO),
                 OpcionFiltro(activity.getString(R.string.tipo_competicion), Tirada.TIPO_COMPETICION)
@@ -30,4 +34,7 @@ object Filtros {
             onAplicar = onAplicar
         )
     }
+
+    fun mostrar(dialogos: DialogosRestaurables, filtroActual: FiltroTiradas) =
+        FiltrosDialog.mostrar(dialogos, filtroActual)
 }
