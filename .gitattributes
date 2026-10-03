@@ -1,0 +1,28 @@
+# Finales de línea: git decide qué es texto y guarda siempre LF en el repositorio,
+# sea cual sea el sistema (Windows, macOS o Linux) o su configuración de autocrlf.
+* text=auto
+
+# El wrapper de Linux/macOS necesita LF o falla con «bad interpreter».
+gradlew text eol=lf
+*.sh text eol=lf
+# El de Windows necesita CRLF.
+*.bat text eol=crlf
+
+# Binarios: git no debe tocarlos nunca.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.jar binary
+*.ttf binary
+*.otf binary
+*.zip binary
+*.keystore binary
+*.jks binary
+
+# GitHub: no cuenta estos archivos en las estadísticas del lenguaje y los
+# pliega en las revisiones de código.
+**/schemas/** linguist-generated=true
+gradle/wrapper/gradle-wrapper.jar linguist-vendored
