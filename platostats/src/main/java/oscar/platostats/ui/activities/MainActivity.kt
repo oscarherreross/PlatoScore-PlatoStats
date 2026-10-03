@@ -9,15 +9,18 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.BundleCompat
 import androidx.core.os.bundleOf
+import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
 import androidx.core.view.updatePadding
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
@@ -46,6 +49,11 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: TiradaViewModel by viewModels()
     private lateinit var adapter: TiradaAdapter
     private lateinit var drawerToggle: ActionBarDrawerToggle
+
+    /** Con el menú lateral abierto, «atrás» lo cierra en lugar de salir de la app. */
+    private val cerrarMenuConAtras = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = binding.drawerLayout.closeDrawers()
+    }
 
     private val dialogos = DialogosRestaurables(this)
     private lateinit var cuenta: CuentaUi
@@ -107,6 +115,12 @@ class MainActivity : AppCompatActivity() {
             this, binding.drawerLayout, CoreR.string.drawer_abrir, CoreR.string.drawer_cerrar
         )
         binding.drawerLayout.addDrawerListener(drawerToggle)
+        onBackPressedDispatcher.addCallback(this, cerrarMenuConAtras)
+        binding.drawerLayout.addDrawerListener(object : DrawerLayout.SimpleDrawerListener() {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                cerrarMenuConAtras.isEnabled = slideOffset > 0f
+            }
+        })
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         binding.tvEmail.text = FirebaseAuth.getInstance().currentUser?.email
@@ -122,6 +136,8 @@ class MainActivity : AppCompatActivity() {
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         drawerToggle.syncState()
+        // Al recrearse la pantalla con el menú abierto, este vuelve sin avisar a nadie.
+        cerrarMenuConAtras.isEnabled = binding.drawerLayout.isDrawerOpen(GravityCompat.START)
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
