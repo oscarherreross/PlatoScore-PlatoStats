@@ -1,0 +1,55 @@
+name: CI
+
+# Compila las dos apps, pasa los tests unitarios y el análisis estático en cada
+# push a main y en cada pull request.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Si llega un commit nuevo a la misma rama, cancela la ejecución anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+
+      - name: Instalar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Preparar Gradle (con caché)
+        uses: gradle/actions/setup-gradle@v4
+
+      # Los google-services.json reales no están en el repositorio. Las plantillas
+      # bastan para compilar y pasar los tests (no se inicia sesión en CI).
+      - name: Usar la configuración de Firebase de ejemplo
+        run: |
+          cp app/google-services.json.example app/google-services.json
+          cp platostats/google-services.json.example platostats/google-services.json
+
+      - name: Compilar, probar y analizar
+        run: ./gradlew assembleDebug testDebugUnitTest lintDebug --stacktrace
+
+      - name: Guardar los informes si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: informes
+          path: |
+            **/build/reports/
+            **/build/test-results/
+          if-no-files-found: ignore
+          retention-days: 7
