@@ -15,6 +15,11 @@
         android:theme="@style/Theme.Plato"
         tools:targetApi="31">
 
+        <!-- Informes de errores (Crashlytics): activos solo en la versión publicada. -->
+        <meta-data
+            android:name="firebase_crashlytics_collection_enabled"
+            android:value="${crashlyticsActivo}" />
+
         <!-- Pantalla de carga común (:core): entra en MainActivity o en el login. -->
         <activity
             android:name="oscar.plato.core.ui.SplashActivity"

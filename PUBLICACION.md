@@ -2,29 +2,31 @@
 
 Lo que el proyecto ya trae preparado y los pasos manuales que quedan. Todo vale para las dos apps salvo que se diga lo contrario.
 
-## 1. Datos legales y páginas web
+## 1. Datos legales y páginas legales
 
-Google Play exige una política de privacidad con dirección web y, para las apps con cuentas, una página web donde pedir la eliminación de la cuenta. Las cuatro páginas (dos por app) están redactadas como plantillas en `legal/`.
+Google Play exige una política de privacidad accesible desde la app y con dirección web y, para las apps con cuentas, una página web donde pedir la eliminación de la cuenta. Las cuatro páginas (dos por app) están redactadas como plantillas en `legal/`.
 
-1. Rellena `datos-legales.properties`: responsable, correo de contacto y dirección donde vas a publicar las páginas. Es el único sitio donde se escriben.
-2. Genera las páginas:
+**Dentro de las apps no hay que hacer nada más.** La carpeta `legal/` va incluida en cada app, y el enlace «Política de privacidad» (en el inicio de sesión y en el menú lateral) abre la política en una pantalla propia, sin conexión y sin depender de ninguna web. Desde ella se llega a la página de eliminación de cuenta.
+
+Lo que queda es rellenar tus datos y publicar las páginas en la web, que es lo que pide Play Console:
+
+1. Rellena `legal/datos-legales.properties`: responsable y correo de contacto. Es el único sitio donde se escriben; mientras falten, las páginas de la app muestran «(pendiente de indicar)».
+2. Genera las páginas para la web:
    ```bash
    ./gradlew generarPaginasLegales
    ```
    Aparecen en `docs/`, con tus datos ya puestos.
 3. Publica la carpeta `docs/`. Con GitHub Pages: *Settings → Pages → Deploy from a branch → `main` / `docs`* (en un repositorio privado hace falta un plan de pago; sirve cualquier otro alojamiento de páginas estáticas, como Firebase Hosting).
-4. Comprueba que estas direcciones abren:
+4. Comprueba que estas direcciones abren, donde `<web>` es la dirección en la que has publicado `docs/`:
 
    | | PlatoScore | PlatoStats |
    |---|---|---|
-   | Política de privacidad | `<urlBase>/platoscore/privacidad.html` | `<urlBase>/platostats/privacidad.html` |
-   | Eliminación de cuenta | `<urlBase>/platoscore/eliminar-cuenta.html` | `<urlBase>/platostats/eliminar-cuenta.html` |
+   | Política de privacidad | `<web>/platoscore/privacidad.html` | `<web>/platostats/privacidad.html` |
+   | Eliminación de cuenta | `<web>/platoscore/eliminar-cuenta.html` | `<web>/platostats/eliminar-cuenta.html` |
 
-Las apps enlazan a su política desde el inicio de sesión y desde el menú lateral, con esa misma `urlBase`. Mientras no esté rellena, el enlace muestra un aviso en vez de abrirse.
+Para cambiar un texto, edita la plantilla en `legal/`: la app lo recoge al compilar, y para la web hay que volver a generar (lo que hay en `docs/` se sobrescribe).
 
-Para cambiar un texto, edita la plantilla en `legal/` y vuelve a generar: lo que hay en `docs/` se sobrescribe.
-
-> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (informes de errores, sincronización en la nube…), hay que actualizarlos junto con la ficha del apartado siguiente.
+> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (sincronización en la nube, analítica…), hay que actualizarlos junto con la ficha del apartado siguiente.
 
 ## 2. Play Console
 
@@ -40,12 +42,15 @@ Para cambiar un texto, edita la plantilla en `legal/` y vuelve a generar: lo que
 | URL para solicitar la eliminación de la cuenta | La de «Eliminación de cuenta» de la tabla anterior |
 | ¿Se puede pedir el borrado de datos sin eliminar la cuenta? | No |
 
-Tipos de datos que hay que declarar (los dos los trata Firebase Authentication):
+Tipos de datos que hay que declarar. Los dos primeros los trata Firebase Authentication; los otros tres, Firebase Crashlytics (informes de errores):
 
 | Tipo | Recopilado | Compartido | Obligatorio | Finalidad |
 |---|---|---|---|---|
 | Información personal → Dirección de correo electrónico | Sí | No | Sí | Gestión de cuentas |
 | Información personal → IDs de usuario | Sí | No | Sí | Gestión de cuentas |
+| Información y rendimiento de la app → Registros de fallos | Sí | No | No: el usuario puede desactivarlo | Análisis |
+| Información y rendimiento de la app → Diagnóstico | Sí | No | No: el usuario puede desactivarlo | Análisis |
+| ID de dispositivo u otros ID | Sí | No | No: el usuario puede desactivarlo | Análisis |
 
 Lo que **no** se declara, y por qué:
 
@@ -94,6 +99,8 @@ val versionParche = 0
 
 El paquete queda en `app/build/outputs/bundle/release/` (y en `platostats/...`). Falla a propósito si los datos legales siguen sin rellenar. El archivo que traduce las trazas de error ofuscadas (`mapping.txt`) va dentro del paquete y Play lo usa solo; una copia queda en `build/outputs/mapping/release/`.
 
+Al compilar una release **firmada** (con `keystore.properties`), ese mismo archivo se sube también a Firebase, para que Crashlytics muestre las trazas legibles. Hace falta conexión y el `google-services.json` real. Las compilaciones sin firmar no suben nada.
+
 Para probar en un dispositivo la versión que se va a publicar, con R8 y firmada:
 
 ```bash
@@ -104,10 +111,14 @@ Para probar en un dispositivo la versión que se va a publicar, con R8 y firmada
 
 Comprobado en el emulador (Android 15), en debug y en release con R8: giros de pantalla con cada diálogo y cada formulario abiertos, filtros, restauración tras cerrarse el proceso, y arranque hasta el inicio de sesión.
 
+**Informes de errores.** Crashlytics solo está activo en la versión release; en debug no envía nada. El usuario puede desactivarlo con el interruptor «Enviar informes de errores» del menú lateral. El panel aparece en la consola de Firebase (*Crashlytics*) cuando llega el primer informe.
+
 Pendiente de probar a mano, porque necesita una cuenta real o un dispositivo que no había:
 
 - [ ] Crear cuenta, iniciar sesión y recuperar la contraseña.
 - [ ] Cambiar la contraseña desde el menú lateral.
 - [ ] **Eliminar la cuenta**: que desaparece de Firebase (consola → Authentication), que se borran sus tiradas del dispositivo y que la app vuelve al inicio de sesión.
+- [ ] **Sesión caducada**: con la misma cuenta abierta en dos dispositivos, eliminarla (o cambiar su contraseña) en uno y abrir la app en el otro: debe avisar y volver al inicio de sesión.
+- [ ] **Crashlytics**: provocar un fallo en una versión release firmada y comprobar que el informe llega a la consola de Firebase con la traza legible.
 - [ ] Un recorrido completo en un dispositivo con Android 16, que es donde `targetSdk 36` cambia cosas: el gesto de atrás predictivo y, en tabletas, que la app ya no puede fijar la orientación.
 - [ ] La versión release firmada con la clave de subida, instalada desde una prueba interna de Play.

@@ -1,3 +1,4 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -7,6 +8,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 // Versión de PlatoScore (cada app lleva la suya; ver PUBLICACION.md). El nombre
@@ -23,10 +25,6 @@ val keystoreProperties = Properties().apply {
     if (archivo.exists()) archivo.inputStream().use { load(it) }
 }
 
-// Dirección donde están publicadas las páginas legales (datos-legales.properties).
-// Vacía mientras no se rellene: la app avisa en vez de abrir el enlace.
-val urlPaginasLegales: String by rootProject.extra
-
 android {
     namespace = "oscar.platoscore"
     compileSdk = 36
@@ -37,11 +35,6 @@ android {
         targetSdk = 36
         versionCode = versionMayor * 10000 + versionMenor * 100 + versionParche
         versionName = "$versionMayor.$versionMenor.$versionParche"
-
-        resValue(
-            "string", "url_privacidad",
-            if (urlPaginasLegales.isEmpty()) "" else "$urlPaginasLegales/platoscore/privacidad.html"
-        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -67,9 +60,18 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.findByName("release")
+
+            // Crashlytics solo envía informes en la versión publicada, y la tabla que
+            // traduce sus trazas ofuscadas (mapping) solo se sube al compilar una
+            // release firmada: las de prueba no tocan el proyecto de Firebase.
+            manifestPlaceholders["crashlyticsActivo"] = true
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = keystoreProperties.isNotEmpty()
+            }
         }
         debug {
             isMinifyEnabled = false
+            manifestPlaceholders["crashlyticsActivo"] = false
         }
     }
 
@@ -81,6 +83,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // La carpeta legal/ va dentro de la app: la política de privacidad se muestra
+    // desde ahí, sin depender de que esté publicada en la web.
+    sourceSets["main"].assets.srcDir(rootProject.file("legal"))
 }
 
 kotlin {

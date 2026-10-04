@@ -42,11 +42,14 @@ dependencies {
     api("androidx.constraintlayout:constraintlayout:2.1.4")
     api("androidx.activity:activity-ktx:1.9.2")
 
-    // Firebase (autenticación). Cada app aporta su propio google-services.json.
+    // Firebase (autenticación e informes de errores). Cada app aporta su propio
+    // google-services.json.
     api(platform("com.google.firebase:firebase-bom:33.1.2"))
     api("com.google.firebase:firebase-auth-ktx")
+    // El plugin de Gradle de Crashlytics lo aplica cada app.
+    api("com.google.firebase:firebase-crashlytics")
 
-    // ViewModel y LiveData de las operaciones de cuenta (CuentaViewModel)
+    // ViewModel y LiveData de los ViewModel comunes (cuenta y guardado)
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.7")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")

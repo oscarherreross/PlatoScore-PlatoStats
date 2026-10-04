@@ -197,6 +197,13 @@
                     android:text="@string/accion_cerrar_sesion"
                     android:layout_marginTop="8dp" />
 
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/swInformesErrores"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/ajuste_informes_errores"
+                    android:layout_marginTop="8dp" />
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnPrivacidad"
                     style="@style/Widget.MaterialComponents.Button.TextButton"
