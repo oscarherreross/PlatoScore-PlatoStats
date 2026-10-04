@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
     <title>Política de privacidad de PlatoStats</title>
     <link rel="stylesheet" href="../estilo.css">
 </head>
@@ -16,10 +17,11 @@
         datos personales trata la aplicación, para qué y qué puedes hacer con ellos.</p>
 
     <div class="aviso">
-        <strong>En resumen:</strong> la única información que sale de tu dispositivo es la de tu
-        cuenta (correo y contraseña), que gestiona Firebase Authentication, un servicio de Google.
-        Tus tiradas y estadísticas se guardan solo en tu dispositivo. La aplicación no tiene
-        publicidad ni herramientas de análisis o de seguimiento.
+        <strong>En resumen:</strong> de tu dispositivo solo salen los datos de tu cuenta (correo y
+        contraseña), que gestiona Firebase Authentication, y, si la aplicación falla, un informe
+        técnico del error, que puedes desactivar. Los dos son servicios de Google. Tus tiradas y
+        estadísticas se guardan solo en tu dispositivo. La aplicación no tiene publicidad ni
+        analiza cómo la usas.
     </div>
 
     <h2>1. Responsable del tratamiento</h2>
@@ -43,6 +45,18 @@
     <p>La base jurídica es la ejecución de la relación que estableces al crear la cuenta y usar la
         aplicación (artículo 6.1.b del RGPD).</p>
 
+    <h3>Informes de errores</h3>
+    <p>Si la aplicación falla, envía un informe técnico a Firebase Crashlytics (Google) para poder
+        corregir el problema. El informe contiene la traza del error, la versión de la aplicación,
+        el modelo del dispositivo y su versión de Android, su estado en ese momento (memoria y
+        almacenamiento libres, orientación de la pantalla) y un identificador aleatorio de la
+        instalación. Con el mismo fin se registra cada arranque de la aplicación, con esos mismos
+        datos técnicos, para medir su estabilidad. La aplicación no añade a los informes tu correo,
+        tu identificador de usuario ni lo que escribes en ella.</p>
+    <p>La base jurídica es el interés legítimo en mantener la aplicación estable (artículo 6.1.f
+        del RGPD). Puedes desactivar el envío en cualquier momento en el menú lateral de la
+        aplicación, con el interruptor «Enviar informes de errores».</p>
+
     <h3>Datos que introduces en la aplicación</h3>
     <p>Tus tiradas: lugar, fecha y hora, número de escuadra, tipo (entrenamiento o competición),
         máquina, notas y, de cada serie, el puesto, los platos rotos y los rotos al primer tiro.
@@ -65,14 +79,15 @@
     <h2>3. Lo que la aplicación no hace</h2>
     <ul>
         <li>No muestra publicidad.</li>
-        <li>No usa herramientas de análisis ni de seguimiento.</li>
+        <li>No analiza cómo usas la aplicación ni te sigue en otras aplicaciones o sitios web.</li>
         <li>No vende ni cede tus datos a terceros.</li>
         <li>No accede a tus contactos, tu ubicación, tu cámara ni tus archivos.</li>
     </ul>
 
     <h2>4. Quién más trata tus datos</h2>
-    <p>Google (Google Ireland Limited y Google LLC) presta el servicio Firebase Authentication como
-        encargado del tratamiento de los datos de tu cuenta. Google puede tratarlos fuera del
+    <p>Google (Google Ireland Limited y Google LLC) presta los servicios Firebase Authentication y
+        Firebase Crashlytics como encargado del tratamiento de los datos de tu cuenta y de los
+        informes de errores. Google puede tratarlos fuera del
         Espacio Económico Europeo, con las garantías previstas en el RGPD (Marco de Privacidad de
         Datos UE-EE. UU. y cláusulas contractuales tipo). Más información en la
         <a href="https://firebase.google.com/support/privacy">página de privacidad de Firebase</a>.</p>
@@ -81,6 +96,7 @@
     <ul>
         <li>Los datos de tu cuenta, hasta que la elimines. Después, Google los borra de sus sistemas
             en un plazo máximo de 180 días.</li>
+        <li>Los informes de errores, 90 días.</li>
         <li>Los datos guardados en tu dispositivo, hasta que los borres, elimines tu cuenta desde
             ese dispositivo, borres los datos de la aplicación o la desinstales.</li>
     </ul>

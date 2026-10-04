@@ -10,6 +10,11 @@
         <activity
             android:name="oscar.plato.core.ui.LoginActivity"
             android:exported="false" />
+
+        <!-- Política de privacidad, que va dentro de la app. -->
+        <activity
+            android:name="oscar.plato.core.ui.PoliticaPrivacidadActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

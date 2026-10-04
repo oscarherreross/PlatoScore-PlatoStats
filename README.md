@@ -33,19 +33,19 @@ La interfaz está en español.
 ├── platostats/   PlatoStats       (oscar.platostats)
 ├── core/         Código común     (oscar.plato.core): login, pantalla de carga, cuenta,
 │                                  filtros, diálogos, fechas, insets y tema
-└── legal/        Plantillas de la política de privacidad y de la página de eliminación
-                  de cuenta de cada app
+└── legal/        Política de privacidad y página de eliminación de cuenta de cada app
+                  (van dentro de las apps y sirven de plantilla para la web)
 ```
 
 Cada app implementa la interfaz `PlatoApp` de `:core` en su clase `Application` para indicar su pantalla principal, su logo y su lema. `:core` no conoce a ninguna de las dos apps.
 
 ## Tecnología
 
-Kotlin · Views XML con ViewBinding (sin Compose ni Fragments) · MVVM con `AndroidViewModel` y `LiveData` · Room 2.8 con KSP · Firebase Authentication (correo y contraseña) · Coroutines · Material Components.
+Kotlin · Views XML con ViewBinding (sin Compose ni Fragments) · MVVM con `AndroidViewModel` y `LiveData` · Room 2.8 con KSP · Firebase Authentication (correo y contraseña) y Crashlytics · Coroutines · Material Components.
 
 `compileSdk` y `targetSdk` 36, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.0. La variante release se compila con R8.
 
-Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar.
+Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar y, en la versión publicada, para recibir informes de errores (Crashlytics), que el usuario puede desactivar.
 
 ## Cómo compilarlo
 
@@ -87,6 +87,8 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`. Si Android Studio no lo ha
 - Las barras superiores se pintan con `?attr/platoAppBar`, no con `colorPrimary`, para que en modo noche la barra sea grafito y el naranja siga siendo el color de acento.
 - La app dibuja de borde a borde (edge-to-edge): cada pantalla nueva debe aplicar sus insets (`InsetsUtil`).
 - Cada cambio de base de datos necesita una migración real y su esquema exportado (`app/schemas` y `platostats/schemas`); no se usa `fallbackToDestructiveMigration`.
+- Toda pantalla posterior al inicio de sesión empieza su `onCreate` con `if (!exigirSesion()) return`: sin sesión vuelve al login en vez de trabajar con un usuario vacío.
+- Los ViewModel que escriben en la base de datos heredan de `GuardadoViewModel` y lanzan sus escrituras con `guardar { ... }`: no se interrumpen si la pantalla se cierra y, si fallan, avisan al usuario en vez de cerrar la app.
 - Las pantallas deben conservar su estado al girar: los filtros viven en el `SavedStateHandle` del ViewModel y los diálogos se registran en `DialogosRestaurables` (`:core`), que los reabre con lo que tuvieran escrito. Un diálogo nuevo se abre con `dialogos.mostrar(...)`, no con `.show()`.
 
 [`Summary.md`](Summary.md) recoge el detalle completo: modelo de datos, migraciones, pantallas, decisiones de diseño y limitaciones conocidas.

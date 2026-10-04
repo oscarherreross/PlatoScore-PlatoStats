@@ -10,8 +10,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.BundleCompat
 import androidx.core.widget.doAfterTextChanged
+import java.util.Calendar
 import kotlinx.parcelize.Parcelize
 import oscar.plato.core.ui.DialogosRestaurables
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -22,7 +24,6 @@ import oscar.platostats.models.Serie
 import oscar.platostats.models.Tirada
 import oscar.platostats.utils.Extras
 import oscar.platostats.viewmodels.TiradaViewModel
-import java.util.Calendar
 
 /** Lo escrito en la fila de una serie, tal cual (puede estar a medias o vacío). */
 @Parcelize
@@ -67,6 +68,7 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -96,6 +98,7 @@ class TiradaDetailActivity : AppCompatActivity() {
             if (n in 1..MAX_SERIES) construirFilas(n)
         }
         binding.btnGuardar.setOnClickListener { guardar() }
+        viewModel.formularioGuardado.observe(this) { hecho -> alGuardar(hecho) }
 
         if (formularioListo) {
             actualizarCampoFechaHora()
@@ -278,9 +281,21 @@ class TiradaDetailActivity : AppCompatActivity() {
             notas = binding.etNotas.text?.toString()?.trim().orEmpty()
         )
 
+        // La pantalla no se cierra hasta saber que se ha guardado (ver alGuardar).
+        binding.btnGuardar.isEnabled = false
         if (editando) viewModel.actualizar(tirada, series) else viewModel.guardarNueva(tirada, series)
-        Toast.makeText(this, R.string.toast_tirada_guardada, Toast.LENGTH_SHORT).show()
-        finish()
+    }
+
+    /** Si el guardado falla, el formulario se queda abierto con lo escrito. */
+    private fun alGuardar(hecho: Boolean?) {
+        if (hecho == null) return
+        viewModel.formularioGuardadoAtendido()
+        if (hecho) {
+            Toast.makeText(this, R.string.toast_tirada_guardada, Toast.LENGTH_SHORT).show()
+            finish()
+        } else {
+            binding.btnGuardar.isEnabled = true
+        }
     }
 
     private fun toast(resId: Int) = Toast.makeText(this, resId, Toast.LENGTH_SHORT).show()

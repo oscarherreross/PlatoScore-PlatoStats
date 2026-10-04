@@ -12,6 +12,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.plato.core.ui.DialogosRestaurables
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -42,6 +43,7 @@ class TiradaDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityTiradaDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)

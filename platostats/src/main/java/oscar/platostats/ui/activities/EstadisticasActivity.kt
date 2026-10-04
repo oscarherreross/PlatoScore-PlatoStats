@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import oscar.plato.core.models.FiltroTiradas
 import oscar.plato.core.ui.DialogosRestaurables
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -53,6 +54,7 @@ class EstadisticasActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityEstadisticasBinding.inflate(layoutInflater)
         setContentView(binding.root)

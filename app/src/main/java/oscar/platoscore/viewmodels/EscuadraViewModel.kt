@@ -1,16 +1,14 @@
 package oscar.platoscore.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import oscar.plato.core.viewmodels.GuardadoViewModel
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.Escuadra
 import oscar.platoscore.models.EscuadraConContadores
 import oscar.platoscore.repositories.EscuadraRepository
 
-class EscuadraViewModel(application: Application) : AndroidViewModel(application) {
+class EscuadraViewModel(application: Application) : GuardadoViewModel(application) {
 
     private val escuadraRepository: EscuadraRepository
 
@@ -27,14 +25,14 @@ class EscuadraViewModel(application: Application) : AndroidViewModel(application
      * no se repitan números aunque se hayan borrado escuadras intermedias.
      */
     fun crearEscuadra(tiradaId: Int) {
-        viewModelScope.launch {
+        guardar {
             val numero = escuadraRepository.getSiguienteNumeroEscuadra(tiradaId)
             escuadraRepository.insert(Escuadra(tiradaId = tiradaId, numeroEscuadra = numero))
         }
     }
 
     fun deleteEscuadra(escuadra: Escuadra) {
-        viewModelScope.launch {
+        guardar {
             escuadraRepository.delete(escuadra)
         }
     }

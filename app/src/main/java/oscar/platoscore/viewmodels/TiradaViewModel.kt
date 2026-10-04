@@ -1,15 +1,13 @@
 package oscar.platoscore.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
 import oscar.plato.core.models.FiltroTiradas
 import oscar.plato.core.utils.Sesion
+import oscar.plato.core.viewmodels.GuardadoViewModel
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.ResumenProfesional
 import oscar.platoscore.models.ResumenProfesionalCalc
@@ -21,7 +19,7 @@ import oscar.platoscore.repositories.TiradaRepository
 class TiradaViewModel(
     application: Application,
     estado: SavedStateHandle
-) : AndroidViewModel(application) {
+) : GuardadoViewModel(application) {
 
     private val tiradaRepository: TiradaRepository
     private val uid = Sesion.uid()
@@ -57,20 +55,20 @@ class TiradaViewModel(
     fun getTirada(id: Int): LiveData<Tirada?> = tiradaRepository.getTirada(id)
 
     fun insertTirada(tirada: Tirada) {
-        viewModelScope.launch {
+        guardar {
             // Se sella con el UID del profesional autenticado para aislar sus datos.
             tiradaRepository.insert(tirada.copy(userId = uid))
         }
     }
 
     fun updateTirada(tirada: Tirada) {
-        viewModelScope.launch {
+        guardar {
             tiradaRepository.update(tirada)
         }
     }
 
     fun deleteTirada(tirada: Tirada) {
-        viewModelScope.launch {
+        guardar {
             tiradaRepository.delete(tirada)
         }
     }

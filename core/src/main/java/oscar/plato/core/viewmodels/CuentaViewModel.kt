@@ -1,6 +1,7 @@
 package oscar.plato.core.viewmodels
 
 import android.app.Application
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,9 +12,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import oscar.plato.core.PlatoApp
 import oscar.plato.core.R
@@ -26,7 +24,7 @@ sealed interface EstadoCuenta {
     /** Ha fallado. Con [enPassword], porque la contraseña escrita no es la de la cuenta. */
     data class Error(@StringRes val mensaje: Int, val enPassword: Boolean = false) : EstadoCuenta
 
-    /** Ha terminado; [mensaje] es lo que hay que contarle al usuario. */
+    /** Ha terminado; [mensaje] es lo que hay que contarle (o ya se le ha contado) al usuario. */
     data class Hecho(@StringRes val mensaje: Int) : EstadoCuenta
 }
 
@@ -111,10 +109,13 @@ class CuentaViewModel(application: Application) : AndroidViewModel(application) 
         // esta pantalla siga abierta.
         alcanceDeApp.launch {
             val borrados = runCatching { app.borrarDatosDe(uid) }.isSuccess
-            _eliminacion.value = EstadoCuenta.Hecho(
+            val mensaje =
                 if (borrados) R.string.toast_cuenta_eliminada
                 else R.string.toast_cuenta_eliminada_sin_datos
-            )
+            // El aviso se da desde aquí: al borrarse la cuenta se cierra la sesión y la
+            // pantalla puede haberse ido ya al inicio de sesión.
+            Toast.makeText(getApplication(), mensaje, Toast.LENGTH_LONG).show()
+            _eliminacion.value = EstadoCuenta.Hecho(mensaje)
         }
     }
 
@@ -127,7 +128,4 @@ class CuentaViewModel(application: Application) : AndroidViewModel(application) 
         else -> R.string.login_error_generico
     }
 
-    private companion object {
-        val alcanceDeApp = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-    }
 }

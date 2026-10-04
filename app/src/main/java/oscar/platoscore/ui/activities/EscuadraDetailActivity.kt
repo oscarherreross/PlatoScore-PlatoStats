@@ -12,6 +12,7 @@ import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.plato.core.ui.DialogosRestaurables
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
@@ -46,6 +47,7 @@ class EscuadraDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityEscuadraDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)

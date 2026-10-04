@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import oscar.plato.core.ui.DialogosRestaurables
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.InsetsUtil
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
@@ -52,6 +53,7 @@ class ResultadosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityResultadosBinding.inflate(layoutInflater)
         setContentView(binding.root)
