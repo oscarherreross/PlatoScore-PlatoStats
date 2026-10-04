@@ -2,27 +2,29 @@
 
 Lo que el proyecto ya trae preparado y los pasos manuales que quedan. Todo vale para las dos apps salvo que se diga lo contrario.
 
-## 1. Datos legales y páginas web
+## 1. Datos legales y páginas legales
 
-Google Play exige una política de privacidad con dirección web y, para las apps con cuentas, una página web donde pedir la eliminación de la cuenta. Las cuatro páginas (dos por app) están redactadas como plantillas en `legal/`.
+Google Play exige una política de privacidad accesible desde la app y con dirección web y, para las apps con cuentas, una página web donde pedir la eliminación de la cuenta. Las cuatro páginas (dos por app) están redactadas como plantillas en `legal/`.
 
-1. Rellena `datos-legales.properties`: responsable, correo de contacto y dirección donde vas a publicar las páginas. Es el único sitio donde se escriben.
-2. Genera las páginas:
+**Dentro de las apps no hay que hacer nada más.** La carpeta `legal/` va incluida en cada app, y el enlace «Política de privacidad» (en el inicio de sesión y en el menú lateral) abre la política en una pantalla propia, sin conexión y sin depender de ninguna web. Desde ella se llega a la página de eliminación de cuenta.
+
+Lo que queda es rellenar tus datos y publicar las páginas en la web, que es lo que pide Play Console:
+
+1. Rellena `legal/datos-legales.properties`: responsable y correo de contacto. Es el único sitio donde se escriben; mientras falten, las páginas de la app muestran «(pendiente de indicar)».
+2. Genera las páginas para la web:
    ```bash
    ./gradlew generarPaginasLegales
    ```
    Aparecen en `docs/`, con tus datos ya puestos.
 3. Publica la carpeta `docs/`. Con GitHub Pages: *Settings → Pages → Deploy from a branch → `main` / `docs`* (en un repositorio privado hace falta un plan de pago; sirve cualquier otro alojamiento de páginas estáticas, como Firebase Hosting).
-4. Comprueba que estas direcciones abren:
+4. Comprueba que estas direcciones abren, donde `<web>` es la dirección en la que has publicado `docs/`:
 
    | | PlatoScore | PlatoStats |
    |---|---|---|
-   | Política de privacidad | `<urlBase>/platoscore/privacidad.html` | `<urlBase>/platostats/privacidad.html` |
-   | Eliminación de cuenta | `<urlBase>/platoscore/eliminar-cuenta.html` | `<urlBase>/platostats/eliminar-cuenta.html` |
+   | Política de privacidad | `<web>/platoscore/privacidad.html` | `<web>/platostats/privacidad.html` |
+   | Eliminación de cuenta | `<web>/platoscore/eliminar-cuenta.html` | `<web>/platostats/eliminar-cuenta.html` |
 
-Las apps enlazan a su política desde el inicio de sesión y desde el menú lateral, con esa misma `urlBase`. Mientras no esté rellena, el enlace muestra un aviso en vez de abrirse.
-
-Para cambiar un texto, edita la plantilla en `legal/` y vuelve a generar: lo que hay en `docs/` se sobrescribe.
+Para cambiar un texto, edita la plantilla en `legal/`: la app lo recoge al compilar, y para la web hay que volver a generar (lo que hay en `docs/` se sobrescribe).
 
 > Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (sincronización en la nube, analítica…), hay que actualizarlos junto con la ficha del apartado siguiente.
 

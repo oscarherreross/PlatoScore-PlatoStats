@@ -80,5 +80,6 @@
 
     <!-- Política de privacidad -->
     <string name="accion_privacidad">Política de privacidad</string>
-    <string name="toast_privacidad_no_disponible">No se ha podido abrir la política de privacidad</string>
+    <string name="legal_dato_pendiente">(pendiente de indicar)</string>
+    <string name="toast_enlace_no_disponible">No se ha podido abrir el enlace</string>
 </resources>

@@ -33,8 +33,8 @@ La interfaz está en español.
 ├── platostats/   PlatoStats       (oscar.platostats)
 ├── core/         Código común     (oscar.plato.core): login, pantalla de carga, cuenta,
 │                                  filtros, diálogos, fechas, insets y tema
-└── legal/        Plantillas de la política de privacidad y de la página de eliminación
-                  de cuenta de cada app
+└── legal/        Política de privacidad y página de eliminación de cuenta de cada app
+                  (van dentro de las apps y sirven de plantilla para la web)
 ```
 
 Cada app implementa la interfaz `PlatoApp` de `:core` en su clase `Application` para indicar su pantalla principal, su logo y su lema. `:core` no conoce a ninguna de las dos apps.

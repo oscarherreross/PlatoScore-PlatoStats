@@ -26,10 +26,6 @@ val keystoreProperties = Properties().apply {
     if (archivo.exists()) archivo.inputStream().use { load(it) }
 }
 
-// Dirección donde están publicadas las páginas legales (datos-legales.properties).
-// Vacía mientras no se rellene: la app avisa en vez de abrir el enlace.
-val urlPaginasLegales: String by rootProject.extra
-
 android {
     namespace = "oscar.platostats"
     compileSdk = 36
@@ -40,11 +36,6 @@ android {
         targetSdk = 36
         versionCode = versionMayor * 10000 + versionMenor * 100 + versionParche
         versionName = "$versionMayor.$versionMenor.$versionParche"
-
-        resValue(
-            "string", "url_privacidad",
-            if (urlPaginasLegales.isEmpty()) "" else "$urlPaginasLegales/platostats/privacidad.html"
-        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -97,6 +88,10 @@ android {
     buildFeatures {
         viewBinding = true
     }
+
+    // La carpeta legal/ va dentro de la app: la política de privacidad se muestra
+    // desde ahí, sin depender de que esté publicada en la web.
+    sourceSets["main"].assets.srcDir(rootProject.file("legal"))
 }
 
 ksp {

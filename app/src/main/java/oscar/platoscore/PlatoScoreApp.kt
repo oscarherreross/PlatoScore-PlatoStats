@@ -15,8 +15,7 @@ class PlatoScoreApp : Application(), PlatoApp {
     override val logo = R.drawable.ic_logo
     override val lema = R.string.splash_tagline
 
-    override val urlPrivacidad: String
-        get() = getString(R.string.url_privacidad)
+    override val carpetaLegal = "platoscore"
 
     override suspend fun borrarDatosDe(uid: String) {
         PlatoScoreDatabase.getDatabase(this).tiradaDao().deleteDeUsuario(uid)

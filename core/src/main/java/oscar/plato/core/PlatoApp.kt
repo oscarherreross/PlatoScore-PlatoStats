@@ -24,8 +24,8 @@ interface PlatoApp {
     @get:StringRes
     val lema: Int
 
-    /** Dirección web de la política de privacidad; vacía si todavía no está publicada. */
-    val urlPrivacidad: String
+    /** Carpeta de legal/ con las páginas de esta app (política de privacidad y eliminación de cuenta). */
+    val carpetaLegal: String
 
     /**
      * Borra de este dispositivo todos los datos guardados por el usuario [uid].

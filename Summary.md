@@ -39,10 +39,11 @@ Todo está en español (textos en `strings.xml`).
 ```
 :core   oscar.plato.core
 ├── PlatoApp           Interfaz que implementa la Application de cada app (pantalla principal, logo, lema)
-├── models/            FiltroTiradas (genérico)
+├── models/            FiltroTiradas (genérico), DatosLegales
 ├── ui/                SplashActivity, LoginActivity, CuentaUi (cambiar contraseña / cerrar sesión /
 │                      eliminar cuenta), FiltrosDialog (+ OpcionFiltro), DialogosRestaurables,
-│                      Privacidad (enlace a la política), SesionRequerida (exigirSesion)
+│                      PoliticaPrivacidadActivity (política dentro de la app, en un WebView),
+│                      SesionRequerida (exigirSesion)
 ├── viewmodels/        CuentaViewModel (operaciones de cuenta contra Firebase),
 │                      GuardadoViewModel (base de los ViewModel que escriben en la BD)
 ├── utils/             Fechas, Sesion, InformesDeErrores, InsetsUtil, EdgeToEdgeExt
@@ -70,9 +71,9 @@ Todo está en español (textos en `strings.xml`).
 └── utils/Extras
 ```
 
-En la raíz: `legal/` (plantillas de las páginas legales), `datos-legales.properties` (responsable, contacto y dirección de esas páginas) y `PUBLICACION.md` (guía de publicación).
+En la raíz: `legal/` (páginas legales de cada app y `datos-legales.properties`, con el responsable y el contacto) y `PUBLICACION.md` (guía de publicación). La carpeta `legal/` entera se incluye en las dos apps como *assets*.
 
-**Regla:** nada de `:core` puede conocer clases de una app concreta; lo que varía por app pasa por `PlatoApp` (pantalla principal, logo, lema, dirección de la política de privacidad y borrado de los datos de un usuario). Las dos apps tienen clases con el mismo nombre (`MainActivity`, `Tirada`, `TiradaDao`…) en paquetes distintos: no hay conflicto porque nunca se compilan juntas.
+**Regla:** nada de `:core` puede conocer clases de una app concreta; lo que varía por app pasa por `PlatoApp` (pantalla principal, logo, lema, carpeta de sus páginas legales y borrado de los datos de un usuario). Las dos apps tienen clases con el mismo nombre (`MainActivity`, `Tirada`, `TiradaDao`…) en paquetes distintos: no hay conflicto porque nunca se compilan juntas.
 
 ## 4. Modelo de datos (Room)
 
@@ -166,7 +167,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 9. **Las pantallas conservan su estado al girar**: filtros en `SavedStateHandle` y diálogos con `DialogosRestaurables`, sin Fragments.
 10. **Las escrituras no cierran la app ni se quedan a medias**: los ViewModel heredan de `GuardadoViewModel` y escriben con `guardar { ... }`. Si fallan, se registra el error en Crashlytics y se avisa con un mensaje; el formulario de PlatoStats, además, espera al resultado y no se cierra si falla.
 11. **Si cambia lo que la app envía fuera del dispositivo**, hay que actualizar las plantillas de `legal/` y la ficha de seguridad de los datos (`PUBLICACION.md`).
-12. **Los datos legales se escriben en un solo sitio** (`datos-legales.properties`); las páginas de `docs/` se generan desde `legal/` con `./gradlew generarPaginasLegales` y no se editan a mano.
+12. **Los datos legales se escriben en un solo sitio** (`legal/datos-legales.properties`). La política se muestra **dentro de la app** (`PoliticaPrivacidadActivity` carga las páginas de `legal/` y las completa con esos datos), sin depender de la web; las páginas de `docs/` para la web se generan con `./gradlew generarPaginasLegales` y no se editan a mano.
 
 ## 10. Limitaciones y trabajo pendiente conocido
 
