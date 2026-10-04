@@ -1,3 +1,4 @@
+import com.google.firebase.crashlytics.buildtools.gradle.CrashlyticsExtension
 import java.util.Properties
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     id("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 // Versión de PlatoScore (cada app lleva la suya; ver PUBLICACION.md). El nombre
@@ -66,9 +68,18 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.findByName("release")
+
+            // Crashlytics solo envía informes en la versión publicada, y la tabla que
+            // traduce sus trazas ofuscadas (mapping) solo se sube al compilar una
+            // release firmada: las de prueba no tocan el proyecto de Firebase.
+            manifestPlaceholders["crashlyticsActivo"] = true
+            configure<CrashlyticsExtension> {
+                mappingFileUploadEnabled = keystoreProperties.isNotEmpty()
+            }
         }
         debug {
             isMinifyEnabled = false
+            manifestPlaceholders["crashlyticsActivo"] = false
         }
     }
 

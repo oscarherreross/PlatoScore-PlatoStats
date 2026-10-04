@@ -1,7 +1,7 @@
 package oscar.plato.core.ui
 
 import android.app.Dialog
-import android.content.Intent
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -12,12 +12,14 @@ import com.google.firebase.auth.FirebaseAuth
 import oscar.plato.core.R
 import oscar.plato.core.databinding.DialogCambiarPasswordBinding
 import oscar.plato.core.databinding.DialogEliminarCuentaBinding
+import oscar.plato.core.utils.InformesDeErrores
 import oscar.plato.core.viewmodels.CuentaViewModel
 import oscar.plato.core.viewmodels.EstadoCuenta
 
 /**
  * Acciones de cuenta de la pantalla principal de las dos apps: cerrar sesión,
- * cambiar la contraseña y eliminar la cuenta. La pantalla la crea en su onCreate.
+ * cambiar la contraseña, eliminar la cuenta y decidir si se envían informes de
+ * errores. La pantalla la crea en su onCreate.
  *
  * Los diálogos solo recogen los datos; las operaciones las hace [CuentaViewModel],
  * así que siguen su curso aunque la pantalla se recree a mitad.
@@ -46,12 +48,20 @@ class CuentaUi(
     fun cerrarSesion() {
         FirebaseAuth.getInstance().signOut()
         Toast.makeText(activity, R.string.toast_sesion_cerrada, Toast.LENGTH_SHORT).show()
-        irAlInicioDeSesion()
+        activity.irAlInicioDeSesion()
     }
 
     fun mostrarCambiarPassword() = dialogos.mostrar(DIALOGO_PASSWORD)
 
     fun mostrarEliminarCuenta() = dialogos.mostrar(DIALOGO_ELIMINAR)
+
+    /** Enlaza el interruptor con el que el usuario decide si se envían informes de errores. */
+    fun enlazarInformesDeErrores(interruptor: CompoundButton) {
+        interruptor.isChecked = InformesDeErrores.activos(activity)
+        interruptor.setOnCheckedChangeListener { _, activos ->
+            InformesDeErrores.activar(activity, activos)
+        }
+    }
 
     // ─── CAMBIAR CONTRASEÑA ───
 
@@ -160,9 +170,9 @@ class CuentaUi(
                 viewModel.eliminacionAtendida()
             }
             is EstadoCuenta.Hecho -> {
-                Toast.makeText(activity, estado.mensaje, Toast.LENGTH_LONG).show()
+                // El aviso ya lo ha dado el ViewModel.
                 viewModel.eliminacionAtendida()
-                irAlInicioDeSesion()
+                activity.irAlInicioDeSesion()
             }
             else -> Unit
         }
@@ -178,12 +188,7 @@ class CuentaUi(
         dialogo.getButton(AlertDialog.BUTTON_NEGATIVE)?.isEnabled = !enCurso
     }
 
-    private fun irAlInicioDeSesion() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        activity.startActivity(intent)
-        activity.finish()
-    }
+
 
     private companion object {
         const val DIALOGO_PASSWORD = "cuenta_password"

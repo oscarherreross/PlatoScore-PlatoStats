@@ -30,6 +30,7 @@ import oscar.plato.core.ui.CuentaUi
 import oscar.plato.core.ui.DialogosRestaurables
 import oscar.plato.core.ui.FiltrosDialog
 import oscar.plato.core.ui.abrirPoliticaPrivacidad
+import oscar.plato.core.ui.exigirSesion
 import oscar.plato.core.utils.Fechas
 import oscar.plato.core.utils.enableEdgeToEdgeConToolbar
 import oscar.platoscore.R
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!exigirSesion()) return
         enableEdgeToEdgeConToolbar()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -127,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         binding.btnCerrarSesion.setOnClickListener { cuenta.cerrarSesion() }
         binding.btnPrivacidad.setOnClickListener { abrirPoliticaPrivacidad() }
         binding.btnEliminarCuenta.setOnClickListener { cuenta.mostrarEliminarCuenta() }
+        cuenta.enlazarInformesDeErrores(binding.swInformesErrores)
 
         tiradaViewModel.resumenProfesional.observe(this) { resumen ->
             mostrarResumen(resumen)

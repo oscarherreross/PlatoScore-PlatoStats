@@ -24,7 +24,8 @@ Todo está en español (textos en `strings.xml`).
 - **Arquitectura**: **MVVM** → Activities → ViewModels (`AndroidViewModel` + `LiveData`) → Repositories → DAOs.
 - **Persistencia**: **Room 2.8.4** (SQLite local), compilado con **KSP** (no kapt). **Cada app tiene su propia BD** (ver §4), con `exportSchema=true` y migraciones reales (sin `fallbackToDestructiveMigration`).
 - **Autenticación**: **Firebase Authentication** (email/contraseña). Firebase BoM **33.1.2**, `firebase-auth-ktx`, plugin `com.google.gms.google-services`. **Cada app tiene su propio proyecto Firebase** (ver §5).
-- **Async**: Coroutines 1.8.1 (los repositorios usan `withContext(Dispatchers.IO)`; ViewModels usan `viewModelScope`).
+- **Informes de errores**: **Firebase Crashlytics** (dependencia en `:core`, plugin `com.google.firebase.crashlytics` en cada app). Solo envía en la versión release (`firebase_crashlytics_collection_enabled` se fija por `manifestPlaceholders`), el usuario puede desactivarlo en el menú lateral (`InformesDeErrores`) y la tabla de R8 solo se sube a Firebase al compilar una release firmada. No se asocia ningún identificador de usuario a los informes.
+- **Async**: Coroutines 1.8.1 (los repositorios usan `withContext(Dispatchers.IO)`). Las escrituras de los ViewModel se lanzan con `GuardadoViewModel.guardar`, que no usa `viewModelScope` para que cerrar la pantalla no las interrumpa.
 - **Librerías AndroidX**: appcompat 1.7.0, material 1.12.0, constraintlayout 2.1.4, activity-ktx 1.9.2, lifecycle 2.8.7, recyclerview 1.3.2, cardview 1.0.0, **drawerlayout 1.2.0**.
 - **Tests**: JUnit4 unitarios (lógica pura) en los tres módulos. NO hay tests instrumentados/Espresso.
 - **Sin librerías de gráficas externas**: la gráfica de estadísticas de PlatoStats es una **View custom dibujada a mano** (`LineChartView`).
@@ -41,9 +42,10 @@ Todo está en español (textos en `strings.xml`).
 ├── models/            FiltroTiradas (genérico)
 ├── ui/                SplashActivity, LoginActivity, CuentaUi (cambiar contraseña / cerrar sesión /
 │                      eliminar cuenta), FiltrosDialog (+ OpcionFiltro), DialogosRestaurables,
-│                      Privacidad (enlace a la política)
-├── viewmodels/        CuentaViewModel (operaciones de cuenta contra Firebase)
-├── utils/             Fechas, Sesion, InsetsUtil, EdgeToEdgeExt
+│                      Privacidad (enlace a la política), SesionRequerida (exigirSesion)
+├── viewmodels/        CuentaViewModel (operaciones de cuenta contra Firebase),
+│                      GuardadoViewModel (base de los ViewModel que escriben en la BD)
+├── utils/             Fechas, Sesion, InformesDeErrores, InsetsUtil, EdgeToEdgeExt
 └── res/               Tema Theme.Plato, paleta Grafito, attrs (platoAppBar), textos comunes,
                        layouts de login / splash / diálogos de filtros y contraseña
 
@@ -104,7 +106,8 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 - **Proyectos Firebase separados**: PlatoScore usa el proyecto **"platoscore"** (`app/google-services.json`); PlatoStats usa el proyecto **"platostats"** (`platostats/google-services.json`). **Los dos archivos reales NO están en git** (están en el `.gitignore`); en el repositorio solo van las plantillas `app/google-services.json.example` y `platostats/google-services.json.example`, con valores falsos. **Las cuentas son independientes**: quien use las dos apps se registra en cada una.
 - **Ya no hay roles** ni pantalla de selección de rol: cada app es un solo modo.
 - **Aislamiento de datos por usuario**: cada `Tirada` (en las dos apps) lleva `userId` (UID de Firebase) y todas las consultas filtran por él (`Sesion.uid()`).
-- **NO hay sincronización en la nube**: los datos viven en Room **local del dispositivo**, particionados por UID. Firebase se usa SOLO para autenticar.
+- **Sesión obligatoria**: toda pantalla posterior al login empieza su `onCreate` con `if (!exigirSesion()) return`. Sin usuario vuelve al inicio de sesión en vez de consultar con un UID vacío (que en PlatoScore enseñaría las tiradas sin dueño); con la pantalla a la vista, un `AuthStateListener` hace lo mismo si la sesión se pierde. Además, una vez por arranque se comprueba con Firebase (`reload()`) que la cuenta sigue siendo válida: si se eliminó o cambió de contraseña en otro dispositivo, se cierra la sesión. Sin conexión no se hace nada.
+- **NO hay sincronización en la nube**: los datos viven en Room **local del dispositivo**, particionados por UID. Firebase se usa SOLO para autenticar y para los informes de errores.
 - **Eliminar cuenta** (menú lateral, exigido por Google Play): pide la contraseña, reautentica, llama a `FirebaseUser.delete()` y después borra del dispositivo las tiradas de ese UID (`PlatoApp.borrarDatosDe`; el resto cae en cascada). Lo hace `CuentaViewModel`, para que la operación siga su curso aunque la pantalla se recree.
 - **Copia de seguridad de Android**: solo se copia la base de datos (`backup_rules.xml` y `data_extraction_rules.xml` de cada app), no la sesión de Firebase. En PlatoScore, que guarda DNI de terceros, a la nube solo sube si la copia va cifrada.
 - Setup requerido en cada consola Firebase: proveedor **Email/Password habilitado** y el `google-services.json` real en la carpeta del módulo. **Sin él, ese módulo no compila.** Quien clone el repositorio debe descargarlo de su consola (Configuración del proyecto → General → Tus apps → la app Android → `google-services.json`) o, solo para compilar sin poder iniciar sesión, copiar la plantilla `.example` como `google-services.json`. Como no está en git, conviene guardar una copia aparte.
@@ -161,11 +164,13 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 7. **Todo texto en `strings.xml`** (lo común en `:core`, lo propio en cada app); extras de Intent en `utils/Extras` de cada app.
 8. **`:core` no conoce a ninguna app**: lo específico de cada una entra por `PlatoApp`.
 9. **Las pantallas conservan su estado al girar**: filtros en `SavedStateHandle` y diálogos con `DialogosRestaurables`, sin Fragments.
-10. **Los datos legales se escriben en un solo sitio** (`datos-legales.properties`); las páginas de `docs/` se generan desde `legal/` con `./gradlew generarPaginasLegales` y no se editan a mano.
+10. **Las escrituras no cierran la app ni se quedan a medias**: los ViewModel heredan de `GuardadoViewModel` y escriben con `guardar { ... }`. Si fallan, se registra el error en Crashlytics y se avisa con un mensaje; el formulario de PlatoStats, además, espera al resultado y no se cierra si falla.
+11. **Si cambia lo que la app envía fuera del dispositivo**, hay que actualizar las plantillas de `legal/` y la ficha de seguridad de los datos (`PUBLICACION.md`).
+12. **Los datos legales se escriben en un solo sitio** (`datos-legales.properties`); las páginas de `docs/` se generan desde `legal/` con `./gradlew generarPaginasLegales` y no se editan a mano.
 
 ## 10. Limitaciones y trabajo pendiente conocido
 
-- **Flujos con cuenta real sin probar**: las pantallas posteriores al login se han recorrido en el emulador (Android 15, debug y release con R8) entrando sin sesión, con giros de pantalla y cierre del proceso incluidos. Lo que necesita una cuenta de Firebase —crear cuenta, iniciar sesión, cambiar la contraseña y **eliminar la cuenta**— no se ha probado, y tampoco nada en un dispositivo con Android 16. La lista está en `PUBLICACION.md`.
+- **Flujos con cuenta real sin probar**: las pantallas posteriores al login se han recorrido en el emulador (Android 15, debug y release con R8) entrando sin sesión, con giros de pantalla y cierre del proceso incluidos. Lo que necesita una cuenta de Firebase —crear cuenta, iniciar sesión, cambiar la contraseña, **eliminar la cuenta**, la sesión caducada desde otro dispositivo y la llegada de los informes de Crashlytics a la consola— no se ha probado, y tampoco nada en un dispositivo con Android 16. La lista está en `PUBLICACION.md`.
 - **Datos solo locales por dispositivo** (por UID). Sin sincronización en la nube; si se cambia de móvil no se recuperan.
 - **Recaudación** usa los **precios vigentes** de la tirada (no se "congela" al cerrar).
 - **Punto 16 pendiente**: registrar las tiradas de PlatoScore por series (hoy solo el total de platos por tirador). De ahí depende la **fase 2 del desempate** (automático por mejor última serie).

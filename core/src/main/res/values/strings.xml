@@ -8,6 +8,7 @@
     <string name="accion_cancelar">Cancelar</string>
     <string name="accion_eliminar">Eliminar</string>
     <string name="accion_guardar">Guardar</string>
+    <string name="error_guardar">No se han podido guardar los cambios. Inténtalo de nuevo.</string>
 
     <!-- Resultados -->
     <string name="toast_nada_que_compartir">No hay resultados que compartir</string>
@@ -33,6 +34,7 @@
     <string name="login_reset_enviado">Te hemos enviado un correo para restablecer la contraseña</string>
     <string name="accion_cerrar_sesion">Cerrar sesión</string>
     <string name="toast_sesion_cerrada">Sesión cerrada</string>
+    <string name="toast_sesion_caducada">Tu sesión ya no es válida. Inicia sesión de nuevo.</string>
 
     <!-- Formulario de tirada -->
     <string name="label_maquina">Máquina</string>
@@ -72,6 +74,9 @@
     <string name="password_error_incorrecta">La contraseña no es correcta</string>
     <string name="toast_cuenta_eliminada">Cuenta eliminada</string>
     <string name="toast_cuenta_eliminada_sin_datos">Cuenta eliminada, pero no se han podido borrar los datos de este dispositivo. Bórralos desde los ajustes del sistema o desinstala la app.</string>
+
+    <!-- Informes de errores (Crashlytics) -->
+    <string name="ajuste_informes_errores">Enviar informes de errores</string>
 
     <!-- Política de privacidad -->
     <string name="accion_privacidad">Política de privacidad</string>

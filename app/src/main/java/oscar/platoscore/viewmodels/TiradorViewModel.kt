@@ -1,15 +1,13 @@
 package oscar.platoscore.viewmodels
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import oscar.plato.core.viewmodels.GuardadoViewModel
 import oscar.platoscore.database.PlatoScoreDatabase
 import oscar.platoscore.models.Tirador
 import oscar.platoscore.repositories.TiradorRepository
 
-class TiradorViewModel(application: Application) : AndroidViewModel(application) {
+class TiradorViewModel(application: Application) : GuardadoViewModel(application) {
 
     private val tiradorRepository: TiradorRepository
 
@@ -28,19 +26,19 @@ class TiradorViewModel(application: Application) : AndroidViewModel(application)
         tiradorRepository.getTiradoresByTirada(tiradaId)
 
     fun insertTirador(tirador: Tirador) {
-        viewModelScope.launch {
+        guardar {
             tiradorRepository.insert(tirador)
         }
     }
 
     fun updateTirador(tirador: Tirador) {
-        viewModelScope.launch {
+        guardar {
             tiradorRepository.update(tirador)
         }
     }
 
     fun deleteTirador(tirador: Tirador) {
-        viewModelScope.launch {
+        guardar {
             tiradorRepository.delete(tirador)
         }
     }

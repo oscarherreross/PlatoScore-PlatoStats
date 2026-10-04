@@ -24,7 +24,7 @@ Las apps enlazan a su política desde el inicio de sesión y desde el menú late
 
 Para cambiar un texto, edita la plantilla en `legal/` y vuelve a generar: lo que hay en `docs/` se sobrescribe.
 
-> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (informes de errores, sincronización en la nube…), hay que actualizarlos junto con la ficha del apartado siguiente.
+> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (sincronización en la nube, analítica…), hay que actualizarlos junto con la ficha del apartado siguiente.
 
 ## 2. Play Console
 
@@ -40,12 +40,15 @@ Para cambiar un texto, edita la plantilla en `legal/` y vuelve a generar: lo que
 | URL para solicitar la eliminación de la cuenta | La de «Eliminación de cuenta» de la tabla anterior |
 | ¿Se puede pedir el borrado de datos sin eliminar la cuenta? | No |
 
-Tipos de datos que hay que declarar (los dos los trata Firebase Authentication):
+Tipos de datos que hay que declarar. Los dos primeros los trata Firebase Authentication; los otros tres, Firebase Crashlytics (informes de errores):
 
 | Tipo | Recopilado | Compartido | Obligatorio | Finalidad |
 |---|---|---|---|---|
 | Información personal → Dirección de correo electrónico | Sí | No | Sí | Gestión de cuentas |
 | Información personal → IDs de usuario | Sí | No | Sí | Gestión de cuentas |
+| Información y rendimiento de la app → Registros de fallos | Sí | No | No: el usuario puede desactivarlo | Análisis |
+| Información y rendimiento de la app → Diagnóstico | Sí | No | No: el usuario puede desactivarlo | Análisis |
+| ID de dispositivo u otros ID | Sí | No | No: el usuario puede desactivarlo | Análisis |
 
 Lo que **no** se declara, y por qué:
 
@@ -94,6 +97,8 @@ val versionParche = 0
 
 El paquete queda en `app/build/outputs/bundle/release/` (y en `platostats/...`). Falla a propósito si los datos legales siguen sin rellenar. El archivo que traduce las trazas de error ofuscadas (`mapping.txt`) va dentro del paquete y Play lo usa solo; una copia queda en `build/outputs/mapping/release/`.
 
+Al compilar una release **firmada** (con `keystore.properties`), ese mismo archivo se sube también a Firebase, para que Crashlytics muestre las trazas legibles. Hace falta conexión y el `google-services.json` real. Las compilaciones sin firmar no suben nada.
+
 Para probar en un dispositivo la versión que se va a publicar, con R8 y firmada:
 
 ```bash
@@ -104,10 +109,14 @@ Para probar en un dispositivo la versión que se va a publicar, con R8 y firmada
 
 Comprobado en el emulador (Android 15), en debug y en release con R8: giros de pantalla con cada diálogo y cada formulario abiertos, filtros, restauración tras cerrarse el proceso, y arranque hasta el inicio de sesión.
 
+**Informes de errores.** Crashlytics solo está activo en la versión release; en debug no envía nada. El usuario puede desactivarlo con el interruptor «Enviar informes de errores» del menú lateral. El panel aparece en la consola de Firebase (*Crashlytics*) cuando llega el primer informe.
+
 Pendiente de probar a mano, porque necesita una cuenta real o un dispositivo que no había:
 
 - [ ] Crear cuenta, iniciar sesión y recuperar la contraseña.
 - [ ] Cambiar la contraseña desde el menú lateral.
 - [ ] **Eliminar la cuenta**: que desaparece de Firebase (consola → Authentication), que se borran sus tiradas del dispositivo y que la app vuelve al inicio de sesión.
+- [ ] **Sesión caducada**: con la misma cuenta abierta en dos dispositivos, eliminarla (o cambiar su contraseña) en uno y abrir la app en el otro: debe avisar y volver al inicio de sesión.
+- [ ] **Crashlytics**: provocar un fallo en una versión release firmada y comprobar que el informe llega a la consola de Firebase con la traza legible.
 - [ ] Un recorrido completo en un dispositivo con Android 16, que es donde `targetSdk 36` cambia cosas: el gesto de atrás predictivo y, en tabletas, que la app ya no puede fijar la orientación.
 - [ ] La versión release firmada con la clave de subida, instalada desde una prueba interna de Play.
