@@ -30,7 +30,7 @@ Todo está en español (textos en `strings.xml`).
 - **Sin librerías de gráficas externas**: la gráfica de estadísticas de PlatoStats es una **View custom dibujada a mano** (`LineChartView`).
 
 **Gotchas críticos de build:**
-- En `gradle.properties` está `ksp.useKSP2=true`. Es **obligatorio**: sin él, el procesador de Room 2.8 casca con `AbstractMethodError` al releer los esquemas exportados (conflicto de kotlinx-serialization).
+- **Kotlin 2.2.21 y KSP 2.3.11 van emparejados** (`gradle/libs.versions.toml`). KSP tiene que ser **2.3.6 o posterior**: las versiones anteriores de KSP2 no cerraban los `.jar` que leían y el demonio de Gradle se quedaba con el `classes.jar` de `:core` abierto, así que en Windows la compilación siguiente a un cambio en `:core` fallaba en `:core:bundleLibCompileToJarDebug` («el archivo está siendo utilizado por otro proceso»). KSP 2.3.x exige Kotlin 2.2 o posterior y, desde la 2.3.12, AGP 8.12 o posterior. Ya no existe `ksp.useKSP2`: KSP 2.3 solo tiene KSP2, que es el que necesita el procesador de Room 2.8 (con KSP1 cascaba con `AbstractMethodError` al releer los esquemas exportados).
 - `android.nonTransitiveRClass=true`: la `R` de cada módulo solo contiene sus propios recursos. El código de las apps se refiere a los recursos de `:core` con `import oscar.plato.core.R as CoreR` (`CoreR.string.accion_cancelar`, `CoreR.menu.menu_filtro`, `CoreR.id.action_filtros`…). Los XML no necesitan nada especial.
 
 ## 3. Estructura del código
@@ -152,7 +152,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 
 ## 9. Decisiones clave a respetar
 
-1. **KSP2 obligatorio** (`ksp.useKSP2=true`).
+1. **KSP 2.3.6 o posterior**, actualizado a la vez que Kotlin (ver los gotchas de build de §2).
 2. **Precio del tirador nunca persistido** — siempre `Tirada.precioPara()`.
 3. **Fechas de PlatoScore en ISO**; de PlatoStats en epoch millis.
 4. **Migraciones reales** con esquemas exportados; patrón de respaldo-sin-FK para quitar columnas.

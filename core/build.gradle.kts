@@ -1,5 +1,7 @@
 // Código común a PlatoScore y PlatoStats: inicio de sesión, cuenta, pantalla de
 // carga, filtros, fechas, insets y el tema Grafito.
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -20,12 +22,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
-    }
-
     buildFeatures {
         viewBinding = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_11
     }
 }
 

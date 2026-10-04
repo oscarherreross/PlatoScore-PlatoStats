@@ -43,7 +43,7 @@ Cada app implementa la interfaz `PlatoApp` de `:core` en su clase `Application` 
 
 Kotlin · Views XML con ViewBinding (sin Compose ni Fragments) · MVVM con `AndroidViewModel` y `LiveData` · Room 2.8 con KSP · Firebase Authentication (correo y contraseña) · Coroutines · Material Components.
 
-`compileSdk` y `targetSdk` 36, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.0. La variante release se compila con R8.
+`compileSdk` y `targetSdk` 36, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.2. La variante release se compila con R8.
 
 Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar.
 
@@ -82,7 +82,7 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`. Si Android Studio no lo ha
 
 ## Notas para desarrollar
 
-- **`ksp.useKSP2=true` en `gradle.properties` es obligatorio.** Sin él, el procesador de Room 2.8 falla con un `AbstractMethodError` al releer los esquemas exportados.
+- **KSP tiene que ser 2.3.6 o posterior, y se actualiza junto con Kotlin.** Las versiones anteriores dejaban abierto en el demonio de Gradle el `classes.jar` de `:core`, y en Windows la compilación siguiente a un cambio en `:core` fallaba en `:core:bundleLibCompileToJarDebug` («el archivo está siendo utilizado por otro proceso»; `./gradlew --stop` lo desbloqueaba). Esas versiones de KSP exigen Kotlin 2.2 o posterior y, desde la 2.3.12, AGP 8.12 o posterior: por eso el proyecto usa la 2.3.11. Ya no hace falta `ksp.useKSP2=true`, porque KSP 2.3 solo tiene KSP2.
 - Los recursos de `:core` se usan desde las apps con `import oscar.plato.core.R as CoreR`, porque `android.nonTransitiveRClass` está activado.
 - Las barras superiores se pintan con `?attr/platoAppBar`, no con `colorPrimary`, para que en modo noche la barra sea grafito y el naranja siga siendo el color de acento.
 - La app dibuja de borde a borde (edge-to-edge): cada pantalla nueva debe aplicar sus insets (`InsetsUtil`).

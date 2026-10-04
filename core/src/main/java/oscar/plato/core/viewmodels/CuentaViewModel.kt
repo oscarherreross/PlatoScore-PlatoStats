@@ -24,10 +24,10 @@ sealed interface EstadoCuenta {
     data object EnCurso : EstadoCuenta
 
     /** Ha fallado. Con [enPassword], porque la contraseña escrita no es la de la cuenta. */
-    data class Error(@StringRes val mensaje: Int, val enPassword: Boolean = false) : EstadoCuenta
+    data class Error(@param:StringRes val mensaje: Int, val enPassword: Boolean = false) : EstadoCuenta
 
     /** Ha terminado; [mensaje] es lo que hay que contarle al usuario. */
-    data class Hecho(@StringRes val mensaje: Int) : EstadoCuenta
+    data class Hecho(@param:StringRes val mensaje: Int) : EstadoCuenta
 }
 
 /**
