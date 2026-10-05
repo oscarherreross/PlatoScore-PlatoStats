@@ -57,9 +57,9 @@ tasks.register<Copy>("generarPaginasLegales") {
     }
 }
 
-// Sin los datos legales no se puede generar el paquete que se sube a Google Play
+// Sin los datos legales no se puede generar el paquete para Google Play
 // (bundleRelease). El resto de compilaciones de release solo avisa, para poder
-// probar R8 antes de tenerlos.
+// probar R8 antes de tenerlos; un APK que se vaya a repartir debe llevarlos.
 gradle.taskGraph.whenReady {
     if (datosLegalesSinRellenar.isEmpty()) return@whenReady
     val tareas = allTasks.map { it.name }

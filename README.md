@@ -1,5 +1,7 @@
 # PlatoScore y PlatoStats
 
+[![CI](https://github.com/oscarherreross/PlatoScore-PlatoStats/actions/workflows/ci.yml/badge.svg)](https://github.com/oscarherreross/PlatoScore-PlatoStats/actions/workflows/ci.yml)
+
 Dos aplicaciones Android nativas para el **tiro al plato**, en un mismo repositorio:
 
 | App | Para quién | Qué hace |
@@ -10,6 +12,22 @@ Dos aplicaciones Android nativas para el **tiro al plato**, en un mismo reposito
 Las dos comparten el inicio de sesión, la gestión de la cuenta (cambiar la contraseña, eliminarla), la pantalla de carga, el tema y los filtros a través de un módulo común (`:core`). Cada una tiene su propia base de datos y su propio proyecto de Firebase, así que las cuentas son independientes.
 
 La interfaz está en español.
+
+## Capturas
+
+**PlatoScore**
+
+| Tiradas | Escuadra | Clasificaciones |
+|---|---|---|
+| <img src="capturas/platoscore-tiradas.png" width="240" alt="Lista de tiradas de PlatoScore"> | <img src="capturas/platoscore-escuadra.png" width="240" alt="Tiradores de una escuadra"> | <img src="capturas/platoscore-resultados.png" width="240" alt="Clasificaciones por categoría y recaudación"> |
+
+**PlatoStats**
+
+| Mis tiradas | Tirada con sus series | Estadísticas | Modo noche |
+|---|---|---|---|
+| <img src="capturas/platostats-tiradas.png" width="200" alt="Lista de tiradas de PlatoStats"> | <img src="capturas/platostats-formulario.png" width="200" alt="Formulario de una tirada con dos series"> | <img src="capturas/platostats-estadisticas.png" width="200" alt="Estadísticas y gráfica de evolución"> | <img src="capturas/platostats-estadisticas-noche.png" width="200" alt="Estadísticas en modo noche"> |
+
+Los datos de las capturas son inventados.
 
 ## Funcionalidades
 
@@ -45,7 +63,7 @@ Kotlin · Views XML con ViewBinding (sin Compose ni Fragments) · MVVM con `Andr
 
 `compileSdk` y `targetSdk` 36, `minSdk` 24. Gradle 8.11 (con wrapper), AGP 8.10 y Kotlin 2.2. La variante release se compila con R8.
 
-Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar y, en la versión publicada, para recibir informes de errores (Crashlytics), que el usuario puede desactivar.
+Los datos se guardan **solo en el dispositivo** (Room, separados por usuario). Firebase se usa únicamente para autenticar y, en la variante release, para recibir informes de errores (Crashlytics), que el usuario puede desactivar.
 
 ## Cómo compilarlo
 
@@ -95,7 +113,11 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`. Si Android Studio no lo ha
 
 ## Estado
 
-Proyecto en desarrollo, todavía sin publicar en Google Play. [`PUBLICACION.md`](PUBLICACION.md) recoge lo que ya está preparado (firma, versiones, R8, páginas legales) y los pasos que quedan. Solo hay tests unitarios (37) de la lógica de negocio; no hay tests instrumentados.
+Proyecto personal, versión 1.0.0 de las dos apps. No está en Google Play: el código se publica aquí y, cuando hay una versión firmada, su APK se adjunta en [Releases](https://github.com/oscarherreross/PlatoScore-PlatoStats/releases). [`PUBLICACION.md`](PUBLICACION.md) explica cómo se genera y se firma una versión.
+
+- **Tests:** 41 unitarios de la lógica de negocio (clasificaciones y desempates, precios, estadísticas, filtros, fechas, datos legales). No hay tests instrumentados ni de las migraciones.
+- **Integración continua:** cada cambio compila las dos apps, pasa los tests y el análisis estático (GitHub Actions).
+- **Probado a mano** en emulador con Android 15, en debug y en release con R8. Lo que queda por probar está en [`PUBLICACION.md`](PUBLICACION.md#5-qué-queda-por-probar).
 
 ## Licencia
 

@@ -71,7 +71,7 @@ Todo está en español (textos en `strings.xml`).
 └── utils/Extras
 ```
 
-En la raíz: `legal/` (páginas legales de cada app y `datos-legales.properties`, con el responsable y el contacto) y `PUBLICACION.md` (guía de publicación). La carpeta `legal/` entera se incluye en las dos apps como *assets*.
+En la raíz: `legal/` (páginas legales de cada app y `datos-legales.properties`, con el responsable y el contacto) y `PUBLICACION.md` (cómo generar y firmar una versión) y `capturas/` (imágenes del README). La carpeta `legal/` entera se incluye en las dos apps como *assets*.
 
 **Regla:** nada de `:core` puede conocer clases de una app concreta; lo que varía por app pasa por `PlatoApp` (pantalla principal, logo, lema, carpeta de sus páginas legales y borrado de los datos de un usuario). Las dos apps tienen clases con el mismo nombre (`MainActivity`, `Tirada`, `TiradaDao`…) en paquetes distintos: no hay conflicto porque nunca se compilan juntas.
 
@@ -147,7 +147,7 @@ Es el mismo esquema que tenían esas tablas en la v6 de PlatoScore, con los nomb
 
 ## 8. Tests
 
-Unitarios (JUnit4, lógica pura, sin Android), 37 en total:
+Unitarios (JUnit4, lógica pura, sin Android), 41 en total:
 - `:core`: `FechasTest`, `FiltroTiradasTest`.
 - `:app`: `ClasificacionTest`, `FiltroTiradasTest`, `ResumenProfesionalTest`.
 - `:platostats`: `EstadisticasTest`, `FiltroTiradasTest`, `PerfilUsuarioTest`.
@@ -184,7 +184,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 - **Migrar a Firestore** para sincronización multi-dispositivo.
 - Implementar el **registro por series en PlatoScore** (punto 16) → habilita desempate automático.
 - **Exportar a PDF** (hoy solo texto), estadísticas cruzadas (máquina×puesto), presets de fecha, etc.
-- Antes de publicar en Play quedan pasos manuales (datos legales, alojar las páginas, clave de firma, ficha de seguridad de los datos): ver `PUBLICACION.md`.
+- Las apps no se publican en Google Play: el repositorio es público y las versiones firmadas se adjuntan como APK en GitHub Releases. Antes de repartir un APK quedan pasos manuales (datos legales, clave de firma): ver `PUBLICACION.md`, que conserva en un anexo lo que haría falta para Play.
 
 ---
 
