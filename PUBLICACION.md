@@ -1,78 +1,33 @@
-# Publicar PlatoScore y PlatoStats en Google Play
+# Publicar una versión de PlatoScore y PlatoStats
 
-Lo que el proyecto ya trae preparado y los pasos manuales que quedan. Todo vale para las dos apps salvo que se diga lo contrario.
+Las apps **no se publican en Google Play**. El código está en este repositorio y cada versión firmada se adjunta como APK en [GitHub Releases](https://github.com/oscarherreross/PlatoScore-PlatoStats/releases), para quien quiera instalarla. Todo vale para las dos apps salvo que se diga lo contrario.
 
-## 1. Datos legales y páginas legales
+El [anexo](#anexo-si-algún-día-se-publican-en-google-play) conserva lo que haría falta para Google Play.
 
-Google Play exige una política de privacidad accesible desde la app y con dirección web y, para las apps con cuentas, una página web donde pedir la eliminación de la cuenta. Las cuatro páginas (dos por app) están redactadas como plantillas en `legal/`.
+## 1. Datos legales
 
-**Dentro de las apps no hay que hacer nada más.** La carpeta `legal/` va incluida en cada app, y el enlace «Política de privacidad» (en el inicio de sesión y en el menú lateral) abre la política en una pantalla propia, sin conexión y sin depender de ninguna web. Desde ella se llega a la página de eliminación de cuenta.
+Las apps crean cuentas (correo y contraseña en Firebase), así que quien reparte un APK responde de esos datos. La política de privacidad y la página de eliminación de cuenta de cada app están redactadas como plantillas en `legal/` y **van dentro de las apps**: el enlace «Política de privacidad» (en el inicio de sesión y en el menú lateral) las abre sin conexión.
 
-Lo que queda es rellenar tus datos y publicar las páginas en la web, que es lo que pide Play Console:
+Antes de repartir un APK, rellena `legal/datos-legales.properties` con el responsable y un correo de contacto. Es el único sitio donde se escriben; mientras falten, la política muestra «(pendiente de indicar)» y la compilación de release avisa.
 
-1. Rellena `legal/datos-legales.properties`: responsable y correo de contacto. Es el único sitio donde se escriben; mientras falten, las páginas de la app muestran «(pendiente de indicar)».
-2. Genera las páginas para la web:
+Para cambiar un texto, edita la plantilla en `legal/`: la app lo recoge al compilar.
+
+> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de repartir la app: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (sincronización en la nube, analítica…), hay que actualizarlos.
+
+## 2. Firma
+
+Android solo instala APK firmados, y solo actualiza una app si la versión nueva está firmada con **la misma clave** que la instalada. Fuera de Google Play nadie guarda esa clave por ti: si se pierde, quien tenga la app tendrá que desinstalarla (y perder sus datos) para instalar una versión firmada con otra.
+
+1. Crea el almacén con la clave, una sola vez (sirve para las dos apps):
    ```bash
-   ./gradlew generarPaginasLegales
+   keytool -genkeypair -v -keystore plato-firma.jks -alias plato -keyalg RSA -keysize 2048 -validity 10000
    ```
-   Aparecen en `docs/`, con tus datos ya puestos.
-3. Publica la carpeta `docs/`. Con GitHub Pages: *Settings → Pages → Deploy from a branch → `main` / `docs`* (en un repositorio privado hace falta un plan de pago; sirve cualquier otro alojamiento de páginas estáticas, como Firebase Hosting).
-4. Comprueba que estas direcciones abren, donde `<web>` es la dirección en la que has publicado `docs/`:
-
-   | | PlatoScore | PlatoStats |
-   |---|---|---|
-   | Política de privacidad | `<web>/platoscore/privacidad.html` | `<web>/platostats/privacidad.html` |
-   | Eliminación de cuenta | `<web>/platoscore/eliminar-cuenta.html` | `<web>/platostats/eliminar-cuenta.html` |
-
-Para cambiar un texto, edita la plantilla en `legal/`: la app lo recoge al compilar, y para la web hay que volver a generar (lo que hay en `docs/` se sobrescribe).
-
-> Los textos son un borrador redactado a partir de lo que hace el código. Revísalos antes de publicarlos: no sustituyen al asesoramiento legal. Si la app empieza a tratar más datos (sincronización en la nube, analítica…), hay que actualizarlos junto con la ficha del apartado siguiente.
-
-## 2. Play Console
-
-**Contenido de la aplicación → Política de privacidad:** la dirección de la política de cada app.
-
-**Contenido de la aplicación → Seguridad de los datos.** Respuestas que corresponden al código actual:
-
-| Pregunta | Respuesta |
-|---|---|
-| ¿La app recopila o comparte datos de usuario? | Sí |
-| ¿Se cifran en tránsito todos los datos recopilados? | Sí (Firebase usa HTTPS) |
-| Método de creación de cuentas | Nombre de usuario y contraseña |
-| URL para solicitar la eliminación de la cuenta | La de «Eliminación de cuenta» de la tabla anterior |
-| ¿Se puede pedir el borrado de datos sin eliminar la cuenta? | No |
-
-Tipos de datos que hay que declarar. Los dos primeros los trata Firebase Authentication; los otros tres, Firebase Crashlytics (informes de errores):
-
-| Tipo | Recopilado | Compartido | Obligatorio | Finalidad |
-|---|---|---|---|---|
-| Información personal → Dirección de correo electrónico | Sí | No | Sí | Gestión de cuentas |
-| Información personal → IDs de usuario | Sí | No | Sí | Gestión de cuentas |
-| Información y rendimiento de la app → Registros de fallos | Sí | No | No: el usuario puede desactivarlo | Análisis |
-| Información y rendimiento de la app → Diagnóstico | Sí | No | No: el usuario puede desactivarlo | Análisis |
-| ID de dispositivo u otros ID | Sí | No | No: el usuario puede desactivarlo | Análisis |
-
-Lo que **no** se declara, y por qué:
-
-- Tiradas, escuadras y tiradores (con su DNI y licencia) en PlatoScore, y tiradas y series en PlatoStats: se guardan solo en el dispositivo. Play llama «recopilar» a enviar datos fuera del dispositivo.
-- La copia de seguridad de Android: la hace el sistema en la cuenta de Google del propio usuario, y el desarrollador no la recibe.
-
-Contrasta la tabla con la guía de Firebase sobre este formulario (<https://firebase.google.com/docs/android/play-data-disclosure>) por si ha cambiado lo que recoge el SDK.
-
-## 3. Firma
-
-Lo habitual es **Play App Signing**: Google guarda la clave con la que firma lo que reciben los usuarios, y tú firmas lo que subes con una *clave de subida*. Si la pierdes, Google puede sustituirla; por eso es la opción recomendada.
-
-1. Crea el almacén con la clave de subida, una sola vez (sirve para las dos apps):
-   ```bash
-   keytool -genkeypair -v -keystore plato-subida.jks -alias subida -keyalg RSA -keysize 2048 -validity 10000
-   ```
-   Guárdalo fuera del repositorio y haz copia de seguridad, también de las contraseñas.
+   Guárdalo **fuera del repositorio** y haz copia de seguridad, también de las contraseñas.
 2. Copia `keystore.properties.example` como `keystore.properties` en la raíz del proyecto y pon la ruta, el alias y las contraseñas. Ese archivo está en el `.gitignore` y no debe subirse nunca.
 
-Sin `keystore.properties`, la variante release se compila igualmente pero sin firmar: sirve para comprobar que R8 no rompe nada, no para instalar ni publicar.
+Sin `keystore.properties`, la variante release se compila igualmente pero sin firmar: sirve para comprobar que R8 no rompe nada, no para instalar.
 
-## 4. Versiones
+## 3. Versiones
 
 Cada app lleva su propia versión, al principio de su `build.gradle.kts`:
 
@@ -84,34 +39,33 @@ val versionParche = 0
 
 - El nombre visible es `mayor.menor.parche` (1.0.0).
 - El código interno se calcula solo: `mayor × 10000 + menor × 100 + parche` (10000 para la 1.0.0). Por eso `menor` y `parche` no pueden pasar de 99.
-- Google Play rechaza un código ya usado, aunque esa subida no llegara a publicarse: **cada subida necesita subir al menos el parche**.
+- Android no instala encima de una app una versión con un código menor: **cada versión que se reparte sube al menos el parche**.
 - Criterio: `parche` para correcciones, `menor` para funciones nuevas, `mayor` para cambios grandes. Las dos apps no tienen por qué ir a la par.
 
-## 5. Generar el paquete
+## 4. Generar y publicar una versión
 
-```bash
-./gradlew :app:bundleRelease
-```
+1. Comprueba que `main` está en verde en la integración continua y que los `google-services.json` reales están en `app/` y `platostats/`.
+2. Genera los dos APK firmados (con R8):
+   ```bash
+   ./gradlew :app:assembleRelease :platostats:assembleRelease
+   ```
+   Quedan en `app/build/outputs/apk/release/app-release.apk` y `platostats/build/outputs/apk/release/platostats-release.apk`.
+3. Instálalos en un dispositivo y pruébalos: es la única compilación en la que Crashlytics envía informes.
+4. En GitHub, *Releases → Draft a new release*: crea una etiqueta (`v1.0.0`), describe los cambios y adjunta los dos APK con nombres claros (`PlatoScore-1.0.0.apk`, `PlatoStats-1.0.0.apk`).
 
-```bash
-./gradlew :platostats:bundleRelease
-```
+Los APK **no se guardan en el repositorio** (están en el `.gitignore`); solo se adjuntan a la versión.
 
-El paquete queda en `app/build/outputs/bundle/release/` (y en `platostats/...`). Falla a propósito si los datos legales siguen sin rellenar. El archivo que traduce las trazas de error ofuscadas (`mapping.txt`) va dentro del paquete y Play lo usa solo; una copia queda en `build/outputs/mapping/release/`.
+Al compilar una release firmada, el archivo que traduce las trazas de error ofuscadas (`mapping.txt`) se sube a Firebase para que Crashlytics muestre trazas legibles. Hace falta conexión. Las compilaciones sin firmar no suben nada. Una copia queda en `build/outputs/mapping/release/`.
 
-Al compilar una release **firmada** (con `keystore.properties`), ese mismo archivo se sube también a Firebase, para que Crashlytics muestre las trazas legibles. Hace falta conexión y el `google-services.json` real. Las compilaciones sin firmar no suben nada.
+Quien instale el APK tiene que permitir en su dispositivo la instalación desde el navegador o el gestor de archivos, y verá el aviso habitual de Play Protect para apps de fuera de la tienda.
 
-Para probar en un dispositivo la versión que se va a publicar, con R8 y firmada:
+**Firebase.** Un APK lleva dentro la clave de API de su proyecto de Firebase, como cualquier app Android; no es un secreto, pero conviene acotarla. En Google Cloud (*API y servicios → Credenciales*), restringe la clave de cada proyecto a su paquete (`oscar.platoscore` u `oscar.platostats`) y a la huella SHA-1 de la clave de firma, y deja solo las API que usa la app.
 
-```bash
-./gradlew :app:assembleRelease
-```
+## 5. Qué queda por probar
 
-## 6. Qué probar antes de subir
+Comprobado en el emulador (Android 15), en debug y en release con R8: giros de pantalla con cada diálogo y cada formulario abiertos, filtros, restauración tras cerrarse el proceso, el arranque hasta el inicio de sesión, la política de privacidad y, entrando sin sesión, las pantallas de las dos apps (tiradas, escuadras, tiradores, clasificaciones, series y estadísticas).
 
-Comprobado en el emulador (Android 15), en debug y en release con R8: giros de pantalla con cada diálogo y cada formulario abiertos, filtros, restauración tras cerrarse el proceso, y arranque hasta el inicio de sesión.
-
-**Informes de errores.** Crashlytics solo está activo en la versión release; en debug no envía nada. El usuario puede desactivarlo con el interruptor «Enviar informes de errores» del menú lateral. El panel aparece en la consola de Firebase (*Crashlytics*) cuando llega el primer informe.
+**Informes de errores.** Crashlytics solo está activo en la variante release; en debug no envía nada. El usuario puede desactivarlo con el interruptor «Enviar informes de errores» del menú lateral. El panel aparece en la consola de Firebase (*Crashlytics*) cuando llega el primer informe.
 
 Pendiente de probar a mano, porque necesita una cuenta real o un dispositivo que no había:
 
@@ -121,4 +75,22 @@ Pendiente de probar a mano, porque necesita una cuenta real o un dispositivo que
 - [ ] **Sesión caducada**: con la misma cuenta abierta en dos dispositivos, eliminarla (o cambiar su contraseña) en uno y abrir la app en el otro: debe avisar y volver al inicio de sesión.
 - [ ] **Crashlytics**: provocar un fallo en una versión release firmada y comprobar que el informe llega a la consola de Firebase con la traza legible.
 - [ ] Un recorrido completo en un dispositivo con Android 16, que es donde `targetSdk 36` cambia cosas: el gesto de atrás predictivo y, en tabletas, que la app ya no puede fijar la orientación.
-- [ ] La versión release firmada con la clave de subida, instalada desde una prueba interna de Play.
+
+## Anexo: si algún día se publican en Google Play
+
+El proyecto quedó preparado para ello (targetSdk 36, R8, eliminación de cuenta desde la app, política de privacidad). Lo que faltaría:
+
+- **Cuenta de desarrollador.** Una cuenta personal muestra en la ficha el nombre legal del titular y exige, antes de publicar, una prueba cerrada de cada app con 12 testers durante 14 días seguidos.
+- **Páginas legales en la web.** Play pide una dirección web para la política de privacidad y otra para solicitar la eliminación de la cuenta. Con los datos legales rellenos, `./gradlew generarPaginasLegales` las genera en `docs/`, listas para GitHub Pages (*Settings → Pages → `main` / `docs`*).
+- **Paquete.** `./gradlew :app:bundleRelease` (y `:platostats:bundleRelease`) genera el `.aab`; falla a propósito si faltan los datos legales. Con Play App Signing, la clave del apartado 2 pasa a ser la clave de subida.
+- **Seguridad de los datos.** Respuestas que corresponden al código actual: la app recopila datos, cifrados en tránsito; las cuentas se crean con usuario y contraseña; no se puede pedir el borrado de datos sin eliminar la cuenta. Tipos que hay que declarar:
+
+  | Tipo | Obligatorio | Finalidad |
+  |---|---|---|
+  | Dirección de correo electrónico | Sí | Gestión de cuentas |
+  | IDs de usuario | Sí | Gestión de cuentas |
+  | Registros de fallos | No: el usuario puede desactivarlo | Análisis |
+  | Diagnóstico | No: el usuario puede desactivarlo | Análisis |
+  | ID de dispositivo u otros ID | No: el usuario puede desactivarlo | Análisis |
+
+  Ninguno se comparte con terceros. No se declaran las tiradas, escuadras, tiradores ni series (se guardan solo en el dispositivo) ni la copia de seguridad de Android (la hace el sistema en la cuenta del usuario). Contrasta la tabla con la [guía de Firebase](https://firebase.google.com/docs/android/play-data-disclosure) por si ha cambiado lo que recoge el SDK.
