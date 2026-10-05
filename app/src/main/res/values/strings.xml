@@ -53,9 +53,9 @@
     <string name="toast_tirador_eliminado">Tirador eliminado</string>
     <string name="label_nombre_apellidos">Nombre y apellidos</string>
     <string name="hint_nombre_apellidos">Ej: Juan Pérez</string>
-    <string name="label_dni">DNI</string>
+    <string name="label_dni">DNI (opcional)</string>
     <string name="hint_dni">Ej: 12345678A</string>
-    <string name="label_numero_licencia">Número de licencia</string>
+    <string name="label_numero_licencia">Número de licencia (opcional)</string>
     <string name="hint_numero_licencia">Ej: LIC-001</string>
     <string name="label_platos_rotos">Platos rotos</string>
     <string name="hint_platos_rotos">0</string>
