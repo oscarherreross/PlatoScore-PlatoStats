@@ -1,6 +1,6 @@
 # Publicar una versión de PlatoScore y PlatoStats
 
-Las apps **no se publican en Google Play**. El código está en este repositorio y cada versión firmada se adjunta como APK en [GitHub Releases](https://github.com/oscarherreross/PlatoScore-PlatoStats/releases), para quien quiera instalarla. Todo vale para las dos apps salvo que se diga lo contrario.
+Las apps **no se publican en Google Play** ni, por ahora, se reparten como APK: lo que se publica es el código de este repositorio. Este documento explica cómo se generaría una versión firmada para adjuntarla en [GitHub Releases](https://github.com/oscarherreross/PlatoScore-PlatoStats/releases). Todo vale para las dos apps salvo que se diga lo contrario.
 
 El [anexo](#anexo-si-algún-día-se-publican-en-google-play) conserva lo que haría falta para Google Play.
 
@@ -67,10 +67,16 @@ Comprobado en el emulador (Android 15), en debug y en release con R8: giros de p
 
 **Informes de errores.** Crashlytics solo está activo en la variante release; en debug no envía nada. El usuario puede desactivarlo con el interruptor «Enviar informes de errores» del menú lateral. El panel aparece en la consola de Firebase (*Crashlytics*) cuando llega el primer informe.
 
-Pendiente de probar a mano, porque necesita una cuenta real o un dispositivo que no había:
+Comprobado a mano con cuentas reales, en una tableta con Android 15 y en las dos apps (octubre de 2026):
 
-- [ ] Crear cuenta, iniciar sesión y recuperar la contraseña.
-- [ ] Cambiar la contraseña desde el menú lateral.
+- [x] Crear una cuenta, cerrar sesión y volver a iniciarla.
+- [x] Recuperar la contraseña con el correo de «He olvidado mi contraseña».
+- [x] Cambiar la contraseña desde el menú lateral, con la contraseña actual mal escrita y bien escrita.
+- [x] Abrir la política de privacidad desde el inicio de sesión y desde el menú lateral.
+- [x] Que una cuenta no ve los datos de otra en el mismo dispositivo.
+
+Sigue sin probar a mano:
+
 - [ ] **Eliminar la cuenta**: que desaparece de Firebase (consola → Authentication), que se borran sus tiradas del dispositivo y que la app vuelve al inicio de sesión.
 - [ ] **Sesión caducada**: con la misma cuenta abierta en dos dispositivos, eliminarla (o cambiar su contraseña) en uno y abrir la app en el otro: debe avisar y volver al inicio de sesión.
 - [ ] **Crashlytics**: provocar un fallo en una versión release firmada y comprobar que el informe llega a la consola de Firebase con la traza legible.

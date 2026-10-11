@@ -113,11 +113,11 @@ En Windows usa `gradlew.bat` en lugar de `./gradlew`. Si Android Studio no lo ha
 
 ## Estado
 
-Proyecto personal, versión 1.0.0 de las dos apps. No está en Google Play: el código se publica aquí y, cuando hay una versión firmada, su APK se adjunta en [Releases](https://github.com/oscarherreross/PlatoScore-PlatoStats/releases). [`PUBLICACION.md`](PUBLICACION.md) explica cómo se genera y se firma una versión.
+Proyecto personal, versión 1.0.0 de las dos apps. No está en Google Play ni se reparte como APK: lo que se publica aquí es el código. [`PUBLICACION.md`](PUBLICACION.md) explica cómo se generaría y se firmaría una versión.
 
 - **Tests:** 41 unitarios de la lógica de negocio (clasificaciones y desempates, precios, estadísticas, filtros, fechas, datos legales). No hay tests instrumentados ni de las migraciones.
 - **Integración continua:** cada cambio compila las dos apps, pasa los tests y el análisis estático (GitHub Actions).
-- **Probado a mano** en emulador con Android 15, en debug y en release con R8. Lo que queda por probar está en [`PUBLICACION.md`](PUBLICACION.md#5-qué-queda-por-probar).
+- **Probado a mano** en emulador con Android 15 (debug y release con R8) y, con cuentas reales, en una tableta con Android 15: crear cuenta, iniciar sesión, y recuperar y cambiar la contraseña. Lo que queda por probar está en [`PUBLICACION.md`](PUBLICACION.md#5-qué-queda-por-probar).
 
 ## Licencia
 
