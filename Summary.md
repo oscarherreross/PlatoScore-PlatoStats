@@ -171,7 +171,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 
 ## 10. Limitaciones y trabajo pendiente conocido
 
-- **Flujos con cuenta real sin probar**: las pantallas posteriores al login se han recorrido en el emulador (Android 15, debug y release con R8) entrando sin sesión, con giros de pantalla y cierre del proceso incluidos. Lo que necesita una cuenta de Firebase —crear cuenta, iniciar sesión, cambiar la contraseña, **eliminar la cuenta**, la sesión caducada desde otro dispositivo y la llegada de los informes de Crashlytics a la consola— no se ha probado, y tampoco nada en un dispositivo con Android 16. La lista está en `PUBLICACION.md`.
+- **Pruebas manuales**: las pantallas posteriores al login se han recorrido en el emulador (Android 15, debug y release con R8) entrando sin sesión, con giros de pantalla y cierre del proceso incluidos. Con cuentas reales, en una tableta con Android 15 (octubre de 2026), se han probado en las dos apps crear cuenta, cerrar e iniciar sesión, recuperar y cambiar la contraseña, la política de privacidad y que una cuenta no ve los datos de otra. **Siguen sin probar** eliminar la cuenta, la sesión caducada desde otro dispositivo, la llegada de los informes de Crashlytics a la consola y cualquier cosa en un dispositivo con Android 16. La lista está en `PUBLICACION.md`.
 - **Datos solo locales por dispositivo** (por UID). Sin sincronización en la nube; si se cambia de móvil no se recuperan.
 - **Recaudación** usa los **precios vigentes** de la tirada (no se "congela" al cerrar).
 - **Punto 16 pendiente**: registrar las tiradas de PlatoScore por series (hoy solo el total de platos por tirador). De ahí depende la **fase 2 del desempate** (automático por mejor última serie).
@@ -184,7 +184,7 @@ Se ejecutan con `./gradlew testDebugUnitTest` (todos los módulos; `:platostats`
 - **Migrar a Firestore** para sincronización multi-dispositivo.
 - Implementar el **registro por series en PlatoScore** (punto 16) → habilita desempate automático.
 - **Exportar a PDF** (hoy solo texto), estadísticas cruzadas (máquina×puesto), presets de fecha, etc.
-- Las apps no se publican en Google Play: el repositorio es público y las versiones firmadas se adjuntan como APK en GitHub Releases. Antes de repartir un APK quedan pasos manuales (datos legales, clave de firma): ver `PUBLICACION.md`, que conserva en un anexo lo que haría falta para Play.
+- Las apps no se publican en Google Play ni se reparten como APK: el repositorio es público y lo que se enseña es el código. Para repartir un APK quedarían pasos manuales (datos legales, clave de firma): ver `PUBLICACION.md`, que conserva en un anexo lo que haría falta para Play.
 
 ---
 
